@@ -17,15 +17,6 @@ import java.net.URL;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.http.HttpRequest;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.mime.HttpMultipartMode;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
 
 /**
  *
@@ -91,7 +82,7 @@ public class PortadaApi {
             hwriter.append("--*****\r\n");
             hwriter.append("Content-Disposition: form-data; name=\"image\"; filename=\"").append(inFile.getName()).append("\"\r\n");
             hwriter.append("Content-Type: ").append(HttpURLConnection.guessContentTypeFromName(inFile.getName())).append("\r\n");
-            hwriter.append("Content-Length: ").append(String.valueOf(inFile.length()));
+            hwriter.append("Content-Length: ").append(String.valueOf(inFile.length())).append("\r\n");
             hwriter.append("\r\n"); 
             StringBuilder fwriter = new StringBuilder();
             fwriter.append("\r\n");
@@ -109,12 +100,14 @@ public class PortadaApi {
             con.connect();
             try (OutputStream outputStream = con.getOutputStream();
                     PrintWriter writer = new PrintWriter(new OutputStreamWriter(outputStream, "UTF-8"), true)) { 
-                writer.append(hwriter.toString());               
+                writer.append(hwriter.toString());   
+                writer.flush();
                 try(FileInputStream in = new FileInputStream(inFile)){
                     copyStreams(in, outputStream);
+                    outputStream.flush();
                 }
                 writer.append(fwriter.toString());
-                outputStream.flush();
+                writer.flush();
             }
             int responseCode = con.getResponseCode();
             if ((responseCode >= 200) && (responseCode < 400)) {  
