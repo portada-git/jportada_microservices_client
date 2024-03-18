@@ -23,16 +23,61 @@ import java.util.logging.Logger;
  * @author josepcanellas
  */
 public class PortadaApi {
-    String host;
-    String port;
+
+    /**
+     * @return the host
+     */
+    public String getHost() {
+        return host;
+    }
+
+    /**
+     * @param host the host to set
+     */
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    /**
+     * @return the port
+     */
+    public String getPort() {
+        return port;
+    }
+
+    /**
+     * @param port the port to set
+     */
+    public void setPort(String port) {
+        this.port = port;
+    }
+
+    /**
+     * @return the pref
+     */
+    public String getPref() {
+        return pref;
+    }
+
+    /**
+     * @param pref the pref to set
+     */
+    public void setPref(String pref) {
+        setPrefField(pref);        
+    }
+    
+    private String host;
+    private String port;
+    private String pref;
 
     public PortadaApi() {
         init();
     }
 
-    public PortadaApi(String host, String port) {
+    public PortadaApi(String host, String port, String pref) {
         this.host = host;
         this.port = port;
+        this.setPrefField(pref);
     }
     
     
@@ -41,21 +86,22 @@ public class PortadaApi {
         try {
             FileReader freader = new FileReader("config/init.properties");
             prop.load(freader);
-            host = prop.getProperty("host");
-            port = prop.getProperty("port");
+            setHost(prop.getProperty("host"));
+            setPort(prop.getProperty("port"));
+            setPref(prop.getProperty("pref"));
         } catch (IOException ex) {
             Logger.getLogger(PortadaApi.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
     public void deskewImageFile(String inputFile){
-        deskewImageFile(inputFile, inputFile);
+        deskewImageFile(inputFile, inputFile, inputFile);
     }
     
-    public void deskewImageFile(String inputFile, String outputFile){
+    public void deskewImageFile(String inputFile, String outputFile, String errorFile){
 //        String extension="jpg";
 //        String strUrl = "http://".concat(host).concat(":").concat(port).concat("/deskewImageFile");
-        String strUrl = String.format("http://%s:%s/deskewImageFile",host, port);
+        String strUrl = String.format("http://%s:%s%sdeskewImageFile", getHost(), getPort(),getPref());
 //        String[] aInput = inputFile.split("\\.");
 //        if(aInput.length>=2){
 //            extension = aInput[aInput.length-1];
@@ -117,6 +163,9 @@ public class PortadaApi {
             } else {
                 //error
                 //con.getErrorStream();
+                try(FileOutputStream outputStream = new FileOutputStream(errorFile)){
+                    copyStreams(con.getErrorStream(), outputStream);
+                }
             }
             con.disconnect();
         } catch (MalformedURLException ex) {
@@ -139,4 +188,17 @@ public class PortadaApi {
         return count;
     }
     
+    private final void setPrefField(String pref) {
+        if(pref==null || pref.isEmpty() || pref.isBlank()){
+            pref="/";
+        }else{
+            if(!pref.startsWith("/")){
+                pref="/".concat(pref);
+            }
+            if(!pref.endsWith("/")){
+                pref=pref.concat("/");
+            }
+        }
+        this.pref = pref;       
+    }
 }

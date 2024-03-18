@@ -23,3 +23,7 @@
 /nbdist/
 /.nb-gradle/
 
+/data/
+
+.DS_Store
+

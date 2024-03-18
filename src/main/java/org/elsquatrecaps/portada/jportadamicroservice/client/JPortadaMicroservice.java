@@ -11,6 +11,6 @@ public class JPortadaMicroservice {
         config.parseArgumentsAndConfigure(args);
         
         PortadaApi papi = new PortadaApi();
-        papi.deskewImageFile(config.getInputFile(), config.getOutputFile());
+        papi.deskewImageFile(config.getInputFile(), config.getOutputFile(), "data/error.txt");
     }
 }
