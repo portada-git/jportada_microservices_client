@@ -81,6 +81,18 @@ public class PortadaApi {
     }
     
     
+    public final void init(Configuration config) {
+        this.host = config.getHost();
+        this.port = config.getPort();
+        this.setPrefField(config.getPref());
+    }
+    
+    public final void init(String host, String port, String pref) {
+        this.host = host;
+        this.port = port;
+        this.setPrefField(pref);
+    }
+    
     public final void init(){
         Properties prop = new Properties();
         try {
@@ -94,35 +106,67 @@ public class PortadaApi {
         }
     }
     
+    public void deskewImageFile(Configuration config){
+        switch (config.getCommandArgumentsSize()) {
+            case 1:
+                deskewImageFile(config.getInputFile());
+                break;
+            case 2:
+                deskewImageFile(config.getInputFile(), config.getOutputFile());
+                break;
+            case 3:
+                deskewImageFile(config.getInputFile(), config.getOutputFile(), config.getErrorFile());
+                break;
+            default:
+                throw new RuntimeException("Bad number of parametres for deskewImageFile command");
+        }
+        
+    }
+    
     public void deskewImageFile(String inputFile){
         deskewImageFile(inputFile, inputFile, inputFile);
     }
     
+    public void deskewImageFile(String inputFile, String outputFile){
+        deskewImageFile(inputFile, outputFile, outputFile);
+    }
+    
     public void deskewImageFile(String inputFile, String outputFile, String errorFile){
-//        String extension="jpg";
-//        String strUrl = "http://".concat(host).concat(":").concat(port).concat("/deskewImageFile");
-        String strUrl = String.format("http://%s:%s%sdeskewImageFile", getHost(), getPort(),getPref());
-//        String[] aInput = inputFile.split("\\.");
-//        if(aInput.length>=2){
-//            extension = aInput[aInput.length-1];
-//        }
+        transformImageFile("deskewImageFile", inputFile, outputFile, errorFile);
+    }
+    
+    public void dewarpImageFile(Configuration config){
+        switch (config.getCommandArgumentsSize()) {
+            case 1:
+                dewarpImageFile(config.getInputFile());
+                break;
+            case 2:
+                dewarpImageFile(config.getInputFile(), config.getOutputFile());
+                break;
+            case 3:
+                dewarpImageFile(config.getInputFile(), config.getOutputFile(), config.getErrorFile());
+                break;
+            default:
+                throw new RuntimeException("Bad number of parametres for deskewImageFile command");
+        }
+        
+    }
+    
+    public void dewarpImageFile(String inputFile){
+        dewarpImageFile(inputFile, inputFile, inputFile);
+    }
+    
+    public void dewarpImageFile(String inputFile, String outputFile){
+        dewarpImageFile(inputFile, outputFile, outputFile);
+    }
+    
+    public void dewarpImageFile(String inputFile, String outputFile, String errorFile){
+        transformImageFile("dewarpImageFile", inputFile, outputFile, errorFile);
+    }
+    
+    private void transformImageFile(String command, String inputFile, String outputFile, String errorFile){
+        String strUrl = String.format("http://%s:%s%s%s", getHost(), getPort(),getPref(), command);
         try{  
-            
-//            MultipartEntityBuilder mpbuilder = MultipartEntityBuilder.create();
-//            mpbuilder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
-//            mpbuilder.addPart("image", new FileBody(new File(inputFile), ContentType.IMAGE_JPEG));
-//            
-//            HttpPost post = new HttpPost(strUrl);
-//            post.setEntity(mpbuilder.build());
-//            
-//            try(CloseableHttpClient client = HttpClientBuilder.create().build()) {
-//                CloseableHttpResponse response = client.execute(post);
-//                try(InputStream in = response.getEntity().getContent()){
-//                    try(FileOutputStream outputStream = new FileOutputStream(outputFile)){
-//                        copyStreams(in, outputStream);
-//                    }
-//                }
-//            }
             File inFile = new File(inputFile);
             StringBuilder hwriter = new StringBuilder();
             hwriter.append("--*****\r\n");
@@ -133,7 +177,6 @@ public class PortadaApi {
             StringBuilder fwriter = new StringBuilder();
             fwriter.append("\r\n");
             fwriter.append("--*****--\r\n");
-//            long clength = hwriter.length() +  fwriter.length() + inFile.length();
             
             URL url = new URL(strUrl);
             HttpURLConnection con = (HttpURLConnection)url.openConnection();
@@ -141,7 +184,6 @@ public class PortadaApi {
             con.setDoOutput(true);
             con.setUseCaches(false);
             con.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + "*****");
-//            con.setRequestProperty("Content-Length", String.valueOf(clength));
             con.setRequestMethod("POST");
             con.connect();
             try (OutputStream outputStream = con.getOutputStream();
@@ -162,7 +204,6 @@ public class PortadaApi {
                 }
             } else {
                 //error
-                //con.getErrorStream();
                 try(FileOutputStream outputStream = new FileOutputStream(errorFile)){
                     copyStreams(con.getErrorStream(), outputStream);
                 }
