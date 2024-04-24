@@ -29,6 +29,17 @@ public class JPortadaMicroservice {
             case "dewarpImageFile":
                 papìInstance.dewarpImageFile(config);
                 break;
+            case "fixBackTransparency":
+            case "fixBackTransparencyImageFile":
+            case "fixTransparency":
+            case "fixTransparencyImageFile":
+                papìInstance.fixTransparencyImageFile(config);
+                break;
+            case "fixAll":
+            case "fixall":
+            case "fix":
+                papìInstance.fixAllImages(config);
+                break;
             default:
                 throw new RuntimeException("Unkown command named: ".concat(config.getCommand()));
         }
