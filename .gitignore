@@ -23,9 +23,11 @@
 /nbdist/
 /.nb-gradle/
 
-/data/
-/config/
+/data*/
+/config*/
 /corregi*/
+/ocr*/
+/ordered*/
 
 .DS_Store
 
