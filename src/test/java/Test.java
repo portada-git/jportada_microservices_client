@@ -14,7 +14,7 @@ public class Test {
     
     public static void main(String[] args) {
         JPortadaMicroservice prg = new JPortadaMicroservice();
-        String[] args2 = {"fixAll", "-i", "corregidas", "-o", "corregidaw", "-w"};
+        String[] args2 = {"ocrAll", "-i", "corregidas", "-o", "ocr2", "-tm", "bcn"};
         prg.run(args2);
     }
      

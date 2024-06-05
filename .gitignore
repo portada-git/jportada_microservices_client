@@ -24,6 +24,8 @@
 /.nb-gradle/
 
 /data/
+/config/
+/corregi*/
 
 .DS_Store
 

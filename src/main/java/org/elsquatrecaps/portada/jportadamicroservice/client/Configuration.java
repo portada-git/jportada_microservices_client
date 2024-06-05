@@ -49,6 +49,8 @@ public class Configuration{
     private Boolean fixSkew;
     @Arg(dest="fixWarp")
     private Boolean fixWarp;
+    @Arg(dest="team")  //-e
+    private String team;
     
     private int  commandArgumentsSize=0;    
     private final Set<String> attrs = new HashSet<>();
@@ -85,13 +87,16 @@ public class Configuration{
                     setPrefs(preDest, (String) val);
                     break;
                 case "fixTrans":
-                    Configuration.this.setFixTrans((String) val);
+                    this.setFixTrans((String) val);
                     break;
                 case "fixSkew":
-                    Configuration.this.setFixSkew((String) val);
+                    this.setFixSkew((String) val);
                     break;
                 case "fixWarp":
-                    Configuration.this.setFixWarp((String) val);
+                    this.setFixWarp((String) val);
+                    break;
+                case "team":
+                    this.setTeam((String) val);
                     break;
             }
         }
@@ -137,6 +142,7 @@ public class Configuration{
         parser.addArgument("-i", "--input_file").nargs("?").help("Image file to fix skewed problem");
         parser.addArgument("-o", "--output_file").nargs("?").help("Path where fixed image will be saved");
         parser.addArgument("-e", "--error_file").nargs("?").help("Path where error will be saved if an error is happened");
+        parser.addArgument("-tm", "--team").nargs("?").help("Team from user processes the command");
         //parser.addArgument("-p", "--port").nargs("?").help("microservice port");
         //parser.addArgument("-ht", "--host").nargs("?").help("microservice host");
         //parser.addArgument("-pf", "--pref").nargs("?").help("microservice prefix path");
@@ -162,6 +168,9 @@ public class Configuration{
     
     
     private void updateAttrs(){
+        if(this.team!=null){
+            this.attrs.add("team");
+        }
         if(this.inputFile!=null){
             this.attrs.add("input_file");
             this.commandArgumentsSize++;
@@ -369,4 +378,17 @@ public class Configuration{
     public Boolean getFixWarp() {
         return this.fixWarp;
     }
+
+    /**
+     * @return the team
+     */
+    public String getTeam() {
+        return team;
+    }
+
+    private void setTeam(String string) {
+        team=string;        
+        this.attrs.add("team");
+    }
+
 }

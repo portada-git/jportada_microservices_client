@@ -1,11 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package org.elsquatrecaps.portada.jportadamicroservice.client;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  *
@@ -65,7 +58,7 @@ public class ConnectionMs {
      * @param pref the pref to set
      */
     public void setPref(String pref) {
-        if(pref==null || pref.isEmpty() || pref.isBlank()){
+        if(pref==null || pref.isEmpty() || pref.trim().isEmpty()){
             pref="/";
         }else{
             if(!pref.startsWith("/")){
