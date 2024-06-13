@@ -276,6 +276,7 @@ public class ImageFilesSelector extends javax.swing.JFrame {
         });
 
         runFixOrderButton.setText("Fix order");
+        runFixOrderButton.setEnabled(false);
         runFixOrderButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 runFixOrderButtonActionPerformed(evt);
@@ -858,6 +859,11 @@ public class ImageFilesSelector extends javax.swing.JFrame {
 
     private void teamComboBoxOrderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_teamComboBoxOrderActionPerformed
         // TODO add your handling code here:
+        if(this.teamComboBoxOrder.getSelectedItem().toString().equals("NONE")){
+            this.runFixOrderButton.setEnabled(false);
+        }else{
+            this.runFixOrderButton.setEnabled(true);
+        }        
     }//GEN-LAST:event_teamComboBoxOrderActionPerformed
 
     /**
