@@ -1,11 +1,6 @@
 
 import org.elsquatrecaps.portada.jportadamicroservice.client.JPortadaMicroservice;
 
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-
 /**
  *
  * @author josep
@@ -14,7 +9,12 @@ public class Test {
     
     public static void main(String[] args) {
         JPortadaMicroservice prg = new JPortadaMicroservice();
-        String[] args2 = {"ocrAll", "-i", "corregidas", "-o", "ocr2", "-tm", "bcn"};
+//        String[] args2 = {"requestAccess", "-tm", "bcn", "-m", "josep.canellas@gmail.com", "-f"};
+//        String[] args2 = {"verifyCode", "-tm", "bcn", "-m", "josep.canellas@gmail.com", "-c", "dPPvzUcB"};
+//        String[] args2 = {"ocrAll", "-tm", "bcn", "-i", "corregides2", "-o", "ocr4"};
+        String[] args2 = {"reorderAll", "-tm", "bcn", "-i", "corregides2", "-o", "corregides3"};
+//        String[] args2 = {"pytest", "-tm", "bcn"};
+//        String[] args2 = {"jtest", "-tm", "bcn"};
         prg.run(args2);
     }
      

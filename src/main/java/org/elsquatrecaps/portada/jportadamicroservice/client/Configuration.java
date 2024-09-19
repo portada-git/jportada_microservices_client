@@ -43,14 +43,22 @@ public class Configuration{
     private Map<String, Integer> ports = new HashMap<>();
     private Map<String, String> hosts = new HashMap<>();
     private Map<String, String> prefs = new HashMap<>();
+    private Map<String, String> protocols = new HashMap<>();
     @Arg(dest="fixTrans")
     private Boolean fixTransparency;
     @Arg(dest="fixSkew")
     private Boolean fixSkew;
     @Arg(dest="fixWarp")
     private Boolean fixWarp;
-    @Arg(dest="team")  //-e
+    @Arg(dest="team")  //-tm
     private String team;
+    @Arg(dest="verificationCode")  //-c
+    private String verificationCode;
+    @Arg(dest="email")  //-m
+    private String email;
+    @Arg(dest="forceKeyGeneration")  //-f
+    private Boolean forceKeyGeneration;
+    private String[] teamsForSelecting;
     
     private int  commandArgumentsSize=0;    
     private final Set<String> attrs = new HashSet<>();
@@ -60,6 +68,7 @@ public class Configuration{
             String preDest = DEFAULT;
             if(dest.endsWith(".port") 
                     || dest.endsWith(".host")
+                    || dest.endsWith(".protocol")
                     || dest.endsWith(".pref")){
                 preDest = dest.substring(0, dest.lastIndexOf("."));
                 dest = dest.substring(dest.lastIndexOf(".")+1);
@@ -77,6 +86,9 @@ public class Configuration{
                 case "error_file":
                     setErrorFile((String) val);
                     break;                    
+                case "protocol":
+                    setProtocols(preDest, (String) val);
+                    break;
                 case "port":
                     setPorts(preDest, (String) val);
                     break;
@@ -98,6 +110,18 @@ public class Configuration{
                 case "team":
                     this.setTeam((String) val);
                     break;
+                case "email":
+                    this.setEmail((String) val);
+                    break;
+                case "verificationCode":
+                    this.setVerificationCode((String) val);
+                    break;
+                case "forceKeyGeneration":
+                    this.setForceKeyGeneration((String) val);
+                    break;
+                case "teamsForSelecting":
+                    this.setTeamsForSelecting((String) val);
+                    break;
             }
         }
     }
@@ -107,30 +131,32 @@ public class Configuration{
         configure();        
     }
     
-    public void configure(){
-        Configuration args = this;
+    public static Properties loadAndGetConfigProperties(){
         Properties properties = new Properties();
         try {
             if(Files.exists(Paths.get("init.properties"))){
                 properties.load(new FileReader("init.properties"));
-                properties.forEach((Object k, Object v) -> {
-                    args.setDefaultArg(String.valueOf(k), v);
-                });
             }else if(Files.exists(Paths.get("config/init.properties"))){
                 properties.load(new FileReader("config/init.properties"));
-                properties.forEach((Object k, Object v) -> {
-                    args.setDefaultArg(String.valueOf(k), v);
-                });
-            }
-            if(this.outputFile==null){
-                this.outputFile=inputFile;
-            }
-            if(!(fixSkew || fixTransparency || fixWarp)){
-                fixSkew = fixWarp = fixTransparency = Boolean.TRUE;
-            }
+            }  
         } catch (IOException ex) {
             Logger.getLogger(Configuration.class.getName()).log(Level.SEVERE, null, ex);
             throw new RuntimeException(ex);
+        }
+        return properties;
+    }
+    
+    public void configure(){
+        Configuration args = this;
+        Properties properties = loadAndGetConfigProperties();
+        properties.forEach((Object k, Object v) -> {
+            args.setDefaultArg(String.valueOf(k), v);
+        });
+        if(this.outputFile==null){
+            this.outputFile=inputFile;
+        }
+        if(!(fixSkew || fixTransparency || fixWarp)){
+            fixSkew = fixWarp = fixTransparency = Boolean.TRUE;
         }
     }
     
@@ -143,6 +169,9 @@ public class Configuration{
         parser.addArgument("-o", "--output_file").nargs("?").help("Path where fixed image will be saved");
         parser.addArgument("-e", "--error_file").nargs("?").help("Path where error will be saved if an error is happened");
         parser.addArgument("-tm", "--team").nargs("?").help("Team from user processes the command");
+        parser.addArgument("-m", "--email").nargs("?").help("email to send the veridication code");
+        parser.addArgument("-c", "--verificationCode").nargs("?").help("email to send the veridication code");
+        parser.addArgument("-f", "--forceKeyGeneration").action(Arguments.storeTrue()).help("Force Key pair generation for requestAccess command.");
         //parser.addArgument("-p", "--port").nargs("?").help("microservice port");
         //parser.addArgument("-ht", "--host").nargs("?").help("microservice host");
         //parser.addArgument("-pf", "--pref").nargs("?").help("microservice prefix path");
@@ -168,6 +197,17 @@ public class Configuration{
     
     
     private void updateAttrs(){
+        if(this.forceKeyGeneration!=null){
+            this.attrs.add("forceKeyGeneration");
+        }else{
+            this.forceKeyGeneration = false;
+        }
+        if(this.verificationCode!=null){
+            this.attrs.add("verificationCode");
+        }
+        if(this.email!=null){
+            this.attrs.add("email");
+        }
         if(this.team!=null){
             this.attrs.add("team");
         }
@@ -317,6 +357,28 @@ public class Configuration{
     }
 
     /**
+    /**
+     * @return the protocol
+     */
+    public String getProtocols(String key) {
+        String ret;
+        if(this.protocols.containsKey(key)){
+            ret = protocols.get(key);
+        }else if(protocols.containsKey(DEFAULT)){
+            ret = protocols.get(DEFAULT);
+        }else{
+            ret = "http";
+        }
+        return ret;
+    }
+
+    protected void setProtocols(String key, String val) {
+        if(val!=null && !val.isEmpty()){
+            this.protocols.put(key, val);
+        }
+    }
+
+    /**
      * @return the pref
      */
     public String getPrefs(String key) {
@@ -389,6 +451,60 @@ public class Configuration{
     private void setTeam(String string) {
         team=string;        
         this.attrs.add("team");
+    }
+
+    /**
+     * @return the verificationCode
+     */
+    public String getVerificationCode() {
+        return verificationCode;
+    }
+
+    private void setVerificationCode(String string) {
+        verificationCode=string;        
+        this.attrs.add("verificationCode");
+    }
+
+    private void setForceKeyGeneration(String string) {
+        setForceKeyGeneration(getBoolean(string));        
+    }
+
+    private void setForceKeyGeneration(Boolean val) {
+        forceKeyGeneration = val;
+    }
+
+    public Boolean getForceKeyGeneration() {
+        return forceKeyGeneration;
+    }
+
+    /**
+     * @return the email
+     */
+    public String getEmail() {
+        return email;
+    }
+
+    private void setEmail(String string) {
+        email=string;        
+        this.attrs.add("email");
+    }
+
+    /**
+     * @return the teamsForSelecting
+     */
+    public String[] getTeamsForSelecting() {
+        return teamsForSelecting;
+    }
+
+    /**
+     * @param teamsForSelecting the teamsForSelecting to set
+     */
+    public void setTeamsForSelecting(String[] teamsForSelecting) {
+        this.teamsForSelecting = teamsForSelecting;
+    }
+
+    public void setTeamsForSelecting(String teamsForSelecting) {
+        this.teamsForSelecting = teamsForSelecting.split(",");
     }
 
 }

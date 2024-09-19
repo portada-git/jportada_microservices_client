@@ -4,13 +4,19 @@
  */
 package org.elsquatrecaps.portada.jportadamicroservice.client.gui;
 
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
+import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import org.elsquatrecaps.portada.jportadamicroservice.client.Configuration;
+import org.elsquatrecaps.portada.jportadamicroservice.client.JPortadaMicroservice;
 
 /**
  *
@@ -39,6 +45,16 @@ public class ImageFilesSelector extends javax.swing.JFrame {
     private void initComponents() {
 
         jTabbedPane1 = new javax.swing.JTabbedPane();
+        jPanel14 = new javax.swing.JPanel();
+        jPanel15 = new javax.swing.JPanel();
+        jLabel13 = new javax.swing.JLabel();
+        jPanel16 = new javax.swing.JPanel();
+        jLabel14 = new javax.swing.JLabel();
+        teamComboBoxRequestAccess = new javax.swing.JComboBox<>();
+        runRequestPermisionButton = new javax.swing.JButton();
+        jLabel15 = new javax.swing.JLabel();
+        emailTextField = new javax.swing.JTextField();
+        forceRequestCheckBox = new javax.swing.JCheckBox();
         jPanel3 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         commandComboBox = new javax.swing.JComboBox<>();
@@ -98,6 +114,122 @@ public class ImageFilesSelector extends javax.swing.JFrame {
         setName("Images selector"); // NOI18N
         setPreferredSize(new java.awt.Dimension(615, 230));
         setSize(new java.awt.Dimension(615, 203));
+
+        jTabbedPane1.setOpaque(true);
+
+        jLabel13.setFont(new java.awt.Font("Liberation Sans", 0, 24)); // NOI18N
+        jLabel13.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel13.setText("REQUEST ACCESS PERMISSION");
+
+        javax.swing.GroupLayout jPanel15Layout = new javax.swing.GroupLayout(jPanel15);
+        jPanel15.setLayout(jPanel15Layout);
+        jPanel15Layout.setHorizontalGroup(
+            jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel15Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel13, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel15Layout.setVerticalGroup(
+            jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel15Layout.createSequentialGroup()
+                .addGap(21, 21, 21)
+                .addComponent(jLabel13)
+                .addContainerGap(23, Short.MAX_VALUE))
+        );
+
+        jLabel14.setText("     Team (cost center) associated:");
+        jLabel14.setToolTipText("Select the team as cost center associated to this permission");
+
+        teamComboBoxRequestAccess.setModel(ImageFilesSelector.createComboboxModelTeamsForSelecting());
+        teamComboBoxRequestAccess.setToolTipText("Select the team as cost center associated to this permission");
+        teamComboBoxRequestAccess.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                teamComboBoxRequestAccessActionPerformed(evt);
+            }
+        });
+
+        runRequestPermisionButton.setText("Request Permission");
+        runRequestPermisionButton.setEnabled(false);
+        runRequestPermisionButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                runRequestPermisionButtonActionPerformed(evt);
+            }
+        });
+
+        jLabel15.setText("     Your e-mail:");
+
+        emailTextField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                emailTextFieldActionPerformed(evt);
+            }
+        });
+
+        forceRequestCheckBox.setText("Force request");
+        forceRequestCheckBox.setEnabled(false);
+
+        javax.swing.GroupLayout jPanel16Layout = new javax.swing.GroupLayout(jPanel16);
+        jPanel16.setLayout(jPanel16Layout);
+        jPanel16Layout.setHorizontalGroup(
+            jPanel16Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel16Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel16Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel16Layout.createSequentialGroup()
+                        .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(emailTextField))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel16Layout.createSequentialGroup()
+                        .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(teamComboBoxRequestAccess, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 160, Short.MAX_VALUE)
+                        .addComponent(forceRequestCheckBox))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel16Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(runRequestPermisionButton, javax.swing.GroupLayout.PREFERRED_SIZE, 395, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addGap(33, 33, 33))
+        );
+        jPanel16Layout.setVerticalGroup(
+            jPanel16Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel16Layout.createSequentialGroup()
+                .addGap(25, 25, 25)
+                .addGroup(jPanel16Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel15)
+                    .addComponent(emailTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel16Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(forceRequestCheckBox)
+                    .addComponent(teamComboBoxRequestAccess, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel14))
+                .addGap(30, 30, 30)
+                .addComponent(runRequestPermisionButton, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+
+        javax.swing.GroupLayout jPanel14Layout = new javax.swing.GroupLayout(jPanel14);
+        jPanel14.setLayout(jPanel14Layout);
+        jPanel14Layout.setHorizontalGroup(
+            jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel14Layout.createSequentialGroup()
+                .addGroup(jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel14Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jPanel16, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        jPanel14Layout.setVerticalGroup(
+            jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel14Layout.createSequentialGroup()
+                .addComponent(jPanel15, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jPanel16, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        jTabbedPane1.addTab("", new javax.swing.ImageIcon(getClass().getResource("/icons8-configuración-50.png")), jPanel14); // NOI18N
 
         jLabel1.setText("Command:");
 
@@ -345,7 +477,7 @@ public class ImageFilesSelector extends javax.swing.JFrame {
                         .addComponent(outputFixOrderTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 404, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(odForOutputFixOrderButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addContainerGap(59, Short.MAX_VALUE))
+                .addContainerGap(39, Short.MAX_VALUE))
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -363,9 +495,9 @@ public class ImageFilesSelector extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jLabel12.setText("Team:");
+        jLabel12.setText("Team (cost center):");
 
-        teamComboBoxOrder.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "NONE", "ARG", "BCN", "CUB", "GRE" }));
+        teamComboBoxOrder.setModel(createComboboxModelTeamsForSelecting());
         teamComboBoxOrder.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 teamComboBoxOrderActionPerformed(evt);
@@ -483,7 +615,7 @@ public class ImageFilesSelector extends javax.swing.JFrame {
             jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel11Layout.createSequentialGroup()
                 .addGap(92, 92, 92)
-                .addComponent(runOcrButton, javax.swing.GroupLayout.DEFAULT_SIZE, 421, Short.MAX_VALUE)
+                .addComponent(runOcrButton, javax.swing.GroupLayout.DEFAULT_SIZE, 401, Short.MAX_VALUE)
                 .addGap(150, 150, 150))
         );
         jPanel11Layout.setVerticalGroup(
@@ -494,14 +626,14 @@ public class ImageFilesSelector extends javax.swing.JFrame {
                 .addGap(14, 14, 14))
         );
 
-        teamComboBoxOcr.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "NONE", "ARG", "BCN", "CUB", "GRE" }));
+        teamComboBoxOcr.setModel(createComboboxModelTeamsForSelecting());
         teamComboBoxOcr.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 teamComboBoxOcrActionPerformed(evt);
             }
         });
 
-        jLabel11.setText("Team:");
+        jLabel11.setText("Team (cost center):");
 
         javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
         jPanel8.setLayout(jPanel8Layout);
@@ -518,7 +650,7 @@ public class ImageFilesSelector extends javax.swing.JFrame {
                 .addComponent(jLabel11)
                 .addGap(18, 18, 18)
                 .addComponent(teamComboBoxOcr, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(50, 50, 50))
+                .addGap(67, 67, 67))
         );
         jPanel8Layout.setVerticalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -620,7 +752,7 @@ public class ImageFilesSelector extends javax.swing.JFrame {
         jPanel9.setLayout(jPanel9Layout);
         jPanel9Layout.setHorizontalGroup(
             jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 675, Short.MAX_VALUE)
+            .addGap(0, 655, Short.MAX_VALUE)
             .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel9Layout.createSequentialGroup()
                     .addContainerGap()
@@ -866,6 +998,54 @@ public class ImageFilesSelector extends javax.swing.JFrame {
         }        
     }//GEN-LAST:event_teamComboBoxOrderActionPerformed
 
+    private void teamComboBoxRequestAccessActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_teamComboBoxRequestAccessActionPerformed
+        // TODO add your handling code here:
+        updateRunRequestPermission();
+    }//GEN-LAST:event_teamComboBoxRequestAccessActionPerformed
+
+    private void runRequestPermisionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_runRequestPermisionButtonActionPerformed
+        // TODO add your handling code here:
+        final PortadaWorker worker = new PortadaWorker(null);
+        VerifyCodeAccessFrame diag = new VerifyCodeAccessFrame();                
+        diag.init((butonId) -> {
+            if(butonId == VerifyCodeAccessFrame.ACCEPT_BUTON){
+                Configuration config = new Configuration();
+                List<String> options = new ArrayList<>();
+                options.add("verifyCode");
+                options.add("-tm");
+                options.add(this.teamComboBoxRequestAccess.getSelectedItem().toString().toLowerCase());
+                options.add("-m");
+                options.add(this.emailTextField.getText());
+                options.add("-c");
+                options.add(diag.getVerificationCode());
+                String[] par = new String[options.size()];
+                config.parseArgumentsAndConfigure(options.toArray( par));
+                JPortadaMicroservice.execute(config, worker.papìInstance);
+            }else{
+                diag.setVisible(false);
+            }
+            return null;
+        });
+        
+        List<String> options = new ArrayList<>();
+        Configuration config = new Configuration();
+        options.add("requestAccess");
+        options.add("-tm");
+        options.add(this.teamComboBoxRequestAccess.getSelectedItem().toString().toLowerCase());
+        options.add("-m");
+        options.add(this.emailTextField.getText());
+        String[] par = new String[options.size()];
+        config.parseArgumentsAndConfigure(options.toArray( par));
+        worker.init(config, diag);
+        worker.execute();
+        
+    }//GEN-LAST:event_runRequestPermisionButtonActionPerformed
+
+    private void emailTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_emailTextFieldActionPerformed
+        // TODO add your handling code here:
+        updateRunRequestPermission();
+    }//GEN-LAST:event_emailTextFieldActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -902,13 +1082,21 @@ public class ImageFilesSelector extends javax.swing.JFrame {
             }
         });
     }
+    
+    protected static ComboBoxModel<String> createComboboxModelTeamsForSelecting(){
+        Properties prop = Configuration.loadAndGetConfigProperties();
+        String[] values = prop.getProperty("teamsForSelecting", "NONE,ARG,BCN,CUB,GRE").split(",");
+        return new DefaultComboBoxModel<>(values);
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> commandComboBox;
     private javax.swing.JComboBox<String> commandFixOrderComboBox;
     private javax.swing.JCheckBox deskewCheckBox;
     private javax.swing.JCheckBox dewarpCheckBox;
+    private javax.swing.JTextField emailTextField;
     private javax.swing.JCheckBox fixbacktransCheckBox;
+    private javax.swing.JCheckBox forceRequestCheckBox;
     private javax.swing.JTextField inputFixImagesTextField;
     private javax.swing.JTextField inputFixOrderTextField;
     private javax.swing.JTextField inputOcerTextField;
@@ -917,6 +1105,9 @@ public class ImageFilesSelector extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -930,6 +1121,9 @@ public class ImageFilesSelector extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel12;
     private javax.swing.JPanel jPanel13;
+    private javax.swing.JPanel jPanel14;
+    private javax.swing.JPanel jPanel15;
+    private javax.swing.JPanel jPanel16;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
@@ -954,15 +1148,34 @@ public class ImageFilesSelector extends javax.swing.JFrame {
     private javax.swing.JButton runFixImagesButton;
     private javax.swing.JButton runFixOrderButton;
     private javax.swing.JButton runOcrButton;
+    private javax.swing.JButton runRequestPermisionButton;
     private javax.swing.JButton runSelectBlocksButton;
     private javax.swing.JComboBox<String> teamComboBoxOcr;
     private javax.swing.JComboBox<String> teamComboBoxOrder;
+    private javax.swing.JComboBox<String> teamComboBoxRequestAccess;
     // End of variables declaration//GEN-END:variables
 
     private void initMoreComponents() {
         commandComboBox.setSelectedIndex(iCommandSelection);
         dirBase = new File("");
+//        this.emailTextField.addActionListener((ae) -> {
+//            updateRunRequestPermission();
+//        });
+        this.emailTextField.addFocusListener(new FocusListener(){
+            @Override
+            public void focusGained(FocusEvent fe) {
+            }
+
+            @Override
+            public void focusLost(FocusEvent fe) {
+                updateRunRequestPermission();
+            }
+        });
+//        this.teamComboBoxRequestAccess.addActionListener((ae) -> {
+//            updateRunRequestPermission();
+//        });
         updateComponenetsFirst();
+        this.jTabbedPane1.setSelectedIndex(1);
     }
 
     private void updateComponenetsFirst() {
@@ -1002,5 +1215,20 @@ public class ImageFilesSelector extends javax.swing.JFrame {
                 fixbacktransCheckBox.setSelected(true);
                 break;
         }
+    }
+    
+    private void updateRunRequestPermission(){
+        boolean enabled = false;
+        if(this.teamComboBoxRequestAccess.getSelectedItem().toString().equals("NONE")){
+            enabled = false;
+        }else{
+            enabled = true;
+        }
+        if(this.emailTextField.getText().trim().isEmpty()){
+            enabled = false;
+        }else{
+            enabled = enabled && true;
+        }
+        this.runRequestPermisionButton.setEnabled(enabled);        
     }
 }

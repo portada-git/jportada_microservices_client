@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
 import javax.swing.text.html.HTMLDocument;
@@ -16,7 +15,7 @@ import javax.swing.text.html.HTMLEditorKit;
  *
  * @author josep
  */
-public class ProcessFrame extends javax.swing.JFrame {
+public class ProcessFrame extends javax.swing.JFrame implements InfoProcessFrame {
     private HTMLEditorKit htmlkit = new HTMLEditorKit();
     private HTMLDocument document ;
     
@@ -36,6 +35,7 @@ public class ProcessFrame extends javax.swing.JFrame {
         super.setVisible(v);
     }
     
+    @Override
     public void setProgressBarPanelVisible(boolean v){
         this.progressBarPanel.setVisible(v);
     }
@@ -204,6 +204,7 @@ public class ProcessFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButton1ActionPerformed
   
+    @Override
     public void updateList(String file, String process, double percent, boolean processOk){
         try {
             document.insertBeforeEnd(
@@ -214,6 +215,7 @@ public class ProcessFrame extends javax.swing.JFrame {
         }        
     }
     
+    @Override
     public void updateProgress(String file, String process, double percent){
             this.percentLabel.setText(String.format("%6.2f %%", percent));
             this.fileNameLabel.setText(String.format("(%s)", file));
@@ -236,4 +238,19 @@ public class ProcessFrame extends javax.swing.JFrame {
     private javax.swing.JLabel percentLabel;
     private javax.swing.JPanel progressBarPanel;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void updateInfo(String message, String process) {
+        updateProgress(message, process, jProgressBar1.getValue());
+    }
+
+    @Override
+    public void updateStatusInfo(String status, String message, String process) {
+        updateProgress(message, process, jProgressBar1.getValue());
+    }
+
+    @Override
+    public void updateErrorInfo(String message, String process, int errorcode) {
+        updateProgress(message, process, jProgressBar1.getValue());
+    }
 }

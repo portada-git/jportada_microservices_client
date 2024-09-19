@@ -1,0 +1,3 @@
+#!/bin/bash
+
+java -jar jportadamicroservice-jar-with-dependencies.jar requestAccess ${1} ${2} ${3} ${4} ${5}

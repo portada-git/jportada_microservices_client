@@ -1,14 +1,10 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package org.elsquatrecaps.portada.jportadamicroservice.client.gui;
 
 import java.util.List;
-import java.util.function.Function;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import org.elsquatrecaps.portada.jportadamicroservice.client.Configuration;
+import org.elsquatrecaps.portada.jportadamicroservice.client.JPortadaMicroservice;
 import org.elsquatrecaps.portada.jportadamicroservice.client.PortadaApi;
 
 /**
@@ -18,9 +14,18 @@ import org.elsquatrecaps.portada.jportadamicroservice.client.PortadaApi;
 public class PortadaWorker extends SwingWorker<Void, PortadaApi.ProgressInfo>{
     PortadaApi papìInstance;
     private Configuration config;
-    ProcessFrame processFrame= new ProcessFrame();
+    InfoProcessFrame processFrame;
 
     public PortadaWorker() {
+        processFrame= new ProcessFrame();
+        this.papìInstance = new PortadaApi((PortadaApi.ProgressInfo t) -> {
+            publish(t);
+            return null;
+        });
+    }
+    
+    public PortadaWorker(InfoProcessFrame processFrame) {
+        this.processFrame = processFrame;
         this.papìInstance = new PortadaApi((PortadaApi.ProgressInfo t) -> {
             publish(t);
             return null;
@@ -31,6 +36,11 @@ public class PortadaWorker extends SwingWorker<Void, PortadaApi.ProgressInfo>{
         this.config = config;
     }
 
+    public void init(Configuration config, InfoProcessFrame processFrame) {
+        this.config = config;
+        this.processFrame = processFrame;
+    }
+
     
     @Override
     protected Void doInBackground() throws Exception {
@@ -38,36 +48,7 @@ public class PortadaWorker extends SwingWorker<Void, PortadaApi.ProgressInfo>{
             processFrame.pack();
             processFrame.setVisible(true);
         });
-        papìInstance.init(config);     
-        switch (config.getCommand()) {
-            case "deskew":
-            case "deskewImageFile":
-                papìInstance.deskewImageFile(config);
-                break;
-            case "dewarp":
-            case "dewarpImageFile":
-                papìInstance.dewarpImageFile(config);
-                break;
-            case "fixBackTransparency":
-            case "fixBackTransparencyImageFile":
-            case "fixTransparency":
-            case "fixTransparencyImageFile":
-                papìInstance.fixTransparencyImageFile(config);
-                break;
-            case "fixAll":
-            case "fixall":
-            case "fix":
-                papìInstance.fixAllImages(config);
-                break;
-            case "ocrAll":
-                papìInstance.allImagesToText(config);
-                break;
-            case "reorderAll":
-                papìInstance.allImagesToFixOrder(config);
-                break;
-            default:
-                throw new RuntimeException("Unkown command named: ".concat(config.getCommand()));
-        }     
+        JPortadaMicroservice.execute(config, papìInstance);
         SwingUtilities.invokeLater(() -> {
             processFrame.setProgressBarPanelVisible(false);
         });
@@ -77,10 +58,20 @@ public class PortadaWorker extends SwingWorker<Void, PortadaApi.ProgressInfo>{
     @Override
     protected void process(List<PortadaApi.ProgressInfo> chunks) {
         for(PortadaApi.ProgressInfo info: chunks){
-            double percent = 100*info.getProgress()/(double)info.getMaxProgress();
-            processFrame.updateProgress(info.getName(), info.getProcess(), percent);
-            if(info.getType()==PortadaApi.ProgressInfo.PROCESS){
-                processFrame.updateList(info.getName(), info.getProcess(), percent, info.getErrorState()==0);
+            switch (info.getType()) {
+                case PortadaApi.ProgressInfo.INFO_TYPE:
+                    processFrame.updateInfo(info.getMessage(), info.getProcess());
+                    break;
+                case PortadaApi.ProgressInfo.ERROR_INFO_TYPE:
+                    processFrame.updateErrorInfo(info.getMessage(), info.getProcess(), info.getErrorState());
+                    break;
+                case PortadaApi.ProgressInfo.STATUS_INFO_TYPE:
+                    processFrame.updateStatusInfo(info.getStatus(), info.getMessage(), info.getProcess());
+                    break;
+                default:
+                    double percent = 100*info.getProgress()/(double)info.getMaxProgress();
+                    processFrame.updateProgress(info.getName(), info.getProcess(), percent);
+                    processFrame.updateList(info.getName(), info.getProcess(), percent, info.getErrorState()==0);
             }
         }
     }

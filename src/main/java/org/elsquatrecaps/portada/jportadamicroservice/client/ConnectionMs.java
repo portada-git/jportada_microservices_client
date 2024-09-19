@@ -5,14 +5,17 @@ package org.elsquatrecaps.portada.jportadamicroservice.client;
  * @author josep
  */
 public class ConnectionMs {
+
     private String port;
     private String host;
+    private String protocol;
     private String pref;
 
-    public ConnectionMs(String ports, String hosts, String prefs) {
+    public ConnectionMs(String protocol, String ports, String hosts, String prefs) {
         this.port = ports;
         this.host = hosts;
         this.setPref(prefs);
+        this.protocol = protocol;
     }
 
     public ConnectionMs() {
@@ -69,5 +72,19 @@ public class ConnectionMs {
             }
         }
         this.pref = pref;
+    }
+  
+    /**
+     * @return the protocol
+     */
+    public String getProtocol() {
+        return protocol;
+    }
+
+    /**
+     * @param protocol the protocol to set
+     */
+    public void setProtocol(String protocol) {
+        this.protocol = protocol;
     }
 }
