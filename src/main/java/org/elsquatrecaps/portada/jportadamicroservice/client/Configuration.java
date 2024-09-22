@@ -59,6 +59,12 @@ public class Configuration{
     @Arg(dest="forceKeyGeneration")  //-f
     private Boolean forceKeyGeneration;
     private String[] teamsForSelecting;
+    @Arg(dest="k")  //-k
+    private String pk;
+    @Arg(dest="u")  //-u
+    private String adminUser;
+    @Arg(dest="p")  //-p
+    private String adminPass;
     
     private int  commandArgumentsSize=0;    
     private final Set<String> attrs = new HashSet<>();
@@ -122,6 +128,15 @@ public class Configuration{
                 case "teamsForSelecting":
                     this.setTeamsForSelecting((String) val);
                     break;
+                case "pk":
+                    this.setPk((String) val);
+                    break;
+                case "user":
+                    this.setUser((String) val);
+                    break;
+                case "pass":
+                    this.setPass((String) val);
+                    break;
             }
         }
     }
@@ -172,6 +187,9 @@ public class Configuration{
         parser.addArgument("-m", "--email").nargs("?").help("email to send the veridication code");
         parser.addArgument("-c", "--verificationCode").nargs("?").help("email to send the veridication code");
         parser.addArgument("-f", "--forceKeyGeneration").action(Arguments.storeTrue()).help("Force Key pair generation for requestAccess command.");
+        parser.addArgument("-k", "--pk").action(Arguments.storeTrue()).help("Key filename.");
+        parser.addArgument("-u", "--user").action(Arguments.storeTrue()).help("User name.");
+        parser.addArgument("-p", "--pass").action(Arguments.storeTrue()).help("User password.");
         //parser.addArgument("-p", "--port").nargs("?").help("microservice port");
         //parser.addArgument("-ht", "--host").nargs("?").help("microservice host");
         //parser.addArgument("-pf", "--pref").nargs("?").help("microservice prefix path");
@@ -201,6 +219,15 @@ public class Configuration{
             this.attrs.add("forceKeyGeneration");
         }else{
             this.forceKeyGeneration = false;
+        }
+        if(this.pk!=null){
+            this.attrs.add("pk");
+        }
+        if(this.adminUser!=null){
+            this.attrs.add("user");
+        }
+        if(this.adminPass!=null){
+            this.attrs.add("pass");
         }
         if(this.verificationCode!=null){
             this.attrs.add("verificationCode");
@@ -505,6 +532,33 @@ public class Configuration{
 
     public void setTeamsForSelecting(String teamsForSelecting) {
         this.teamsForSelecting = teamsForSelecting.split(",");
+    }
+
+    private void setPk(String string) {
+        this.pk = string;
+        this.attrs.add("pk");
+    }
+
+    private void setUser(String string) {
+        this.adminUser = string;
+        this.attrs.add("user");
+    }
+
+    private void setPass(String string) {
+        this.adminPass = string;
+        this.attrs.add("pass");
+    }
+
+    public String getPk() {
+        return this.pk;
+    }
+
+    public String getUser() {
+        return this.adminUser;
+    }
+
+    public String getPass() {
+        return this.adminPass;
     }
 
 }

@@ -21,6 +21,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -139,6 +140,60 @@ public class PortadaApi {
         }
     }
     
+    public void acceptKey(Configuration configuration){
+        acceptKey(configuration.getTeam(), configuration.getPk(), configuration.getUser(), configuration.getPass());
+    }
+    
+    public void acceptKey(String team, String pkname, String user, String pass){
+        String ret;
+        try {
+            HashMap p = new HashMap();
+            p.put("pkname", pkname);
+            p.put("team", team);
+            p.put("u", user);
+            p.put("p", pass);
+            JSONObject jsonresponse = new JSONObject(sendData("pr/acceptKey", p, "java"));
+            if(jsonresponse.getInt("statusCode")==0){
+                ret = jsonresponse.getString("message");
+                publishInfo(ret, "accept key");
+            }else{
+                ret = jsonresponse.getString("message");
+                publishErrorInfo(ret, "accept key", jsonresponse.getInt("statusCode"));
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(PortadaApi.class.getName()).log(Level.SEVERE, null, ex);
+            publishErrorInfo(ex.getMessage(), "accept key", -1);
+
+        }
+    }
+
+    public void deleteKey(Configuration configuration){
+        acceptKey(configuration.getTeam(), configuration.getPk(), configuration.getUser(), configuration.getPass());
+    }
+    
+    public void deleteKey(String team, String pkname, String user, String pass){
+        String ret;
+        try {
+            HashMap p = new HashMap();
+            p.put("pkname", pkname);
+            p.put("team", team);
+            p.put("u", user);
+            p.put("p", pass);
+            JSONObject jsonresponse = new JSONObject(sendData("pr/deleteKey", p, "java"));
+            if(jsonresponse.getInt("statusCode")==0){
+                ret = jsonresponse.getString("message");
+                publishInfo(ret, "delete key");
+            }else{
+                ret = jsonresponse.getString("message");
+                publishErrorInfo(ret, "delete key", jsonresponse.getInt("statusCode"));
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(PortadaApi.class.getName()).log(Level.SEVERE, null, ex);
+            publishErrorInfo(ex.getMessage(), "delete key", -1);
+        }
+    }
+
+    
     public void verifyCodeSentByMail(Configuration configuration){
         verifyCodeSentByMail(configuration.getTeam(), configuration.getEmail(), configuration.getVerificationCode());
     }
@@ -185,11 +240,22 @@ public class PortadaApi {
     public void requestAccesPermission(String team, String email, boolean forceGeneration){
         String ret;
         try {
+            File oldKey = null;
             File privateKeyFile = new File(new File(SECURITY_PATH, team), "private.pem").getCanonicalFile().getAbsoluteFile();
             File publicKeyFile = new File(new File(SECURITY_PATH, team), "public.pem").getCanonicalFile().getAbsoluteFile();
             if(privateKeyFile.exists() && !forceGeneration){
                 publishStatus("KEY_ALREADY_EXIST", "An access key already exists on this computer. A new key was not created.", "request for accessing");
                 return;
+            }
+            if(forceGeneration){
+                File oldKeyDir = publicKeyFile.getParentFile();
+                if(oldKeyDir.exists() && oldKeyDir.isDirectory()){
+                     for(File n : oldKeyDir.listFiles()){
+                         if(n.getName().matches(".*__AT_SIGN__.*_public.pem")){
+                            oldKey = n;
+                         }
+                     }
+                }
             }
             KeyPair keyPair = generateKeyPair();
 //            String randomName = RandomStringGenerator.builder().get().generate(30);
@@ -199,12 +265,18 @@ public class PortadaApi {
             HashMap p = new HashMap();
             p.put("team", team);
             p.put("email", email);
+            if(forceGeneration && oldKey!=null){
+                p.put("oldKeyName", oldKey.getName());
+            }
             try{
                 JSONObject jsonresponse = new JSONObject(sendPublicKeyFile("requestAccessPermission", publicKeyFile.getCanonicalFile().getAbsolutePath(), p, "java"));
                 if(jsonresponse.getInt("statusCode")==0){
                     //ret = jsonresponse.getString("message").concat(". Before 10 minutes pass, in the console execute the command: verifyCode -tm [YOUR TEAM] -m [YOUR_E_MAIL] -c [THE CODE RECEIVED]");
                     ret = jsonresponse.getString("message");
                     publishStatus(PortadaApi.ProgressInfo.SUCCESS_FOR_PAPI_ACCESS_PERMISSION_REQUEST_STATUS, ret, "request for accessing");
+                    if(oldKey!=null){
+                        oldKey.delete();
+                    }
                 }else{
                     //error
                     publicKeyFile.delete();

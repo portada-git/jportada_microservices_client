@@ -220,7 +220,6 @@
                 <Component class="javax.swing.JCheckBox" name="forceRequestCheckBox">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Force request"/>
-                    <Property name="enabled" type="boolean" value="false"/>
                   </Properties>
                 </Component>
               </SubComponents>

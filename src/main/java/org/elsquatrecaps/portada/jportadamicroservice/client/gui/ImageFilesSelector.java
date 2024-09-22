@@ -166,7 +166,6 @@ public class ImageFilesSelector extends javax.swing.JFrame {
         });
 
         forceRequestCheckBox.setText("Force request");
-        forceRequestCheckBox.setEnabled(false);
 
         javax.swing.GroupLayout jPanel16Layout = new javax.swing.GroupLayout(jPanel16);
         jPanel16.setLayout(jPanel16Layout);
@@ -1034,6 +1033,9 @@ public class ImageFilesSelector extends javax.swing.JFrame {
         options.add(this.teamComboBoxRequestAccess.getSelectedItem().toString().toLowerCase());
         options.add("-m");
         options.add(this.emailTextField.getText());
+        if(this.forceRequestCheckBox.isSelected()){
+            options.add("-f");
+        }
         String[] par = new String[options.size()];
         config.parseArgumentsAndConfigure(options.toArray( par));
         worker.init(config, diag);
