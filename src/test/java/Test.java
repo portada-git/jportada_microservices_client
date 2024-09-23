@@ -12,9 +12,10 @@ public class Test {
 //        String[] args2 = {"requestAccess", "-tm", "bcn", "-m", "josep.canellas@gmail.com", "-f"};
 //        String[] args2 = {"verifyCode", "-tm", "bcn", "-m", "josep.canellas@gmail.com", "-c", "dPPvzUcB"};
 //        String[] args2 = {"ocrAll", "-tm", "bcn", "-i", "corregides2", "-o", "ocr4"};
-        String[] args2 = {"reorderAll", "-tm", "bcn", "-i", "corregides2", "-o", "corregides3"};
+//        String[] args2 = {"reorderAll", "-tm", "bcn", "-i", "corregides2", "-o", "corregides3"};
 //        String[] args2 = {"pytest", "-tm", "bcn"};
 //        String[] args2 = {"jtest", "-tm", "bcn"};
+        String[] args2 = {"ocrJsonAll", "-tm", "bcn", "-i", "corregides2", "-o", "ocr_json"};
         prg.run(args2);
     }
      

@@ -88,9 +88,6 @@ public class JPortadaMicroservice {
             case "ocrAll":
                 papìInstance.allImagesToText(config);
                 break;
-            case "ocrDocumentAll":
-                papìInstance.allImagesToDocument(config);
-                break;
             case "ocrJsonAll":
                 papìInstance.allImagesToJson(config);
                 break;
