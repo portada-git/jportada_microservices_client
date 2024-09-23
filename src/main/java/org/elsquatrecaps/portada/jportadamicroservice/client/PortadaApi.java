@@ -21,10 +21,10 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.Signature;
@@ -37,6 +37,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -139,7 +140,7 @@ public class PortadaApi {
             publishErrorInfo(ex.getMessage(), process, -1);            
         }
     }
-    
+        
     public void acceptKey(Configuration configuration){
         acceptKey(configuration.getTeam(), configuration.getPk(), configuration.getUser(), configuration.getPass());
     }
@@ -151,7 +152,7 @@ public class PortadaApi {
             p.put("pkname", pkname);
             p.put("team", team);
             p.put("u", user);
-            p.put("p", pass);
+            p.put("p", DigestUtils.md5Hex(pass).toUpperCase());
             JSONObject jsonresponse = new JSONObject(sendData("pr/acceptKey", p, "java"));
             if(jsonresponse.getInt("statusCode")==0){
                 ret = jsonresponse.getString("message");

@@ -54,6 +54,12 @@ public class JPortadaMicroservice {
             case "rtest":
                 papìInstance.rtest(config);
                 break;
+            case "accept_key":
+                papìInstance.acceptKey(config);
+                break;
+            case "delete_key":
+                papìInstance.deleteKey(config);
+                break;
             case "verifyCode":
                 papìInstance.verifyCodeSentByMail(config);
                 break;
