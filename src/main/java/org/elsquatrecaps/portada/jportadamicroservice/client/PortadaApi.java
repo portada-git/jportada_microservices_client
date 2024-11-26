@@ -1072,6 +1072,7 @@ public class PortadaApi {
             bos.write(buffer, 0, n);
             count += n;
         }
+        bos.flush();
         return count;
     }    
     
