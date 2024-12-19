@@ -15,8 +15,16 @@ public class Test {
 //        String[] args2 = {"reorderAll", "-tm", "bcn", "-i", "corregides2", "-o", "ordered"};
 //        String[] args2 = {"pytest", "-tm", "bcn"};
 //        String[] args2 = {"jtest", "-tm", "bcn"};
-        String[] args2 = {"ocrJsonAll", "-tm", "bcn", "-i", "corregides2", "-o", "ocr_json"};
+//        String[] args2 = {"ocrJsonAll", "-tm", "bcn", "-i", "corregides2", "-o", "ocr_json"};
 //        String[] args2 = {"accept_key", "-tm", "bcn", "-k", "ogtoledano__AT_SIGN__gmail.com_Cg1Z_M6G_public.pem", "-u", "??", "-p", "???"};
+        String[] args2 = {
+            "extract", 
+            "-i", "/home/josep/Dropbox/feinesJordi/github/JPortadaMicroserviceClient/ocr7", 
+            "-o", "/home/josep/Dropbox/feinesJordi/github/JPortadaMicroserviceClient/resultats", 
+            "-tm", "bcn",
+            "--extractConfigMode", "R", 
+            "--extractConfigProtertiesFile", "db"
+        };
         prg.run(args2);
     }
      

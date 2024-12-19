@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.elsquatrecaps.portada.jportadamicroservice</groupId>
     <artifactId>jportada_microservices_client</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <dependencies>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
@@ -23,8 +23,8 @@
         </dependency>
         <dependency>
             <groupId>org.elsquatrecaps.utilities</groupId>
-            <artifactId>utilities8</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <artifactId>utilities</artifactId>
+            <version>[1.0-SNAPSHOT,)</version>
         </dependency>
         <dependency>
             <groupId>org.netbeans.external</groupId>
@@ -35,7 +35,27 @@
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>2.11.0</version>
-        </dependency>        
+        </dependency>
+        <dependency>
+            <groupId>org.elsquatrecaps.portada.boatfactextractor</groupId>
+            <artifactId>boat_fact_extractor</artifactId>
+            <version>[1.1-SNAPSHOT,)</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
+            <version>3.4.0</version>
+        </dependency>
+        <dependency>
+            <groupId>io.projectreactor</groupId>
+            <artifactId>reactor-core</artifactId>
+            <version>[3.6.8,)</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+            <version>3.4.0</version>
+        </dependency>
     </dependencies>
     <build>
         <!--finalName>JPortadaMicroservice</finalName-->
@@ -96,6 +116,7 @@
     </distributionManagement>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <java.version>11</java.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <exec.mainClass>org.elsquatrecaps.portada.jportadamicroservice.client.JPortadaMicroservice</exec.mainClass>

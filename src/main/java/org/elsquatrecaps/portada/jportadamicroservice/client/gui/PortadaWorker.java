@@ -6,19 +6,20 @@ import javax.swing.SwingWorker;
 import org.elsquatrecaps.portada.jportadamicroservice.client.Configuration;
 import org.elsquatrecaps.portada.jportadamicroservice.client.JPortadaMicroservice;
 import org.elsquatrecaps.portada.jportadamicroservice.client.PortadaApi;
+import org.elsquatrecaps.portada.jportadamicroservice.client.services.ProgressInfo;
 
 /**
  *
  * @author josep
  */
-public class PortadaWorker extends SwingWorker<Void, PortadaApi.ProgressInfo>{
+public class PortadaWorker extends SwingWorker<Void, ProgressInfo>{
     PortadaApi papìInstance;
     private Configuration config;
     InfoProcessFrame processFrame;
 
     public PortadaWorker() {
         processFrame= new ProcessFrame();
-        this.papìInstance = new PortadaApi((PortadaApi.ProgressInfo t) -> {
+        this.papìInstance = new PortadaApi((ProgressInfo t) -> {
             publish(t);
             return null;
         });
@@ -26,7 +27,7 @@ public class PortadaWorker extends SwingWorker<Void, PortadaApi.ProgressInfo>{
     
     public PortadaWorker(InfoProcessFrame processFrame) {
         this.processFrame = processFrame;
-        this.papìInstance = new PortadaApi((PortadaApi.ProgressInfo t) -> {
+        this.papìInstance = new PortadaApi((ProgressInfo t) -> {
             publish(t);
             return null;
         });
@@ -56,16 +57,16 @@ public class PortadaWorker extends SwingWorker<Void, PortadaApi.ProgressInfo>{
     }
 
     @Override
-    protected void process(List<PortadaApi.ProgressInfo> chunks) {
-        for(PortadaApi.ProgressInfo info: chunks){
+    protected void process(List<ProgressInfo> chunks) {
+        for(ProgressInfo info: chunks){
             switch (info.getType()) {
-                case PortadaApi.ProgressInfo.INFO_TYPE:
+                case ProgressInfo.INFO_TYPE:
                     processFrame.updateInfo(info.getMessage(), info.getProcess());
                     break;
-                case PortadaApi.ProgressInfo.ERROR_INFO_TYPE:
+                case ProgressInfo.ERROR_INFO_TYPE:
                     processFrame.updateErrorInfo(info.getMessage(), info.getProcess(), info.getErrorState());
                     break;
-                case PortadaApi.ProgressInfo.STATUS_INFO_TYPE:
+                case ProgressInfo.STATUS_INFO_TYPE:
                     processFrame.updateStatusInfo(info.getStatus(), info.getMessage(), info.getProcess());
                     break;
                 default:

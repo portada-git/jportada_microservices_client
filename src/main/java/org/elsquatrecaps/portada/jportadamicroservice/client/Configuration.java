@@ -23,6 +23,75 @@ import net.sourceforge.argparse4j.inf.ArgumentParserException;
  * @author josep
  */
 public class Configuration{
+
+    /**
+     * @return the extractConfigMode
+     */
+    public String getExtractConfigMode() {
+        return extractConfigMode;
+    }
+
+    /**
+     * @param extractConfigMode the extractConfigMode to set
+     */
+    protected void setExtractConfigMode(String extractConfigMode) {
+        this.extractConfigMode = extractConfigMode;
+        if(extractConfigMode!=null && !extractConfigMode.isEmpty()){
+            this.attrs.add("extractConfigMode");        
+        }
+    }
+
+    /**
+     * @return the extractConfigProtertiesFile
+     */
+    public String getExtractConfigProtertiesFile() {
+        return extractConfigProtertiesFile;
+    }
+
+    /**
+     * @param extractConfigProtertiesFile the extractConfigProtertiesFile to set
+     */
+    protected void setExtractConfigProtertiesFile(String extractConfigProtertiesFile) {
+        this.extractConfigProtertiesFile = extractConfigProtertiesFile;
+        if(extractConfigProtertiesFile!=null && !extractConfigProtertiesFile.isEmpty()){
+            this.attrs.add("extractConfigProtertiesFile");        
+        }
+    }
+
+    /**
+     * @return the extractJsonConfigParsersFile
+     */
+    public String getExtractJsonConfigParsersFile() {
+        return extractJsonConfigParsersFile;
+    }
+
+    /**
+     * @param extractJsonConfigParsersFile the extractJsonConfigParsersFile to set
+     */
+    protected void setExtractJsonConfigParsersFile(String extractJsonConfigParsersFile) {
+        this.extractJsonConfigParsersFile = extractJsonConfigParsersFile;
+        if(extractJsonConfigParsersFile!=null && !extractJsonConfigParsersFile.isEmpty()){
+            this.attrs.add("extractJsonConfigParsersFile");        
+        }
+    }
+    
+    /**
+     * @return the extractJsonConfigParsersFile
+     */
+    public String getExtractExtensionFile() {
+        return extractExtensionFile;
+    }
+
+    /**
+     * @param extractExtensionFile the extractJsonConfigParsersFile to set
+     */
+    protected void setExtractExtensionFile(String extractExtensionFile) {
+        this.extractExtensionFile = extractExtensionFile;
+        if(extractExtensionFile!=null && !extractExtensionFile.isEmpty()){
+            this.attrs.add("extractExtensionFile");        
+        }
+    }
+    
     private final static String DEFAULT = "default";
 
     /**
@@ -65,6 +134,14 @@ public class Configuration{
     private String adminUser;
     @Arg(dest="p")  //-p
     private String adminPass;
+    @Arg(dest="extractConfigMode")
+    private String extractConfigMode;
+    @Arg(dest="extractConfigProtertiesFile")
+    private String extractConfigProtertiesFile;
+    @Arg(dest="extractJsonConfigParsersFile")
+    private String extractJsonConfigParsersFile;
+    @Arg(dest="extractExtensionFile")
+    private String extractExtensionFile;
     
     private int  commandArgumentsSize=0;    
     private final Set<String> attrs = new HashSet<>();
@@ -137,6 +214,18 @@ public class Configuration{
                 case "pass":
                     this.setPass((String) val);
                     break;
+                case "extractConfigMode":
+                    this.setExtractConfigMode((String) val);
+                    break;
+                case "extractConfigProtertiesFile":
+                    this.setExtractConfigProtertiesFile((String) val);
+                    break;
+                case "extractJsonConfigParsersFile":
+                    this.setExtractJsonConfigParsersFile((String) val);
+                    break;
+                case "extractExtensionFile":
+                    this.setExtractExtensionFile((String) val);
+                    break;
             }
         }
     }
@@ -190,6 +279,10 @@ public class Configuration{
         parser.addArgument("-k", "--pk").action(Arguments.storeTrue()).help("Key filename.");
         parser.addArgument("-u", "--user").action(Arguments.storeTrue()).help("User name.");
         parser.addArgument("-p", "--pass").action(Arguments.storeTrue()).help("User password.");
+        parser.addArgument("--extractConfigMode").nargs("?").help("The mode to read the configuration data for extractor. Can be: 'R' for remote, or 'L' for local");
+        parser.addArgument("--extractConfigProtertiesFile").nargs("?").help("The remote path file if 'extractConfigMode' is remote or the local path file if 'extractConfigMode' is local for the extractor config file");
+        parser.addArgument("--extractJsonConfigParsersFile").nargs("?").help("The local path for the parsers JSON configuration file regardless of whether 'extractConfigMode' is local or remote");
+        parser.addArgument("-ext","--extractExtensionFile").nargs("?").setDefault("txt").help("Extension to filter files to extract data");
         //parser.addArgument("-p", "--port").nargs("?").help("microservice port");
         //parser.addArgument("-ht", "--host").nargs("?").help("microservice host");
         //parser.addArgument("-pf", "--pref").nargs("?").help("microservice prefix path");
@@ -215,6 +308,20 @@ public class Configuration{
     
     
     private void updateAttrs(){
+        if(getExtractConfigMode()!=null){
+            this.attrs.add("extractConfigMode");
+        }else{
+            setExtractConfigMode("L");
+        }
+        if(getExtractConfigProtertiesFile()!=null){
+            this.attrs.add("extractConfigProtertiesFile");
+        }
+        if(getExtractJsonConfigParsersFile()!=null){
+            this.attrs.add("extractJsonConfigParsersFile");
+        }
+        if(getExtractExtensionFile()!=null){
+            this.attrs.add("extractExtensionFile");
+        }
         if(this.forceKeyGeneration!=null){
             this.attrs.add("forceKeyGeneration");
         }else{
@@ -254,15 +361,6 @@ public class Configuration{
             this.command = positionalArgs.get(0);
             this.attrs.add("command");
         }
-//        if(this.getHost()!=null){
-//            this.attrs.add("host");
-//        }
-//        if(this.getPort()!=null){
-//            this.attrs.add("port");
-//        }
-//        if(this.getPref()!=null){
-//            this.attrs.add("pref");
-//        }
         if(getFixTransparency()!=null){
             this.attrs.add("fixTrans");            
         }else{

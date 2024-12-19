@@ -1,55 +1,20 @@
 package org.elsquatrecaps.portada.jportadamicroservice.client;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
+import org.elsquatrecaps.portada.jportadamicroservice.client.services.ProgressInfo;
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.security.KeyFactory;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
-import java.security.Signature;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.util.ArrayList;
-import java.util.Base64;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
-import org.elsquatrecaps.portada.jportadamicroservice.client.exceptions.IOPapiCliException;
-import org.json.JSONArray;
+import org.elsquatrecaps.autonewsextractor.tools.configuration.AutoNewsExtractorConfiguration;
+import org.elsquatrecaps.portada.jportadamicroservice.client.services.PublisherService;
+import org.elsquatrecaps.portada.jportadamicroservice.client.services.extractor.FileExtractorSevice;
+import org.elsquatrecaps.portada.jportadamicroservice.client.services.imagefile.ImageFileService;
+import org.elsquatrecaps.portada.jportadamicroservice.client.services.publickey.PublicKeyService;
 import org.json.JSONObject;
 
 /**
@@ -57,43 +22,15 @@ import org.json.JSONObject;
  * @author josepcanellas
  */
 public class PortadaApi {
-    private static final String SECURITY_PATH = "security";
-    public static String[] msContext = {"java", "python", "r"};
+//    public static String[] msContext = {"java", "python", "r"};
     public static String[] imagesExtensions = {".jpg", ".jpeg", ".png", "gif", ".tif", "tiff"};
-    private final Map<String, ConnectionMs> conDataList = new HashMap<>();
-//    private Function<Integer, Void> progress;
+//    private final Map<String, ConnectionMs> conDataList = new HashMap<>();
     private Function<ProgressInfo, Void> publish;
+    PublisherService publisherService=new PublisherService();
+    ImageFileService imageFileService=new ImageFileService();
+    PublicKeyService publicKeyService=new PublicKeyService();
+    FileExtractorSevice fileExtractorSevice=new FileExtractorSevice();
     
-    /**
-     * @param key
-     * @return the host
-     */
-    public String getHost(String key) {
-        return conDataList.get(key).getHost();
-    }
-
-    /**
-     * @param key
-     * @return the protocol
-     */
-    public String getProtocol(String key) {
-        return conDataList.get(key).getProtocol();
-    }
-
-    /**
-     * @return the port
-     */
-    public String getPort(String key) {
-        return conDataList.get(key).getPort();
-    }
-
-    /**
-     * @return the pref
-     */
-    public String getPref(String key) {
-        return conDataList.get(key).getPref();
-    }
-
     public PortadaApi() {
         
     }
@@ -101,15 +38,15 @@ public class PortadaApi {
         this.publish = publish;
     }
 
-//    public PortadaApi(Function<ProgressInfo, Void> publish, Function<Integer, Void> progress) {
-//        this.publish = publish;
-//        this.progress = progress;
-//    }
-
     public final void init(Configuration config) {
-        for(String ctx: msContext){
-            this.conDataList.put(ctx, new ConnectionMs(config.getProtocols(ctx), config.getPort(ctx), config.getHosts(ctx), config.getPrefs(ctx)));
+        Map<String, ConnectionMs> conDataList = new HashMap<>();
+        for(String ctx: PublisherService.msContext){
+            conDataList.put(ctx, new ConnectionMs(config.getProtocols(ctx), config.getPort(ctx), config.getHosts(ctx), config.getPrefs(ctx)));
         }
+        publicKeyService.init(conDataList).init(publish);
+        imageFileService.init(conDataList).init(publish);
+        publisherService.init(conDataList).init(publish);
+        fileExtractorSevice.init(conDataList).init(publish);
     }
     
     public final void init(){
@@ -135,7 +72,7 @@ public class PortadaApi {
         try {
             HashMap p = new HashMap();
             p.put("team", team);
-            JSONObject jsonresponse = new JSONObject(sendData("test", p, contex));
+            JSONObject jsonresponse = new JSONObject(publisherService.sendData("test", p, contex));
             ret = jsonresponse.getString("message");
             publishInfo(ret, process);
         }catch (Exception ex){
@@ -143,236 +80,148 @@ public class PortadaApi {
             publishErrorInfo(ex.getMessage(), process, -1);            
         }
     }
-        
+
     public void acceptKey(Configuration configuration){
-        acceptKey(configuration.getTeam(), configuration.getPk(), configuration.getUser(), configuration.getPass());
+        publicKeyService.acceptKey(configuration.getTeam(), configuration.getPk(), configuration.getUser(), configuration.getPass());
     }
     
-    public void acceptKey(String team, String pkname, String user, String pass){
-        String ret;
-        try {
-            HashMap p = new HashMap();
-            p.put("pkname", pkname);
-            p.put("team", team);
-            p.put("u", user);
-            p.put("p", DigestUtils.md5Hex(pass).toUpperCase());
-            JSONObject jsonresponse = new JSONObject(sendData("pr/acceptKey", p, "java"));
-            if(jsonresponse.getInt("statusCode")==0){
-                ret = jsonresponse.getString("message");
-                publishInfo(ret, "accept key");
-            }else{
-                ret = jsonresponse.getString("message");
-                publishErrorInfo(ret, "accept key", jsonresponse.getInt("statusCode"));
-            }
-        } catch (Exception ex) {
-            Logger.getLogger(PortadaApi.class.getName()).log(Level.SEVERE, null, ex);
-            publishErrorInfo(ex.getMessage(), "accept key", -1);
-
-        }
-    }
-
     public void deleteKey(Configuration configuration){
-        acceptKey(configuration.getTeam(), configuration.getPk(), configuration.getUser(), configuration.getPass());
+        publicKeyService.deleteKey(configuration.getTeam(), configuration.getPk(), configuration.getUser(), configuration.getPass());
     }
-    
-    public void deleteKey(String team, String pkname, String user, String pass){
-        String ret;
-        try {
-            HashMap p = new HashMap();
-            p.put("pkname", pkname);
-            p.put("team", team);
-            p.put("u", user);
-            p.put("p", pass);
-            JSONObject jsonresponse = new JSONObject(sendData("pr/deleteKey", p, "java"));
-            if(jsonresponse.getInt("statusCode")==0){
-                ret = jsonresponse.getString("message");
-                publishInfo(ret, "delete key");
-            }else{
-                ret = jsonresponse.getString("message");
-                publishErrorInfo(ret, "delete key", jsonresponse.getInt("statusCode"));
-            }
-        } catch (Exception ex) {
-            Logger.getLogger(PortadaApi.class.getName()).log(Level.SEVERE, null, ex);
-            publishErrorInfo(ex.getMessage(), "delete key", -1);
-        }
-    }
-
     
     public void verifyCodeSentByMail(Configuration configuration){
-        verifyCodeSentByMail(configuration.getTeam(), configuration.getEmail(), configuration.getVerificationCode());
+        publicKeyService.verifyCodeSentByMail(configuration.getTeam(), configuration.getEmail(), configuration.getVerificationCode());
     }
     
-    public void verifyCodeSentByMail(String team, String email, String code){
-        String ret;
-        try {
-            HashMap p = new HashMap();
-            p.put("code", code);
-            p.put("team", team);
-            p.put("email", email);
-            JSONObject jsonresponse = new JSONObject(sendData("verifyRequestedAcessPermission", p, "java"));
-            if(jsonresponse.getInt("statusCode")==0){
-                ret = jsonresponse.getString("message");
-                publishInfo(ret, "verification process");
-                //rename public key
-                String publicKeyFilename = "public.pem";
-                String newPublicKeyFilename = String.format("%s_%s_%s" , email.replaceAll("@", "__AT_SIGN__"), code, publicKeyFilename);
-                File publicKeyFile = new File(new File(SECURITY_PATH, team), publicKeyFilename);
-                publicKeyFile.renameTo(new File(new File(SECURITY_PATH, team), newPublicKeyFilename));
-            }else{
-                //error
-                if(jsonresponse.getInt("statusCode")==3){
-                    //eliminar claus
-                    File keyFile = new File(new File(SECURITY_PATH, team), "public.pem");
-                    keyFile.delete();
-                    keyFile = new File(new File(SECURITY_PATH, team), "private.pem");
-                    keyFile.delete();
-                }
-                ret = jsonresponse.getString("message");
-                publishErrorInfo(ret, "verification process", jsonresponse.getInt("statusCode"));
-            }
-        } catch (Exception ex) {
-            Logger.getLogger(PortadaApi.class.getName()).log(Level.SEVERE, null, ex);
-            publishErrorInfo(ex.getMessage(), "verification process", -1);
-
-        }
-    }
-
     public void requestAccesPermission(Configuration configuration){
-        requestAccesPermission(configuration.getTeam(), configuration.getEmail(), configuration.getForceKeyGeneration());
+        publicKeyService.requestAccesPermission(configuration.getTeam(), configuration.getEmail(), configuration.getForceKeyGeneration());
     }
     
-    public void requestAccesPermission(String team, String email, boolean forceGeneration){
-        String ret;
+
+    public void extractAllDataFromDir(Configuration config){
+        boolean remoteConfig = config.getExtractConfigMode().startsWith("R");
         try {
-            File oldKey = null;
-            File privateKeyFile = new File(new File(SECURITY_PATH, team), "private.pem").getCanonicalFile().getAbsoluteFile();
-            File publicKeyFile = new File(new File(SECURITY_PATH, team), "public.pem").getCanonicalFile().getAbsoluteFile();
-            if(privateKeyFile.exists() && !forceGeneration){
-                publishStatus("KEY_ALREADY_EXIST", "An access key already exists on this computer. A new key was not created.", "request for accessing");
-                return;
-            }
-            if(forceGeneration){
-                File oldKeyDir = publicKeyFile.getParentFile();
-                if(oldKeyDir.exists() && oldKeyDir.isDirectory()){
-                     for(File n : oldKeyDir.listFiles()){
-                         if(n.getName().matches(".*__AT_SIGN__.*_public.pem")){
-                            oldKey = n;
-                         }
-                     }
+            if(remoteConfig){
+                fileExtractorSevice.init(config.getExtractConfigProtertiesFile());
+                if(config.getExtractJsonConfigParsersFile()!=null){
+                    fileExtractorSevice.init(new File(config.getExtractJsonConfigParsersFile()));
                 }
-            }
-            KeyPair keyPair = generateKeyPair();
-//            String randomName = RandomStringGenerator.builder().get().generate(30);
-//            saveKey(keyPair.getPrivate().getEncoded(), new File(SECURITY_PATH, String.format("private%s.pem", randomName)).getCanonicalFile().getAbsoluteFile(), "PRIVATE");
-            saveKey(keyPair.getPrivate().getEncoded(), privateKeyFile, "PRIVATE");
-            saveKey(keyPair.getPublic().getEncoded(), publicKeyFile, "PUBLIC");
-            HashMap p = new HashMap();
-            p.put("team", team);
-            p.put("email", email);
-            if(forceGeneration && oldKey!=null){
-                p.put("oldKeyName", oldKey.getName());
-            }
-            try{
-                JSONObject jsonresponse = new JSONObject(sendPublicKeyFile("requestAccessPermission", publicKeyFile.getCanonicalFile().getAbsolutePath(), p, "java"));
-                if(jsonresponse.getInt("statusCode")==0){
-                    //ret = jsonresponse.getString("message").concat(". Before 10 minutes pass, in the console execute the command: verifyCode -tm [YOUR TEAM] -m [YOUR_E_MAIL] -c [THE CODE RECEIVED]");
-                    ret = jsonresponse.getString("message");
-                    publishStatus(PortadaApi.ProgressInfo.SUCCESS_FOR_PAPI_ACCESS_PERMISSION_REQUEST_STATUS, ret, "request for accessing");
-                    if(oldKey!=null){
-                        oldKey.delete();
+            }else{
+                    AutoNewsExtractorConfiguration extractorConf = new AutoNewsExtractorConfiguration();
+                    String[] args = {"-d", config.getInputDir(),
+                        "-x", config.getExtractExtensionFile()};
+                    extractorConf.parseArgumentsAndConfigure(args, config.getExtractConfigProtertiesFile());
+                    fileExtractorSevice.init(extractorConf);
+                    if(config.getExtractJsonConfigParsersFile()!=null){
+                        fileExtractorSevice.init(new File(config.getExtractJsonConfigParsersFile()));
+                    }else{
+                        fileExtractorSevice.init(new File(extractorConf.getParserConfigJsonFile()));
                     }
-                }else{
-                    //error
-                    publicKeyFile.delete();
-                    privateKeyFile.delete();
-                    ret = jsonresponse.getString("message");
-                    publishErrorInfo(ret, "request for accessing", jsonresponse.getInt("statusCode"));
-                }
-            }catch(IOException ex){
-                publicKeyFile.delete();
-                privateKeyFile.delete();
-                Logger.getLogger(PortadaApi.class.getName()).log(Level.SEVERE, null, ex);
-                publishErrorInfo(ex.getMessage(), "request for accessing", -1);
             }
-        } catch (NoSuchAlgorithmException | IOException ex) {
+            fileExtractorSevice.processFiles(config.getTeam(), config.getOutputFile(), config.getInputDir(), config.getExtractExtensionFile());
+        } catch (IOException ex) {
             Logger.getLogger(PortadaApi.class.getName()).log(Level.SEVERE, null, ex);
-            publishErrorInfo(ex.getMessage(), "request for accessing", -1);
+            throw new RuntimeException(ex);
         }
     }
     
-    private void saveKey(byte[] key, File fileName, String type) throws FileNotFoundException, IOException{
-        if(!fileName.getParentFile().exists()){
-            fileName.getParentFile().mkdirs();
-        }
-        String pemKey = String.format("-----BEGIN %s KEY-----\n%s\n-----END %s KEY-----", type,  Base64.getEncoder().encodeToString(key), type);
-         try (FileOutputStream fos = new FileOutputStream(fileName)) {
-            fos.write(pemKey.getBytes());
-        }
-    }
-    
-    private KeyPair generateKeyPair() throws NoSuchAlgorithmException{
-        KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance("RSA");
-        keyPairGen.initialize(2048);
-        KeyPair pair = keyPairGen.generateKeyPair();
-        return pair;
-    }
-    
-    
-    
-    private void publishInfo(String message, String process){
-        if(publish!=null){
-            publish.apply(new ProgressInfo(ProgressInfo.INFO_TYPE, message, "", process, 1,1,0));
-        }
-    }
-    
-    private void publishStatus(String status, String message, String process){
-        if(publish!=null){
-            publish.apply(new ProgressInfo(ProgressInfo.STATUS_INFO_TYPE, status, message, "", process, 1,1,0));
-        }
-    }
-    
-    private void publishProgress(String name, String process, int fet, int all){
-        if(publish!=null){
-            publish.apply(new ProgressInfo(ProgressInfo.PROGRESS_INFO_TYPE, "", name, process, fet,all,0));
-        }
-    }
-    
-    private void publishProgress(String pre, String name, String process, int fet, int all){
-        if(publish!=null){
-            publish.apply(new ProgressInfo(ProgressInfo.PROGRESS_INFO_TYPE, pre, name, process, fet,all,0));
-        }
-    }
-    
-    private void publishErrorProgress(String name, String process, int fet, int all, int errorState){
-        if(publish!=null){
-            publish.apply(new ProgressInfo(ProgressInfo.PROGRESS_ERROR_TYPE, "", name, process, fet,all, errorState));
-        }
-    }
-    
-    private void publishErrorProgress(String pre, String name, String process, int fet, int all, int errorState){
-        if(publish!=null){
-            publish.apply(new ProgressInfo(ProgressInfo.PROGRESS_ERROR_TYPE, pre, name, process, fet,all, errorState));
-        }
-    }
-    
-    private void publishErrorInfo(String message, String process, int errorState){
-        if(publish!=null){
-            publish.apply(new ProgressInfo(PortadaApi.ProgressInfo.ERROR_INFO_TYPE, message, "", process, 1, 1, errorState));
-        }
-    }
-    
-//    private void publishError(String message, String process, int fet, int all, int errorState){
-//        if(publish!=null){
-//            publish.apply(new ProgressInfo(PortadaApi.ProgressInfo.ERROR, message, "", process, fet, all, errorState));
+//    public void extractAllDataFromDir(Configuration config){ //REACTIVE
+//        String configPath;
+//        JSONObject cfgJsonParsers=null;
+//        AutoNewsExtractorConfiguration extractorConf=null;
+//        boolean remoteConfig = config.getExtractConfigMode().startsWith("R");
+//        if(config.getExtractConfigProtertiesFile()==null){
+//            //error
+//            throw new UnsupportedOperationException();
+//        }else{
+//            configPath = config.getExtractConfigProtertiesFile();
 //        }
-//    }
-//    
-//    private void publishProgress(String messagePrevious, String name, String process, int fet, int all, int errorState){
-////        if(progress!=null){
-////            progress.apply(fet);
-////        }
-//        if(publish!=null){
-//            publish.apply(new ProgressInfo(messagePrevious, name, process, fet, all, errorState));
+//        if(config.getExtractJsonConfigParsersFile()!=null){
+//            try {
+//                String jsc = new String(Files.readAllBytes(Paths.get(config.getExtractJsonConfigParsersFile())));   
+//                cfgJsonParsers = new JSONObject(jsc);
+//            } catch (IOException ex) {
+//                Logger.getLogger(PortadaApi.class.getName()).log(Level.SEVERE, null, ex);
+//                //ERROR
+//                throw new UnsupportedOperationException();
+//            }
+//        }
+//        if(!remoteConfig){
+//            try {
+//                extractorConf = new AutoNewsExtractorConfiguration();
+//                String[] args = {"-i", config.getInputDir(), 
+//                                 "-ext", config.getExtractExtensionFile()};
+//                extractorConf.parseArgumentsAndConfigure(args, configPath);
+//            } catch (IOException ex) {
+//                //TODO: ERROR extractor configFile not found
+//                throw new UnsupportedOperationException(ex);
+//            }
+//        }
+//        
+//        BoatFactVersionUpdater.BoatFactVersionUpdaterResponse r;
+//        FileExtractorSevice service = fileExtractorSevice;
+//        if(remoteConfig){
+//            if(cfgJsonParsers==null){
+//                //TODO: crida remota passant configPath com a newspaper
+//                service.init(configPath);
+//                //TODO: El config és al servidor. Cal comprovar la seva versió de forma remota.
+//                r = service.processUpdate();
+//            }else{
+//                //TODO: El config és local. Cal comprovar la seva versió en local i fer canvis si cal.
+//                r = BoatFactVersionUpdater.tryToUpdate(cfgJsonParsers);
+//                //TODO: crida remota passant configPath i el contingut del cfgJsonParsers
+//                service.init(configPath).init(cfgJsonParsers);
+//            }
+//        }else if(extractorConf!=null && cfgJsonParsers!=null){
+//            //TODO: El config és local. Cal comprovar la seva versió al servidor i fer canvis si cal.
+//            r = BoatFactVersionUpdater.tryToUpdate(cfgJsonParsers);
+//            //TODO: crida romota passant el contingut de les dues configuracions
+//            service.init(extractorConf).init(cfgJsonParsers);
+//        }else{
+//            //[TODO: Impossible si la configuració ambdós fitxers de configuració han de ser local
+//            //generar ERROR
+//            throw new UnsupportedOperationException();
+//        }
+        
+//        if(!r.isError()){
+//            Map<String, List<ExtractedData>> responseMap = new HashMap<>();
+//            final JSONObject parsersCfg = cfgJsonParsers;
+//            service.processFiles(config.getInputDir(), config.getExtractExtensionFile()).subscribe(item-> {
+//                    JSONObject resp = new JSONObject(item);
+//                    if(resp.getInt("statusCode")==0){
+//                        if(!responseMap.containsKey(resp.getString("parser_name"))){
+//                            responseMap.put(resp.getString("parser_name"), new ArrayList<>());
+//                        }
+//                        JSONArray dataList = resp.getJSONArray("data_list");
+//                        for(int i=0; i<dataList.length(); i++){
+//                            responseMap.get(resp.getString("parser_name")).add(new MutableNewsExtractedData(dataList.getJSONObject(i)));
+//                        }
+//                        publishProgress(resp.getString("information_unit_name"), "extraction process", resp.getInt("percent"), 100);
+//                    }else{
+//                        //ERROR
+//                        //generar ERROR
+//                        throw new UnsupportedOperationException();
+//                    }
+//                },
+//                error -> {
+//                    //TODO: ON ERROR
+//                    error.printStackTrace();
+//                    publishErrorInfo(error.getMessage(), "extraction process", -100);
+//                }, new Runnable() {
+//                @Override
+//                public void run() {
+//                    BoatFactCsvFormatter csvFormatter = new BoatFactCsvFormatter();
+//                    for(String parser: responseMap.keySet()){
+//                        String fn = String.format("%s_%s",config.getOutputFile(), parser);
+//                        if(parsersCfg.optJSONObject(parser)!=null && parsersCfg.optJSONObject(parser).has("csv_view")){
+//                            JSONObject csvParams = parsersCfg.getJSONObject(parser).getJSONObject("csv_view");
+//                            csvFormatter.configHeaderFields(csvParams).format(responseMap.get(parser)).toFile(fn);
+//                        }
+//                        JsonFileFormatterForExtractedData<ExtractedData> jsonFormatter = new JsonFileFormatterForExtractedData<>(responseMap.get(parser));
+//                        jsonFormatter.toFile(fn);
+//                    }
+//                }
+//            });
 //        }
 //    }
     
@@ -428,7 +277,7 @@ public class PortadaApi {
                 String iname = n.split("\\.")[0];
                 File outName = new File(new File(outputDir), iname);
                 JSONObject jsonresponse = new JSONObject(
-                        transformImageFileToJsonImages("pr/redrawOrderedImageFile", 
+                        imageFileService.transformImageFileToJsonImages("pr/redrawOrderedImageFile", 
                                 inputImageFile.getAbsolutePath(), 
                                 outName.getAbsolutePath(), p, "python"));
                 if(jsonresponse.getInt("status")==0){
@@ -508,7 +357,7 @@ public class PortadaApi {
                         .substring(0, inputImageFile.getName().lastIndexOf(".")).concat(".json"));
                 String m = "image: ";
                 String n = inputImageFile.getName();
-                if(transformImageFile("pr/ocrJson", inputImageFile.getAbsolutePath(), 
+                if(imageFileService.transformImageFile("pr/ocrJson", inputImageFile.getAbsolutePath(), 
                         outputImageFile.getAbsolutePath(), errorFile.getAbsolutePath(), p, "java")){
                     publishProgress(m, n, "OCR", ++fet, all);
                 }else{
@@ -586,7 +435,7 @@ public class PortadaApi {
                         .substring(0, inputImageFile.getName().lastIndexOf(".")).concat(".txt"));
                 String m = "image: ";
                 String n = inputImageFile.getName();
-                if(transformImageFile("pr/ocr", inputImageFile.getAbsolutePath(), 
+                if(imageFileService.transformImageFile("pr/ocr", inputImageFile.getAbsolutePath(), 
                         outputImageFile.getAbsolutePath(), errorFile.getAbsolutePath(), p, "java")){
                     publishProgress(m, n, "OCR", ++fet, all);
                 }else{
@@ -756,7 +605,7 @@ public class PortadaApi {
     }
     
     public boolean fixBackTransparencyImageFile(String inputFile, String outputFile, String errorFile){
-        return transformImageFile("fixBackTransparency", inputFile, outputFile, errorFile, "java");
+        return imageFileService.transformImageFile("fixBackTransparency", inputFile, outputFile, errorFile, "java");
     }
     
     public boolean deskewImageFile(Configuration config){
@@ -786,7 +635,7 @@ public class PortadaApi {
     }
     
     public boolean deskewImageFile(String inputFile, String outputFile, String errorFile){
-        return transformImageFile("deskewImageFile", inputFile, outputFile, errorFile, "python");
+        return imageFileService.transformImageFile("deskewImageFile", inputFile, outputFile, errorFile, "python");
     }
     
     public boolean dewarpImageFile(Configuration config){
@@ -816,430 +665,34 @@ public class PortadaApi {
     }
     
     public boolean dewarpImageFile(String inputFile, String outputFile, String errorFile){
-        return transformImageFile("dewarpImageFile", inputFile, outputFile, errorFile, "python");
+        return imageFileService.transformImageFile("dewarpImageFile", inputFile, outputFile, errorFile, "python");
     }
-    
-    private String transformImageFileToJsonImages(String command, String inputFile, String outputDir, String context){
-        return transformImageFileToJsonImages(command, inputFile, outputDir, null, context);
-    }
-    
-    private String transformImageFileToJsonImages(String command, String inputFile, String outputDir, HashMap<String, String> paramData, String context){
-        String ret = null;
-        try{  
-            boolean exit;
-            HttpURLConnection con = flushMultipartRequest(command, "image", inputFile, paramData, context);
-            do{
-                exit = true;
-                int responseCode = con.getResponseCode();
-                if ((responseCode >= 200) && (responseCode < 400)) {  
-                    JSONObject json = new JSONObject(copyStreamToString(con.getInputStream()));
-                    if(json.has("status") && json.getInt("status")!=0){
-                        ret = json.toString();
-                    }else if(json.has("error") && json.getBoolean("error")){
-                        ret = "{\"status\":-1, \"message\":\"".concat(json.getString("message")).concat("\"}");
-                    }else{
-                        //copy all files
-                        JSONArray ar = json.getJSONArray("images");
-                        for(int i=0; i< ar.length(); i++){
-                            byte[] bytes = Base64.getDecoder().decode(ar.getJSONObject(i).getString("image"));
-                            Files.write(
-                                    Paths.get(String.format("%s_%03d%s", 
-                                            outputDir, 
-                                            ar.getJSONObject(i).getInt("count"), 
-                                            ar.getJSONObject(i).getString("extension"))), 
-                                    bytes);
-                        }
-                        //if OK
-                            ret = "{\"status\":0, \"message\":\"".concat(json.has("message")?json.getString("message"):"OK").concat("\"}");
-                        //else
-                            //ret = "{\"status\":-2, \"message\":\"".concat(json.has("message")?json.getString("message"):"OK").concat("\"}");
-                    }                    
-                } else if(responseCode==401) {
-                    SignedData signedData = signChallengeOfConnection(con, paramData.getOrDefault("team", null));
-                    con.disconnect();
-                    con = flushMultipartRequest(command, "image", inputFile, paramData, signedData, context);
-                    exit = false;
-                } else {
-                    //error
-                    ret = "{\"status\":-3, \"message\":\"".concat(copyStreamToString(con.getErrorStream())).concat("\"}");
-                }
-            }while(!exit);
-            con.disconnect();
-        } catch (Exception ex) {
-            Logger.getLogger(PortadaApi.class.getName()).log(Level.SEVERE, null, ex);
-            ret = "{\"status\":-4, \"message\":\"".concat(ex.getMessage()).concat("\"}");
-        }
-        return ret;
-        
-    }
-    
-    private boolean transformImageFile(String command, String inputFile, String outputFile, String errorFile, String context){
-        return transformImageFile(command, inputFile, outputFile, errorFile, null, context);
-    }
-    
-    private boolean transformImageFile(String command, String inputFile, String outputFile, String errorFile, HashMap<String, String> paramData, String context){
-        boolean ret=true;
-        try{  
-            boolean exit;
-            HttpURLConnection con = flushMultipartRequest(command, "image", inputFile, paramData, context);
-            do{
-                exit = true;
-                int responseCode = con.getResponseCode();
-                if ((responseCode >= 200) && (responseCode < 400)) {  
-                    try(FileOutputStream outputStream = new FileOutputStream(outputFile)){
-                        copyStreams(con.getInputStream(), outputStream);
-                    }
-                } else if(responseCode==401) {
-                    SignedData signedData = signChallengeOfConnection(con, paramData.getOrDefault("team", null));
-                    con.disconnect();
-                    con = flushMultipartRequest(command, "image", inputFile, paramData, signedData, context);
-                    exit = false;
-                } else {
-                    //error
-                    try(FileOutputStream outputStream = new FileOutputStream(errorFile)){
-                        copyStreams(con.getErrorStream(), outputStream);
-                    }
-                    ret = false;
-                }
-            }while(!exit);
-            con.disconnect();
-        } catch (Exception ex) {
-            Logger.getLogger(PortadaApi.class.getName()).log(Level.SEVERE, null, ex);
-            ret = false;
-        }
-        return ret;
-    }
-    
-    private static String signChallenge(String challenge, PrivateKey privateKey) throws Exception {
-        Signature privateSignature = Signature.getInstance("SHA256withRSA");
-        privateSignature.initSign(privateKey);
-        privateSignature.update(challenge.getBytes());
 
-        byte[] signature = privateSignature.sign();
-        return Base64.getEncoder().encodeToString(signature);
+    public void publishInfo(String message, String process){
+        publisherService.publishInfo(message, process);
     }
     
-    private String sendData(String command, HashMap<String, String> paramData, String context) throws Exception{
-        return sendData(command, paramData, null, context);
-    }
-    private String sendData(String command, HashMap<String, String> paramData, SignedData signatureData, String context) throws Exception{
-        String ret;
-        String strUrl = String.format("%s://%s:%s%s%s", getProtocol(context), getHost(context), getPort(context),getPref(context), command);
-        HttpPost post = new HttpPost(strUrl);
-        if(signatureData!=null){
-            post.addHeader("X-Signature", signatureData.getSignedData());
-            post.addHeader("Cookie", signatureData.getSessionCookie());
-        }
-        List<NameValuePair> params = new ArrayList<NameValuePair>();
-        for(String key: paramData.keySet()){
-            params.add(new BasicNameValuePair(key, paramData.get(key)));
-        }
-        post.setEntity(new UrlEncodedFormEntity(params));
-        try (CloseableHttpClient client = HttpClients.createDefault();
-        CloseableHttpResponse response = (CloseableHttpResponse) client.execute(post)) {
-            int responseCode = response.getStatusLine().getStatusCode();
-            if ((responseCode >= 200) && (responseCode < 400)) { 
-                ret = EntityUtils.toString(response.getEntity());
-            }else if(responseCode == 401){
-                SignedData signedData = signChallengeOfConnection(response, paramData.getOrDefault("team", null));
-                if(signedData==null){
-                    ret = "{\"error\":true, \"message\":\"You need generate a security key access\"}";
-                }else{
-                    ret = sendData(command, paramData,signedData , context);
-                }
-            }else{
-                ret = "{\"error\":true, \"message\":\"Access to resource forbidden\", \"response\":".concat(EntityUtils.toString(response.getEntity())).concat("}");
-            }
-        }
-        return ret;
+    public void publishStatus(String status, String message, String process){
+        publisherService.publishStatus(status, message, process);
     }
     
-    private String sendPublicKeyFile(String command, String inputFile, HashMap<String, String> paramData, String context) throws IOException{
-        String ret;
-            HttpURLConnection con = flushMultipartRequest(command, "pk", inputFile, paramData, context);
-            int responseCode = con.getResponseCode();
-            if ((responseCode >= 200) && (responseCode < 400)) { 
-                try(ByteArrayOutputStream outputStream = new ByteArrayOutputStream()){
-                    copyStreams(con.getInputStream(), outputStream);
-                    ret = new String(outputStream.toByteArray());
-                    Logger.getLogger(PortadaApi.class.getName()).log(Level.INFO, ret);
-                }
-            } else {
-                //error
-                try(ByteArrayOutputStream outputStream = new ByteArrayOutputStream()){
-                    copyStreams(con.getErrorStream(), outputStream);
-                    ret = new String(outputStream.toByteArray());
-                    Logger.getLogger(PortadaApi.class.getName()).log(Level.WARNING, ret);
-                }
-                throw new IOPapiCliException(String.format("ERROR: %d - %s (%s)", responseCode, con.getResponseMessage(), ret));
-            }
-            con.disconnect();
-        return ret;        
+    public void publishProgress(String name, String process, int fet, int all){
+        publisherService.publishProgress(name, process, fet, all);
     }
     
-    private HttpURLConnection flushMultipartRequest(String command, String fileFieldName, String inputFile, HashMap<String, String> paramData, String context) throws MalformedURLException, IOException{
-        return flushMultipartRequest(command, fileFieldName, inputFile, paramData, null, context);
+    public void publishProgress(String pre, String name, String process, int fet, int all){
+        publisherService.publishProgress(pre, name, process, fet, all);
     }
     
-    private HttpURLConnection flushMultipartRequest(String command, String fileFieldName, String inputFile, HashMap<String, String> paramData, SignedData signatureData, String context) throws MalformedURLException, IOException{
-        HttpURLConnection con;
-        String strUrl = String.format("%s://%s:%s%s%s", getProtocol(context), getHost(context), getPort(context),getPref(context), command);
-        File inFile = new File(inputFile);
-        StringBuilder hwriter = new StringBuilder();
-        if(paramData!=null){
-            paramData.forEach((key, val) -> {
-                hwriter.append("--*****\r\n");
-                hwriter.append("Content-Disposition: form-data; name=\"").append(key).append("\"\r\n");
-                hwriter.append("Content-Type: ").append("text/plain").append("\r\n");
-                hwriter.append("\r\n"); 
-                hwriter.append(val).append("\r\n");
-            });
-        }
-        hwriter.append("--*****\r\n");
-        hwriter.append("Content-Disposition: form-data; name=\"").append(fileFieldName).append("\"; filename=\"").append(inFile.getName()).append("\"\r\n");
-        hwriter.append("Content-Type: ").append(HttpURLConnection.guessContentTypeFromName(inFile.getName())).append("\r\n");
-        hwriter.append("Content-Length: ").append(String.valueOf(inFile.length())).append("\r\n");
-        hwriter.append("\r\n"); 
-        StringBuilder fwriter = new StringBuilder();
-        fwriter.append("\r\n");
-        fwriter.append("--*****--\r\n");
-
-        URL url = new URL(strUrl);
-        con = (HttpURLConnection)url.openConnection();
-        con.setDoInput(true);
-        con.setDoOutput(true);
-        con.setUseCaches(false);
-        con.setRequestMethod("POST");
-        if(signatureData!=null){
-            con.setRequestProperty("X-Signature", signatureData.getSignedData());
-            con.setRequestProperty("Cookie", signatureData.getSessionCookie());
-        }
-        con.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + "*****");
-        con.connect();
-        try (OutputStream outputStream = con.getOutputStream();
-                PrintWriter writer = new PrintWriter(new OutputStreamWriter(outputStream, "UTF-8"), true)) { 
-            writer.append(hwriter.toString());   
-            writer.flush();
-            try(FileInputStream in = new FileInputStream(inFile)){
-                copyStreams(in, outputStream);
-                outputStream.flush();
-            }
-            writer.append(fwriter.toString());
-            writer.flush();
-        }        
-        return con;
-    }    
-    
-    private SignedData signChallengeOfConnection(CloseableHttpResponse response, String team) throws Exception{
-        return signChallengeOfConnection(team, response.getEntity().getContent(), response.getFirstHeader("Set-Cookie").getValue());       
+    public void publishErrorProgress(String name, String process, int fet, int all, int errorState){
+        publisherService.publishErrorProgress(name, process, fet, all, errorState);
     }
     
-    private SignedData signChallengeOfConnection(HttpURLConnection con, String team) throws Exception{
-        return signChallengeOfConnection(team, con.getErrorStream(), con.getHeaderField("Set-Cookie"));
+    public void publishErrorProgress(String pre, String name, String process, int fet, int all, int errorState){
+        publisherService.publishErrorProgress(pre, name, process, fet, all, errorState);
     }
     
-    private SignedData signChallengeOfConnection(String team, InputStream stream, String sessionCookie) throws Exception{
-        SignedData ret = null;
-        File privateKeyFile = new File(new File(SECURITY_PATH, team), "private.pem").getCanonicalFile().getAbsoluteFile();
-        if(privateKeyFile.exists()){
-            PrivateKey privateKey = loadPrivateKey(privateKeyFile.getAbsolutePath());
-            InputStreamReader reader = new InputStreamReader(stream);
-            JsonObject jsonResponse = JsonParser.parseReader(reader).getAsJsonObject();
-            String signed = signChallenge(jsonResponse.get("challenge").getAsString(), privateKey);
-            ret = new SignedData(signed, sessionCookie);
-        }
-        return ret;
-    }
-    
-    private String copyStreamToString(InputStream in) throws IOException{
-        StringBuilder sb = new StringBuilder();
-        try(BufferedReader br = new BufferedReader(new InputStreamReader(in))){
-            String line;
-            while ((line = br.readLine()) != null) {
-                sb.append(line).append("\n");
-            }            
-        }
-        return sb.toString();
-    }
-    
-    private long copyStreams(InputStream in, OutputStream out) throws IOException{
-        BufferedOutputStream bos = new BufferedOutputStream(out);
-        BufferedInputStream bis = new BufferedInputStream(in);
-        byte[] buffer = new byte[12288]; // 12K
-        long count = 0L;
-        int n = 0;
-        while (-1 != (n = bis.read(buffer))) {
-            bos.write(buffer, 0, n);
-            count += n;
-        }
-        bos.flush();
-        return count;
-    }    
-    
-    private static PrivateKey loadPrivateKey(String filename) throws Exception {
-        String key = new String(Files.readAllBytes(new File(filename).toPath()));
-        
-        // Eliminar les línies d'encapçalament i peu
-        key = key.replace("-----BEGIN PRIVATE KEY-----", "")
-                 .replace("-----END PRIVATE KEY-----", "")
-                 .replaceAll("\\s", ""); // Elimina espais i salts de línia
-
-        byte[] keyBytes = Base64.getDecoder().decode(key);
-
-        PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(keyBytes);
-        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-
-        return keyFactory.generatePrivate(keySpec);
-    }
-    
-    private static final class SignedData{
-        private String signedData;
-        private String sessionCookie;
-
-        public SignedData(String signedData, String sessionCookie) {
-            this.signedData = signedData;
-            this.sessionCookie = sessionCookie;
-        }
-
-        /**
-         * @return the signedData
-         */
-        public String getSignedData() {
-            return signedData;
-        }
-
-        /**
-         * @return the sessionCookie
-         */
-        public String getSessionCookie() {
-            return sessionCookie;
-        }
-    }  
-    
-    public static final class ProgressInfo{
-        public static final int ERROR_INFO_TYPE=1;
-        public static final int PROGRESS_ERROR_TYPE=201;
-        public static final int PROGRESS_INFO_TYPE=200;
-        public static final int INFO_TYPE=0;
-        public static final int STATUS_INFO_TYPE=100;
-        
-//        public static final int ERROR=-1;
-//        public static final int PROCESS=0;
-//        public static final int MESSAGE=1;
-//        public static final int INFO=2;
-//        public static final int INFO_ERROR=3;
-//        public static final int STATUS_INFO=4;
-        public static final String KEY_ALREADY_EXIST_STATUS="KEY_ALREADY_EXIST";
-        public static final String SUCCESS_FOR_PAPI_ACCESS_PERMISSION_REQUEST_STATUS="SUCCESS_FOR_PAPI_ACCESS_PERMISSION_REQUEST";
-        public static final String OK_STATUS="";
-        private int type=0;  
-        private String pre;
-        private String name;
-        private String process;
-        private int progress;
-        private int maxProgress;
-        private String status;
-        int errorState=0;
-
-//        public ProgressInfo(String message, String process, String status) {
-//            this(STATUS_INFO_TYPE, message, "", process, 1, 1, 0);
-//            this.status = status;
-//        }
-//        
-////        public ProgressInfo(String message, String process, boolean infoOnly) {
-////            this(infoOnly?INFO:MESSAGE, message, "", process, 0, 100, 0);
-////        }
-//        
-////        public ProgressInfo(String message, String process, int percent) {
-////            this(MESSAGE, message, "", process, percent, 100, 0);
-////        }
-//
-//        public ProgressInfo(String message, String process) {
-//            this(INFO_TYPE, message, "", process, 1, 1, 0);
-//        }
-//        
-//        public ProgressInfo(String name, String process, int progress, int maxProgress) {
-//            this(PROGRESS_INFO_TYPE, "", name, process, progress, maxProgress, 0);
-//        }
-//        
-//        public ProgressInfo(String preNameOrMessage, String name, String process, int progress, int maxProgress) {
-//            this(PROGRESS_INFO_TYPE, preNameOrMessage, name, process, progress, maxProgress, 0);
-//        }
-//        
-//        public ProgressInfo(String name, String process, int progress, int maxProgress, int errorState) {
-//            this(PROGRESS_ERROR_TYPE, "", name, process, progress, maxProgress, errorState);
-//        }
-//        
-//        public ProgressInfo(String preNameOrMessage, String name, String process, int progress, int maxProgress, int errorState) {
-//            this(PROGRESS_ERROR_TYPE, preNameOrMessage, name, process, progress, maxProgress, errorState);
-//        }
-        
-        public ProgressInfo(int type, String status, String preNameOrMessage, String name, String process, int progress, int maxProgress, int errorState) {
-            this(type, preNameOrMessage, name, process, progress, maxProgress, errorState);
-            this.status = status;
-        }
-        
-        public ProgressInfo(int type, String preNameOrMessage, String name, String process, int progress, int maxProgress, int errorState) {
-            this.type=type;
-            this.pre= preNameOrMessage;
-            this.name = name;
-            this.process = process;
-            this.progress = progress;
-            this.maxProgress = maxProgress;
-            this.errorState = errorState;
-        }
-
-        public String getStatus(){
-            String ret = "";
-            if(getType() == STATUS_INFO_TYPE){
-                ret = status;
-            }
-            return ret;
-        }
-        
-        public String getMessage(){
-            return this.pre.concat(this.name);
-        }
-        
-        /**
-         * @return the name
-         */
-        public String getName() {
-            return name;
-        }
-
-        /**
-         * @return the process
-         */
-        public String getProcess() {
-            return process;
-        }
-
-        /**
-         * @return the progress
-         */
-        public int getProgress() {
-            return progress;
-        }
-
-        /**
-         * @return the maxProgress
-         */
-        public int getMaxProgress() {
-            return maxProgress;
-        }
-        
-        public int getErrorState(){
-            return errorState;
-        }
-        
-        public int getType(){
-            return type;
-        }
-        
-        public void setName(String str){
-            this.name = str;
-        }
-        
-    }
+    public void publishErrorInfo(String message, String process, int errorState){
+        publisherService.publishErrorInfo(message, process, errorState);
+    }   
 }

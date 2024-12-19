@@ -1,7 +1,7 @@
 package org.elsquatrecaps.portada.jportadamicroservice.client.gui;
 
 import java.util.function.Function;
-import org.elsquatrecaps.portada.jportadamicroservice.client.PortadaApi;
+import org.elsquatrecaps.portada.jportadamicroservice.client.services.ProgressInfo;
 
 /**
  *
@@ -266,12 +266,12 @@ public class VerifyCodeAccessFrame extends javax.swing.JFrame implements InfoPro
     @Override
     public void updateStatusInfo(String status, String message, String process) {
         boolean success=false;
-        if(!status.equals(PortadaApi.ProgressInfo.OK_STATUS)){
-            if(status.equals(PortadaApi.ProgressInfo.KEY_ALREADY_EXIST_STATUS)){
+        if(!status.equals(ProgressInfo.OK_STATUS)){
+            if(status.equals(ProgressInfo.KEY_ALREADY_EXIST_STATUS)){
                 message = message.concat("If you can work well with the current access permission, click the Cancel button to exit this process, you do not need to create a new access permission");
                 updateErrorInfo(message, process, 0);
                 postTextPane.setText("Only in case you are unable to work on some process, you should force a request for a new access permission. If this is your case, click the Cancel button and request a new permission again by checking the box \"force request\".");
-            }else if(status.equals(PortadaApi.ProgressInfo.SUCCESS_FOR_PAPI_ACCESS_PERMISSION_REQUEST_STATUS)){
+            }else if(status.equals(ProgressInfo.SUCCESS_FOR_PAPI_ACCESS_PERMISSION_REQUEST_STATUS)){
                 success = true;
                 updateInfo(message, process);
             }else{

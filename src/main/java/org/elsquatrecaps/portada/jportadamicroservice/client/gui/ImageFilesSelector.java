@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package org.elsquatrecaps.portada.jportadamicroservice.client.gui;
 
 import java.awt.event.FocusEvent;
@@ -101,12 +97,25 @@ public class ImageFilesSelector extends javax.swing.JFrame {
         jPanel12 = new javax.swing.JPanel();
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
-        inputSelectBlocksTextField = new javax.swing.JTextField();
-        outputSelectBlocksTextField = new javax.swing.JTextField();
-        odForInputSelectBlocksButton = new javax.swing.JButton();
-        odForOutputSelectBlocksButton = new javax.swing.JButton();
+        inputExtractDataField = new javax.swing.JTextField();
+        outputSelectExtractDataField = new javax.swing.JTextField();
+        odForInputExtractDataButton = new javax.swing.JButton();
+        odForOutputExtractDataButton = new javax.swing.JButton();
         jPanel13 = new javax.swing.JPanel();
-        runSelectBlocksButton = new javax.swing.JButton();
+        runExtractDataButton = new javax.swing.JButton();
+        jLabel16 = new javax.swing.JLabel();
+        teamComboBoxExtract = new javax.swing.JComboBox<>();
+        jPanel17 = new javax.swing.JPanel();
+        jLabel18 = new javax.swing.JLabel();
+        jLabel19 = new javax.swing.JLabel();
+        propertiesFileExtractDataTextField = new javax.swing.JTextField();
+        parserConfigFileTextField = new javax.swing.JTextField();
+        odForPropertiesFileButton = new javax.swing.JButton();
+        odForParserConfigFileButton = new javax.swing.JButton();
+        jPanel18 = new javax.swing.JPanel();
+        remoteConfigCheckBox = new javax.swing.JCheckBox();
+        jLabel17 = new javax.swing.JLabel();
+        newsPaperNameExtractDataComboBox = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMaximumSize(new java.awt.Dimension(615, 230));
@@ -182,13 +191,13 @@ public class ImageFilesSelector extends javax.swing.JFrame {
                         .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(teamComboBoxRequestAccess, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 160, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 156, Short.MAX_VALUE)
                         .addComponent(forceRequestCheckBox))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel16Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(runRequestPermisionButton, javax.swing.GroupLayout.PREFERRED_SIZE, 395, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE)))
-                .addGap(33, 33, 33))
+                .addContainerGap(14, Short.MAX_VALUE))
         );
         jPanel16Layout.setVerticalGroup(
             jPanel16Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -397,7 +406,7 @@ public class ImageFilesSelector extends javax.swing.JFrame {
 
         jTabbedPane1.addTab("Fix images", jPanel3);
 
-        commandFixOrderComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Arcanum", "Amazon" }));
+        commandFixOrderComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Arcanum", "Yolo" }));
         commandFixOrderComboBox.setEnabled(false);
         commandFixOrderComboBox.setFocusable(false);
         commandFixOrderComboBox.addActionListener(new java.awt.event.ActionListener() {
@@ -476,7 +485,7 @@ public class ImageFilesSelector extends javax.swing.JFrame {
                         .addComponent(outputFixOrderTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 404, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(odForOutputFixOrderButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addContainerGap(39, Short.MAX_VALUE))
+                .addContainerGap(16, Short.MAX_VALUE))
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -539,7 +548,7 @@ public class ImageFilesSelector extends javax.swing.JFrame {
                 .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(77, Short.MAX_VALUE))
+                .addContainerGap(88, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Fix order layout", jPanel5);
@@ -579,10 +588,10 @@ public class ImageFilesSelector extends javax.swing.JFrame {
                         .addGap(28, 28, 28)
                         .addComponent(jLabel8)
                         .addGap(18, 18, 18)
-                        .addComponent(outputOcrTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 404, Short.MAX_VALUE)
+                        .addComponent(outputOcrTextField)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(odForOutputOcrButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addGap(39, 39, 39))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel10Layout.setVerticalGroup(
             jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -614,7 +623,7 @@ public class ImageFilesSelector extends javax.swing.JFrame {
             jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel11Layout.createSequentialGroup()
                 .addGap(92, 92, 92)
-                .addComponent(runOcrButton, javax.swing.GroupLayout.DEFAULT_SIZE, 401, Short.MAX_VALUE)
+                .addComponent(runOcrButton, javax.swing.GroupLayout.DEFAULT_SIZE, 378, Short.MAX_VALUE)
                 .addGap(150, 150, 150))
         );
         jPanel11Layout.setVerticalGroup(
@@ -641,8 +650,8 @@ public class ImageFilesSelector extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel8Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel8Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -662,7 +671,7 @@ public class ImageFilesSelector extends javax.swing.JFrame {
                 .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(113, Short.MAX_VALUE))
+                .addContainerGap(124, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Ocr process", jPanel8);
@@ -671,17 +680,17 @@ public class ImageFilesSelector extends javax.swing.JFrame {
 
         jLabel10.setText("Output:");
 
-        odForInputSelectBlocksButton.setText("Open dialog");
-        odForInputSelectBlocksButton.addActionListener(new java.awt.event.ActionListener() {
+        odForInputExtractDataButton.setText("Open dialog");
+        odForInputExtractDataButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                odForInputSelectBlocksButtonActionPerformed(evt);
+                odForInputExtractDataButtonActionPerformed(evt);
             }
         });
 
-        odForOutputSelectBlocksButton.setText("Open dialog");
-        odForOutputSelectBlocksButton.addActionListener(new java.awt.event.ActionListener() {
+        odForOutputExtractDataButton.setText("Open dialog");
+        odForOutputExtractDataButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                odForOutputSelectBlocksButtonActionPerformed(evt);
+                odForOutputExtractDataButtonActionPerformed(evt);
             }
         });
 
@@ -690,21 +699,20 @@ public class ImageFilesSelector extends javax.swing.JFrame {
         jPanel12Layout.setHorizontalGroup(
             jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel12Layout.createSequentialGroup()
-                .addGroup(jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGap(28, 28, 28)
+                .addGroup(jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addGroup(jPanel12Layout.createSequentialGroup()
-                        .addGap(39, 39, 39)
                         .addComponent(jLabel9)
                         .addGap(18, 18, 18)
-                        .addComponent(inputSelectBlocksTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 404, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(odForInputSelectBlocksButton))
+                        .addComponent(inputExtractDataField))
                     .addGroup(jPanel12Layout.createSequentialGroup()
-                        .addGap(28, 28, 28)
                         .addComponent(jLabel10)
                         .addGap(18, 18, 18)
-                        .addComponent(outputSelectBlocksTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 404, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(odForOutputSelectBlocksButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(outputSelectExtractDataField, javax.swing.GroupLayout.DEFAULT_SIZE, 404, Short.MAX_VALUE)))
+                .addGap(12, 12, 12)
+                .addGroup(jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(odForInputExtractDataButton)
+                    .addComponent(odForOutputExtractDataButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel12Layout.setVerticalGroup(
@@ -713,20 +721,21 @@ public class ImageFilesSelector extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel9)
-                    .addComponent(inputSelectBlocksTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(odForInputSelectBlocksButton))
+                    .addComponent(inputExtractDataField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(odForInputExtractDataButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel10)
-                    .addComponent(outputSelectBlocksTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(odForOutputSelectBlocksButton))
+                    .addComponent(outputSelectExtractDataField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(odForOutputExtractDataButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        runSelectBlocksButton.setText("Select text blocks");
-        runSelectBlocksButton.addActionListener(new java.awt.event.ActionListener() {
+        runExtractDataButton.setText("Extract data");
+        runExtractDataButton.setEnabled(false);
+        runExtractDataButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                runSelectBlocksButtonActionPerformed(evt);
+                runExtractDataButtonActionPerformed(evt);
             }
         });
 
@@ -735,50 +744,184 @@ public class ImageFilesSelector extends javax.swing.JFrame {
         jPanel13Layout.setHorizontalGroup(
             jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel13Layout.createSequentialGroup()
-                .addGap(92, 92, 92)
-                .addComponent(runSelectBlocksButton, javax.swing.GroupLayout.PREFERRED_SIZE, 399, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(runExtractDataButton, javax.swing.GroupLayout.PREFERRED_SIZE, 399, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel13Layout.setVerticalGroup(
             jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel13Layout.createSequentialGroup()
-                .addContainerGap(17, Short.MAX_VALUE)
-                .addComponent(runSelectBlocksButton)
-                .addGap(14, 14, 14))
+            .addGroup(jPanel13Layout.createSequentialGroup()
+                .addGap(16, 16, 16)
+                .addComponent(runExtractDataButton)
+                .addContainerGap(15, Short.MAX_VALUE))
+        );
+
+        jLabel16.setText("Team (cost center):");
+
+        teamComboBoxExtract.setModel(createComboboxModelTeamsForSelecting());
+        teamComboBoxExtract.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                teamComboBoxExtractActionPerformed(evt);
+            }
+        });
+
+        jPanel17.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+
+        jLabel18.setText("Properties file:");
+
+        jLabel19.setText("Extract parser config file:");
+
+        odForPropertiesFileButton.setFont(new java.awt.Font("Liberation Sans", 0, 8)); // NOI18N
+        odForPropertiesFileButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons8-search-file-18.png"))); // NOI18N
+        odForPropertiesFileButton.setToolTipText("Open dialog");
+        odForPropertiesFileButton.setMargin(new java.awt.Insets(2, 2, 2, 2));
+        odForPropertiesFileButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                odForPropertiesFileButtonActionPerformed(evt);
+            }
+        });
+
+        odForParserConfigFileButton.setFont(new java.awt.Font("Liberation Sans", 0, 8)); // NOI18N
+        odForParserConfigFileButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons8-search-file-18.png"))); // NOI18N
+        odForParserConfigFileButton.setToolTipText("Open dialog");
+        odForParserConfigFileButton.setMargin(new java.awt.Insets(2, 2, 2, 2));
+        odForParserConfigFileButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                odForParserConfigFileButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel17Layout = new javax.swing.GroupLayout(jPanel17);
+        jPanel17.setLayout(jPanel17Layout);
+        jPanel17Layout.setHorizontalGroup(
+            jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel17Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel17Layout.createSequentialGroup()
+                        .addComponent(jLabel18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(propertiesFileExtractDataTextField)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(odForPropertiesFileButton, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel17Layout.createSequentialGroup()
+                        .addComponent(jLabel19)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(parserConfigFileTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 244, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(odForParserConfigFileButton, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
+        );
+        jPanel17Layout.setVerticalGroup(
+            jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel17Layout.createSequentialGroup()
+                .addGap(13, 13, 13)
+                .addGroup(jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel18)
+                    .addComponent(propertiesFileExtractDataTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(odForPropertiesFileButton, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(odForParserConfigFileButton, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel19)
+                        .addComponent(parserConfigFileTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(16, Short.MAX_VALUE))
+        );
+
+        jPanel18.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+
+        remoteConfigCheckBox.setText("User remote config");
+        remoteConfigCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                remoteConfigCheckBoxActionPerformed(evt);
+            }
+        });
+
+        jLabel17.setText("Newspaper name:");
+
+        newsPaperNameExtractDataComboBox.setEditable(true);
+        newsPaperNameExtractDataComboBox.setModel(createComboboxModelNewsPaperForSelecting());
+        newsPaperNameExtractDataComboBox.setEnabled(false);
+
+        javax.swing.GroupLayout jPanel18Layout = new javax.swing.GroupLayout(jPanel18);
+        jPanel18.setLayout(jPanel18Layout);
+        jPanel18Layout.setHorizontalGroup(
+            jPanel18Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel18Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel18Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(newsPaperNameExtractDataComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel18Layout.createSequentialGroup()
+                        .addGroup(jPanel18Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(remoteConfigCheckBox)
+                            .addComponent(jLabel17))
+                        .addGap(0, 6, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        jPanel18Layout.setVerticalGroup(
+            jPanel18Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel18Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(remoteConfigCheckBox)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel17)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(newsPaperNameExtractDataComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(10, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
         jPanel9.setLayout(jPanel9Layout);
         jPanel9Layout.setHorizontalGroup(
             jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 655, Short.MAX_VALUE)
-            .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel9Layout.createSequentialGroup()
-                    .addContainerGap()
-                    .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jPanel12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jPanel13, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addContainerGap()))
+            .addGroup(jPanel9Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel9Layout.createSequentialGroup()
+                        .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(jPanel9Layout.createSequentialGroup()
+                                .addComponent(jLabel16)
+                                .addGap(18, 18, 18)
+                                .addComponent(teamComboBoxExtract, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jPanel12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel9Layout.createSequentialGroup()
+                                .addGap(6, 6, 6)
+                                .addComponent(jPanel18, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jPanel17, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addGap(5, 5, 5))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel9Layout.createSequentialGroup()
+                        .addComponent(jPanel13, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())))
         );
         jPanel9Layout.setVerticalGroup(
             jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 317, Short.MAX_VALUE)
-            .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel9Layout.createSequentialGroup()
-                    .addGap(50, 50, 50)
-                    .addComponent(jPanel12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addComponent(jPanel13, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(137, Short.MAX_VALUE)))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel9Layout.createSequentialGroup()
+                .addGap(22, 22, 22)
+                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(teamComboBoxExtract, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel16))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel17, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jPanel18, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel13, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jTabbedPane1.addTab("Select text blocs", jPanel9);
+        jTabbedPane1.addTab("Extract data", jPanel9);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jTabbedPane1)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -797,7 +940,7 @@ public class ImageFilesSelector extends javax.swing.JFrame {
         if(resp!=JFileChooser.CANCEL_OPTION){
             dirBase = fc.getSelectedFile().getParentFile();
             outputOcrTextField.setText(fc.getSelectedFile().getAbsolutePath());
-            inputSelectBlocksTextField.setText(outputOcrTextField.getText());
+            inputExtractDataField.setText(outputOcrTextField.getText());
         }
 //        updateComponenets();
         
@@ -828,7 +971,7 @@ public class ImageFilesSelector extends javax.swing.JFrame {
             dirBase = fc.getSelectedFile().getParentFile();
             outputFixOrderTextField.setText(fc.getSelectedFile().getAbsolutePath());
             inputOcerTextField.setText(outputFixOrderTextField.getText());
-            inputSelectBlocksTextField.setText(outputFixOrderTextField.getText());
+            inputExtractDataField.setText(outputFixOrderTextField.getText());
         }        
     }//GEN-LAST:event_odForOutputFixOrderButtonActionPerformed
 
@@ -863,7 +1006,7 @@ public class ImageFilesSelector extends javax.swing.JFrame {
             outputFixImagesTextField.setText(fc.getSelectedFile().getAbsolutePath());
             inputOcerTextField.setText(outputFixImagesTextField.getText());
             inputFixOrderTextField.setText(outputFixImagesTextField.getText());
-            inputSelectBlocksTextField.setText(outputFixImagesTextField.getText());
+            inputExtractDataField.setText(outputFixImagesTextField.getText());
         }
     }//GEN-LAST:event_odForOutputFixImagesButtonActionPerformed
 
@@ -893,17 +1036,37 @@ public class ImageFilesSelector extends javax.swing.JFrame {
         updateComponenetsFirst();
     }//GEN-LAST:event_commandComboBoxActionPerformed
 
-    private void odForInputSelectBlocksButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_odForInputSelectBlocksButtonActionPerformed
+    private void odForInputExtractDataButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_odForInputExtractDataButtonActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_odForInputSelectBlocksButtonActionPerformed
+        JFileChooser fc = new JFileChooser(dirBase.getAbsolutePath());
+        fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        fc.setCurrentDirectory(dirBase.getAbsoluteFile());
+        int resp = fc.showOpenDialog(this);
+        if(resp!=JFileChooser.CANCEL_OPTION){
+            dirBase = fc.getSelectedFile().getParentFile();
+            inputExtractDataField.setText(fc.getSelectedFile().getAbsolutePath());
+        }
+//        updateComponenets();
+        
+    }//GEN-LAST:event_odForInputExtractDataButtonActionPerformed
 
-    private void odForOutputSelectBlocksButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_odForOutputSelectBlocksButtonActionPerformed
+    private void odForOutputExtractDataButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_odForOutputExtractDataButtonActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_odForOutputSelectBlocksButtonActionPerformed
-
-    private void runSelectBlocksButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_runSelectBlocksButtonActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_runSelectBlocksButtonActionPerformed
+        JFileChooser fc = new JFileChooser(dirBase.getAbsolutePath());
+        fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        fc.setFileFilter(new FileNameExtensionFilter("Files for data", "csv", "json"));
+        fc.setCurrentDirectory(dirBase.getAbsoluteFile());
+        int resp = fc.showOpenDialog(this);
+        if(resp!=JFileChooser.CANCEL_OPTION){
+            if(fc.getSelectedFile().isDirectory()){
+                dirBase = fc.getSelectedFile();
+                outputSelectExtractDataField.setText(fc.getSelectedFile().getAbsolutePath().concat("/results"));                 
+            }else{
+                dirBase = fc.getSelectedFile().getParentFile();
+                outputSelectExtractDataField.setText(fc.getSelectedFile().getAbsolutePath());
+            }            
+        }        
+    }//GEN-LAST:event_odForOutputExtractDataButtonActionPerformed
 
     private void runFixImagesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_runFixImagesButtonActionPerformed
         // TODO add your handling code here:
@@ -933,13 +1096,13 @@ public class ImageFilesSelector extends javax.swing.JFrame {
     private void outputFixImagesTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_outputFixImagesTextFieldActionPerformed
         this.inputFixOrderTextField.setText(this.outputFixImagesTextField.getText());
         this.inputOcerTextField.setText(this.outputFixImagesTextField.getText());
-        this.inputSelectBlocksTextField.setText(this.outputFixImagesTextField.getText());        
+        this.inputExtractDataField.setText(this.outputFixImagesTextField.getText());        
     }//GEN-LAST:event_outputFixImagesTextFieldActionPerformed
 
     private void outputFixOrderTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_outputFixOrderTextFieldActionPerformed
         // TODO add your handling code here:
         this.inputOcerTextField.setText(this.outputFixImagesTextField.getText());
-        this.inputSelectBlocksTextField.setText(this.outputFixImagesTextField.getText());                
+        this.inputExtractDataField.setText(this.outputFixImagesTextField.getText());                
     }//GEN-LAST:event_outputFixOrderTextFieldActionPerformed
 
     private void runOcrButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_runOcrButtonActionPerformed
@@ -1048,6 +1211,86 @@ public class ImageFilesSelector extends javax.swing.JFrame {
         updateRunRequestPermission();
     }//GEN-LAST:event_emailTextFieldActionPerformed
 
+    private void teamComboBoxExtractActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_teamComboBoxExtractActionPerformed
+        // TODO add your handling code here:
+        if(this.teamComboBoxExtract.getSelectedItem().toString().equals("NONE")){
+            this.runExtractDataButton.setEnabled(false);
+        }else{
+            this.runExtractDataButton.setEnabled(true);
+        }        
+    }//GEN-LAST:event_teamComboBoxExtractActionPerformed
+
+    private void remoteConfigCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_remoteConfigCheckBoxActionPerformed
+        // TODO add your handling code here:
+        this.newsPaperNameExtractDataComboBox.setEditable(remoteConfigCheckBox.isSelected());
+        this.newsPaperNameExtractDataComboBox.setEnabled(remoteConfigCheckBox.isSelected());
+        this.propertiesFileExtractDataTextField.setEditable(!remoteConfigCheckBox.isSelected());
+        this.propertiesFileExtractDataTextField.setEnabled(!remoteConfigCheckBox.isSelected());
+        this.odForPropertiesFileButton.setEnabled(!remoteConfigCheckBox.isSelected());
+    }//GEN-LAST:event_remoteConfigCheckBoxActionPerformed
+
+    private void runExtractDataButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_runExtractDataButtonActionPerformed
+        // TODO add your handling code here:
+        Configuration config = new Configuration();
+        PortadaWorker worker = new PortadaWorker();
+        List<String> options = new ArrayList<>();
+        options.add("extract");
+        options.add("-i");
+        options.add(this.inputExtractDataField.getText());
+        options.add("-o");
+        options.add(this.outputSelectExtractDataField.getText());
+        options.add("-tm");
+        options.add(this.teamComboBoxExtract.getSelectedItem().toString().toLowerCase());
+        if(this.remoteConfigCheckBox.isSelected()){
+            options.add("--extractConfigMode");
+            options.add("R");
+            options.add("--extractConfigProtertiesFile");
+            options.add(((ComboBoxItem)this.newsPaperNameExtractDataComboBox.getSelectedItem()).getId());
+            if(!this.parserConfigFileTextField.getText().isBlank()){
+                options.add("--extractJsonConfigParsersFile");
+                options.add(this.parserConfigFileTextField.getText());
+            }
+        }else{
+            options.add("--extractConfigMode");
+            options.add("L");
+            options.add("--extractConfigProtertiesFile");
+            options.add(this.propertiesFileExtractDataTextField.getText());
+            if(!this.parserConfigFileTextField.getText().isBlank()){
+                options.add("--extractJsonConfigParsersFile");
+                options.add(this.parserConfigFileTextField.getText());
+            }
+        }
+        String[] par = new String[options.size()];
+        config.parseArgumentsAndConfigure(options.toArray( par));
+        worker.init(config);
+        worker.execute();        
+        
+    }//GEN-LAST:event_runExtractDataButtonActionPerformed
+
+    private void odForParserConfigFileButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_odForParserConfigFileButtonActionPerformed
+        // TODO add your handling code here:
+        JFileChooser fc = new JFileChooser(dirBase.getAbsolutePath());
+        fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        fc.setCurrentDirectory(dirBase.getAbsoluteFile());
+        fc.setFileFilter(new FileNameExtensionFilter("Config of parsers", "json"));
+        int resp = fc.showOpenDialog(this);
+        if(resp!=JFileChooser.CANCEL_OPTION){
+            this.parserConfigFileTextField.setText(fc.getSelectedFile().getAbsolutePath());
+        }
+    }//GEN-LAST:event_odForParserConfigFileButtonActionPerformed
+
+    private void odForPropertiesFileButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_odForPropertiesFileButtonActionPerformed
+        // TODO add your handling code here:
+        JFileChooser fc = new JFileChooser(dirBase.getAbsolutePath());
+        fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        fc.setCurrentDirectory(dirBase.getAbsoluteFile());
+        fc.setFileFilter(new FileNameExtensionFilter("Config of extraction", "properties"));
+        int resp = fc.showOpenDialog(this);
+        if(resp!=JFileChooser.CANCEL_OPTION){
+            this.propertiesFileExtractDataTextField.setText(fc.getSelectedFile().getAbsolutePath());
+        }
+    }//GEN-LAST:event_odForPropertiesFileButtonActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1091,6 +1334,16 @@ public class ImageFilesSelector extends javax.swing.JFrame {
         return new DefaultComboBoxModel<>(values);
     }
 
+    protected static ComboBoxModel<ComboBoxItem> createComboboxModelNewsPaperForSelecting(){
+        Properties prop = Configuration.loadAndGetConfigProperties();
+        String[] values = prop.getProperty("newspapersForSlecting", "NONE,db,dm,en,lp,sm").split(",");
+        DefaultComboBoxModel<ComboBoxItem> m = new DefaultComboBoxModel<>();
+        for(String v: values){
+            m.addElement(new ComboBoxItem(v));
+        }
+        return m;
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> commandComboBox;
     private javax.swing.JComboBox<String> commandFixOrderComboBox;
@@ -1099,10 +1352,10 @@ public class ImageFilesSelector extends javax.swing.JFrame {
     private javax.swing.JTextField emailTextField;
     private javax.swing.JCheckBox fixbacktransCheckBox;
     private javax.swing.JCheckBox forceRequestCheckBox;
+    private javax.swing.JTextField inputExtractDataField;
     private javax.swing.JTextField inputFixImagesTextField;
     private javax.swing.JTextField inputFixOrderTextField;
     private javax.swing.JTextField inputOcerTextField;
-    private javax.swing.JTextField inputSelectBlocksTextField;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -1110,6 +1363,10 @@ public class ImageFilesSelector extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
+    private javax.swing.JLabel jLabel16;
+    private javax.swing.JLabel jLabel17;
+    private javax.swing.JLabel jLabel18;
+    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -1126,6 +1383,8 @@ public class ImageFilesSelector extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel14;
     private javax.swing.JPanel jPanel15;
     private javax.swing.JPanel jPanel16;
+    private javax.swing.JPanel jPanel17;
+    private javax.swing.JPanel jPanel18;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
@@ -1135,23 +1394,30 @@ public class ImageFilesSelector extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
     private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JComboBox<ComboBoxItem> newsPaperNameExtractDataComboBox;
+    private javax.swing.JButton odForInputExtractDataButton;
     private javax.swing.JButton odForInputFixImagesButton;
     private javax.swing.JButton odForInputFixOrderButton;
     private javax.swing.JButton odForInputOcrButton;
-    private javax.swing.JButton odForInputSelectBlocksButton;
+    private javax.swing.JButton odForOutputExtractDataButton;
     private javax.swing.JButton odForOutputFixImagesButton;
     private javax.swing.JButton odForOutputFixOrderButton;
     private javax.swing.JButton odForOutputOcrButton;
-    private javax.swing.JButton odForOutputSelectBlocksButton;
+    private javax.swing.JButton odForParserConfigFileButton;
+    private javax.swing.JButton odForPropertiesFileButton;
     private javax.swing.JTextField outputFixImagesTextField;
     private javax.swing.JTextField outputFixOrderTextField;
     private javax.swing.JTextField outputOcrTextField;
-    private javax.swing.JTextField outputSelectBlocksTextField;
+    private javax.swing.JTextField outputSelectExtractDataField;
+    private javax.swing.JTextField parserConfigFileTextField;
+    private javax.swing.JTextField propertiesFileExtractDataTextField;
+    private javax.swing.JCheckBox remoteConfigCheckBox;
+    private javax.swing.JButton runExtractDataButton;
     private javax.swing.JButton runFixImagesButton;
     private javax.swing.JButton runFixOrderButton;
     private javax.swing.JButton runOcrButton;
     private javax.swing.JButton runRequestPermisionButton;
-    private javax.swing.JButton runSelectBlocksButton;
+    private javax.swing.JComboBox<String> teamComboBoxExtract;
     private javax.swing.JComboBox<String> teamComboBoxOcr;
     private javax.swing.JComboBox<String> teamComboBoxOrder;
     private javax.swing.JComboBox<String> teamComboBoxRequestAccess;
@@ -1232,5 +1498,34 @@ public class ImageFilesSelector extends javax.swing.JFrame {
             enabled = enabled && true;
         }
         this.runRequestPermisionButton.setEnabled(enabled);        
+    }
+    
+    private static class ComboBoxItem{
+        private String id;
+        private String desc;
+
+        public ComboBoxItem(String string) {
+            String[] avalue = string.split(":");
+            id=avalue[0];
+            if(avalue.length==1){
+                desc=avalue[0];
+            }else{
+                desc=avalue[1];
+            }
+        }
+        
+        public ComboBoxItem(String id, String desc) {
+            this.id = id;
+            this.desc = desc;
+        }
+
+        @Override
+        public String toString() {
+            return desc;
+        }
+
+        public String getId() {
+            return id;
+        }
     }
 }
