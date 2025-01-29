@@ -19,7 +19,7 @@ import org.elsquatrecaps.portada.jportadamicroservice.client.JPortadaMicroservic
  * @author josep
  */
 public class ImageFilesSelector extends javax.swing.JFrame {
-    private static String[] fixImagesCommads = {"fixAll", "deskew", "dewarp","fixBackTransparency"};
+    private static String[] fixImagesCommads = {"autocorrect", "fixAll", "deskew", "dewarp","fixBackTransparency"};
     private int iCommandSelection=0;
     private File dirBase=new File(".");
 
@@ -89,6 +89,10 @@ public class ImageFilesSelector extends javax.swing.JFrame {
         outputOcrTextField = new javax.swing.JTextField();
         odForInputOcrButton = new javax.swing.JButton();
         odForOutputOcrButton = new javax.swing.JButton();
+        AutoDiscardCheckBox = new javax.swing.JCheckBox();
+        jLabel20 = new javax.swing.JLabel();
+        discardFolderTextField = new javax.swing.JTextField();
+        odForDiscardFolder = new javax.swing.JButton();
         jPanel11 = new javax.swing.JPanel();
         runOcrButton = new javax.swing.JButton();
         teamComboBoxOcr = new javax.swing.JComboBox<>();
@@ -241,7 +245,7 @@ public class ImageFilesSelector extends javax.swing.JFrame {
 
         jLabel1.setText("Command:");
 
-        commandComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Fix all", "Deskew", "Dewarp", "Fix Back Transparecy" }));
+        commandComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Automatic fixing", "Fix all", "Deskew", "Dewarp", "Fix Back Transparecy" }));
         commandComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 commandComboBoxActionPerformed(evt);
@@ -571,27 +575,53 @@ public class ImageFilesSelector extends javax.swing.JFrame {
             }
         });
 
+        AutoDiscardCheckBox.setSelected(true);
+        AutoDiscardCheckBox.setText("Auto discard?");
+        AutoDiscardCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                AutoDiscardCheckBoxActionPerformed(evt);
+            }
+        });
+
+        jLabel20.setText("Discard folder:");
+
+        odForDiscardFolder.setText("Open dialog");
+        odForDiscardFolder.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                odForDiscardFolderActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel10Layout = new javax.swing.GroupLayout(jPanel10);
         jPanel10.setLayout(jPanel10Layout);
         jPanel10Layout.setHorizontalGroup(
             jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel10Layout.createSequentialGroup()
-                .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel10Layout.createSequentialGroup()
                         .addGap(39, 39, 39)
                         .addComponent(jLabel7)
                         .addGap(18, 18, 18)
-                        .addComponent(inputOcerTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 404, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(odForInputOcrButton))
+                        .addComponent(inputOcerTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 404, Short.MAX_VALUE))
                     .addGroup(jPanel10Layout.createSequentialGroup()
                         .addGap(28, 28, 28)
-                        .addComponent(jLabel8)
-                        .addGap(18, 18, 18)
-                        .addComponent(outputOcrTextField)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(odForOutputOcrButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel10Layout.createSequentialGroup()
+                                .addComponent(AutoDiscardCheckBox)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jLabel20)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(discardFolderTextField))
+                            .addGroup(jPanel10Layout.createSequentialGroup()
+                                .addComponent(jLabel8)
+                                .addGap(18, 18, 18)
+                                .addComponent(outputOcrTextField)))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(odForOutputOcrButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(odForInputOcrButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(odForDiscardFolder, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(16, 16, 16))
         );
         jPanel10Layout.setVerticalGroup(
             jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -606,7 +636,14 @@ public class ImageFilesSelector extends javax.swing.JFrame {
                     .addComponent(jLabel8)
                     .addComponent(outputOcrTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(odForOutputOcrButton))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(odForDiscardFolder)
+                    .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(AutoDiscardCheckBox)
+                        .addComponent(jLabel20)
+                        .addComponent(discardFolderTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
         );
 
         runOcrButton.setText("Run OCR");
@@ -623,7 +660,7 @@ public class ImageFilesSelector extends javax.swing.JFrame {
             jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel11Layout.createSequentialGroup()
                 .addGap(92, 92, 92)
-                .addComponent(runOcrButton, javax.swing.GroupLayout.DEFAULT_SIZE, 378, Short.MAX_VALUE)
+                .addComponent(runOcrButton, javax.swing.GroupLayout.DEFAULT_SIZE, 384, Short.MAX_VALUE)
                 .addGap(150, 150, 150))
         );
         jPanel11Layout.setVerticalGroup(
@@ -647,18 +684,19 @@ public class ImageFilesSelector extends javax.swing.JFrame {
         jPanel8.setLayout(jPanel8Layout);
         jPanel8Layout.setHorizontalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel8Layout.createSequentialGroup()
+            .addGroup(jPanel8Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel8Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel11)
-                .addGap(18, 18, 18)
-                .addComponent(teamComboBoxOcr, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(67, 67, 67))
+                    .addGroup(jPanel8Layout.createSequentialGroup()
+                        .addComponent(jPanel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel8Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jLabel11)
+                        .addGap(18, 18, 18)
+                        .addComponent(teamComboBoxOcr, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(67, 67, 67))
+                    .addComponent(jPanel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
         jPanel8Layout.setVerticalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -669,9 +707,9 @@ public class ImageFilesSelector extends javax.swing.JFrame {
                     .addComponent(jLabel11))
                 .addGap(18, 18, 18)
                 .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(18, 18, 18)
                 .addComponent(jPanel11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(124, Short.MAX_VALUE))
+                .addContainerGap(77, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Ocr process", jPanel8);
@@ -993,7 +1031,7 @@ public class ImageFilesSelector extends javax.swing.JFrame {
 
     private void odForOutputFixImagesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_odForOutputFixImagesButtonActionPerformed
         JFileChooser fc = new JFileChooser(dirBase.getAbsoluteFile());
-        if(iCommandSelection==0){
+        if(iCommandSelection<=1){
             fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         }else{
             fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -1012,7 +1050,7 @@ public class ImageFilesSelector extends javax.swing.JFrame {
 
     private void odForInputFixImagesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_odForInputFixImagesButtonActionPerformed
         JFileChooser fc = new JFileChooser(dirBase.getAbsolutePath());
-        if(iCommandSelection==0){
+        if(iCommandSelection<=1){
             fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         }else{
             fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -1029,7 +1067,7 @@ public class ImageFilesSelector extends javax.swing.JFrame {
 
     private void commandComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_commandComboBoxActionPerformed
         iCommandSelection = commandComboBox.getSelectedIndex();
-        if(iCommandSelection==0){
+        if(iCommandSelection<=1){
             inputFixImagesTextField.setText("");
             outputFixImagesTextField.setText("");
         }
@@ -1115,6 +1153,11 @@ public class ImageFilesSelector extends javax.swing.JFrame {
         options.add(this.inputOcerTextField.getText());
         options.add("-o");
         options.add(this.outputOcrTextField.getText());
+        if(this.AutoDiscardCheckBox.isSelected()){
+            options.add("-ad");
+            options.add("-df");
+            options.add(this.discardFolderTextField.getText());
+        }
         options.add("-tm");
         options.add(this.teamComboBoxOcr.getSelectedItem().toString().toLowerCase());
         String[] par = new String[options.size()];
@@ -1291,6 +1334,27 @@ public class ImageFilesSelector extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_odForPropertiesFileButtonActionPerformed
 
+    private void odForDiscardFolderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_odForDiscardFolderActionPerformed
+        // TODO add your handling code here:
+        JFileChooser fc = new JFileChooser(dirBase.getAbsoluteFile());
+        fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        fc.setCurrentDirectory(dirBase.getAbsoluteFile());
+        int resp = fc.showOpenDialog(this);
+        if(resp!=JFileChooser.CANCEL_OPTION){
+            discardFolderTextField.setText(fc.getSelectedFile().getAbsolutePath());
+        }        
+    }//GEN-LAST:event_odForDiscardFolderActionPerformed
+
+    private void AutoDiscardCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AutoDiscardCheckBoxActionPerformed
+        // TODO add your handling code here:
+        if(this.AutoDiscardCheckBox.isSelected()){
+            this.discardFolderTextField.setEnabled(true);
+        }else{
+            this.discardFolderTextField.setText("");
+            this.discardFolderTextField.setEnabled(false);
+        }
+    }//GEN-LAST:event_AutoDiscardCheckBoxActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1345,10 +1409,12 @@ public class ImageFilesSelector extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JCheckBox AutoDiscardCheckBox;
     private javax.swing.JComboBox<String> commandComboBox;
     private javax.swing.JComboBox<String> commandFixOrderComboBox;
     private javax.swing.JCheckBox deskewCheckBox;
     private javax.swing.JCheckBox dewarpCheckBox;
+    private javax.swing.JTextField discardFolderTextField;
     private javax.swing.JTextField emailTextField;
     private javax.swing.JCheckBox fixbacktransCheckBox;
     private javax.swing.JCheckBox forceRequestCheckBox;
@@ -1368,6 +1434,7 @@ public class ImageFilesSelector extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -1395,6 +1462,7 @@ public class ImageFilesSelector extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel9;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JComboBox<ComboBoxItem> newsPaperNameExtractDataComboBox;
+    private javax.swing.JButton odForDiscardFolder;
     private javax.swing.JButton odForInputExtractDataButton;
     private javax.swing.JButton odForInputFixImagesButton;
     private javax.swing.JButton odForInputFixOrderButton;
@@ -1449,6 +1517,14 @@ public class ImageFilesSelector extends javax.swing.JFrame {
     private void updateComponenetsFirst() {
         switch (iCommandSelection) {
             case 0:
+                dewarpCheckBox.setEnabled(false);
+                dewarpCheckBox.setSelected(false);
+                deskewCheckBox.setEnabled(false);
+                deskewCheckBox.setSelected(false);
+                fixbacktransCheckBox.setEnabled(false);
+                fixbacktransCheckBox.setSelected(false);
+                break;
+            case 1:
                 dewarpCheckBox.setEnabled(true);
                 dewarpCheckBox.setSelected(true);
                 deskewCheckBox.setEnabled(true);
@@ -1456,7 +1532,7 @@ public class ImageFilesSelector extends javax.swing.JFrame {
                 fixbacktransCheckBox.setEnabled(true);
                 fixbacktransCheckBox.setSelected(true);
                 break;
-            case 1:
+            case 2:
                 //deskew
                 dewarpCheckBox.setEnabled(false);
                 dewarpCheckBox.setSelected(false);
@@ -1465,7 +1541,7 @@ public class ImageFilesSelector extends javax.swing.JFrame {
                 fixbacktransCheckBox.setEnabled(false);
                 fixbacktransCheckBox.setSelected(false);
                 break;
-            case 2:
+            case 3:
                 //dewarp
                 dewarpCheckBox.setEnabled(false);
                 dewarpCheckBox.setSelected(true);

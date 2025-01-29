@@ -113,6 +113,10 @@ public class Configuration{
     private Map<String, String> hosts = new HashMap<>();
     private Map<String, String> prefs = new HashMap<>();
     private Map<String, String> protocols = new HashMap<>();
+    @Arg(dest="discard_folder")
+    private String discardFolder; //-df
+    @Arg(dest="autoDiscard")
+    private Boolean autoDiscard;  //-ad
     @Arg(dest="fixTrans")
     private Boolean fixTransparency;
     @Arg(dest="fixSkew")
@@ -226,6 +230,12 @@ public class Configuration{
                 case "extractExtensionFile":
                     this.setExtractExtensionFile((String) val);
                     break;
+                case "discardFolder":
+                    this.setDiscardFolder((String) val);
+                    break;
+                case "autoDiscard":
+                    this.setAutoDiscard((String) val);
+                    break;
             }
         }
     }
@@ -259,6 +269,15 @@ public class Configuration{
         if(this.outputFile==null){
             this.outputFile=inputFile;
         }
+        if(fixSkew==null){
+            fixSkew = false;
+        }
+        if(fixTransparency==null){
+            fixTransparency = false;
+        }
+        if(fixWarp==null){
+            fixWarp = false;
+        }
         if(!(fixSkew || fixTransparency || fixWarp)){
             fixSkew = fixWarp = fixTransparency = Boolean.TRUE;
         }
@@ -286,6 +305,8 @@ public class Configuration{
         //parser.addArgument("-p", "--port").nargs("?").help("microservice port");
         //parser.addArgument("-ht", "--host").nargs("?").help("microservice host");
         //parser.addArgument("-pf", "--pref").nargs("?").help("microservice prefix path");
+        parser.addArgument("-df", "--discard_folder").nargs("?").help("Folder where discard wrong images");
+        parser.addArgument("-ad", "--autoDiscard").action(Arguments.storeTrue()).help("Discard images with wrong quality before of ocr process");
         parser.addArgument("-t", "--fixTrans").action(Arguments.storeTrue()).help("Images to process not need to fix back transparency");
         parser.addArgument("-s", "--fixSkew").action(Arguments.storeTrue()).help("Images to process not need to fix skew lines");
         parser.addArgument("-w", "--fixWarp").action(Arguments.storeTrue()).help("Images to process not need to fix warp lines");
@@ -345,6 +366,9 @@ public class Configuration{
         if(this.team!=null){
             this.attrs.add("team");
         }
+        if(this.discardFolder!=null){
+            this.attrs.add("discard_folder");
+        }
         if(this.inputFile!=null){
             this.attrs.add("input_file");
             this.commandArgumentsSize++;
@@ -360,6 +384,11 @@ public class Configuration{
         if(this.positionalArgs!=null){
             this.command = positionalArgs.get(0);
             this.attrs.add("command");
+        }
+        if(autoDiscard!=null){
+            this.attrs.add("autoDiscard");            
+        }else{
+            this.autoDiscard=false;
         }
         if(getFixTransparency()!=null){
             this.attrs.add("fixTrans");            
@@ -518,7 +547,7 @@ public class Configuration{
 
     protected void setPrefs(String key, String val) {
         if(val!=null && !val.isEmpty()){
-            this.prefs.put(key, val);
+            this.prefs.put(key, val.equals("_NONE_")?"":val);
         }
     }
 
@@ -657,6 +686,26 @@ public class Configuration{
 
     public String getPass() {
         return this.adminPass;
+    }
+
+    private void setDiscardFolder(String string) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    private void setAutoDiscard(Boolean par) {
+        this.autoDiscard = par;
+    }
+    
+    private void setAutoDiscard(String string) {
+        setAutoDiscard(getBoolean(string));   
+    }
+
+    public Boolean getAutoDiscard() {
+        return autoDiscard==null?false:autoDiscard;
+    }
+
+    public String getDiscardFolder() {
+        return discardFolder;
     }
 
 }

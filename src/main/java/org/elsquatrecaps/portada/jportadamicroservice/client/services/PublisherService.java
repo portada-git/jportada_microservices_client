@@ -61,7 +61,7 @@ public class PublisherService {
     private Function<ProgressInfo, Void> publish;
     
     
-    public static String[] msContext = {"java", "python", "r"};
+    public static String[] msContext = {"java", "python", "r", "docker"};
     protected Map<String, ConnectionMs> conDataList;
 
     public PublisherService() {
@@ -204,7 +204,7 @@ public class PublisherService {
             post.addHeader("X-Signature", signatureData.getSignedData());
             post.addHeader("Cookie", signatureData.getSessionCookie());
         }
-        List<NameValuePair> params = new ArrayList<NameValuePair>();
+        List<NameValuePair> params = new ArrayList<>();
         for(String key: paramData.keySet()){
             params.add(new BasicNameValuePair(key, paramData.get(key)));
         }

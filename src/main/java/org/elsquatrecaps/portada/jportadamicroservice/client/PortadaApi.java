@@ -5,6 +5,12 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.CopyOption;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -14,6 +20,7 @@ import org.elsquatrecaps.autonewsextractor.tools.configuration.AutoNewsExtractor
 import org.elsquatrecaps.portada.jportadamicroservice.client.services.PublisherService;
 import org.elsquatrecaps.portada.jportadamicroservice.client.services.extractor.FileExtractorSevice;
 import org.elsquatrecaps.portada.jportadamicroservice.client.services.imagefile.ImageFileService;
+import org.elsquatrecaps.portada.jportadamicroservice.client.services.imagefile.ImageQualityFilterService;
 import org.elsquatrecaps.portada.jportadamicroservice.client.services.publickey.PublicKeyService;
 import org.json.JSONObject;
 
@@ -28,6 +35,7 @@ public class PortadaApi {
     private Function<ProgressInfo, Void> publish;
     PublisherService publisherService=new PublisherService();
     ImageFileService imageFileService=new ImageFileService();
+    ImageQualityFilterService imageQualityFilterService = new ImageQualityFilterService();
     PublicKeyService publicKeyService=new PublicKeyService();
     FileExtractorSevice fileExtractorSevice=new FileExtractorSevice();
     
@@ -47,6 +55,7 @@ public class PortadaApi {
         imageFileService.init(conDataList).init(publish);
         publisherService.init(conDataList).init(publish);
         fileExtractorSevice.init(conDataList).init(publish);
+        imageQualityFilterService.init(conDataList).init(publish);
     }
     
     public final void init(){
@@ -387,24 +396,28 @@ public class PortadaApi {
     public void allImagesToText(Configuration config){
          switch (config.getCommandArgumentsSize()) {
             case 1:
-                allImagesToText(config.getInputDir(), config.getInputDir(), config.getTeam());
+                allImagesToText(config.getInputDir(), config.getInputDir(), 
+                        config.getTeam(), config.getAutoDiscard(), config.getDiscardFolder());
                 break;
             case 2:
-                allImagesToText(config.getInputFile(), config.getOutputFile(), config.getTeam());
+                allImagesToText(config.getInputFile(), config.getOutputFile(), 
+                        config.getTeam(), config.getAutoDiscard(), config.getDiscardFolder());
                 break;
             case 3:
-                allImagesToText(config.getInputFile(), config.getOutputFile(), config.getErrorFile(), config.getTeam());
+                allImagesToText(config.getInputFile(), config.getOutputFile(), config.getErrorFile(), 
+                        config.getTeam(), config.getAutoDiscard(), config.getDiscardFolder());
                 break;
             default:
                 throw new RuntimeException("Bad number of parametres for fixBackTransparencyImageFile command");             
          }        
     }
     
-    private void allImagesToText(String inputDir, String outputDir, String team) {
-        allImagesToText(inputDir, outputDir, "errors.txt",  team);
+    private void allImagesToText(String inputDir, String outputDir, String team, boolean autoDiscard, String discardFolder) {
+        allImagesToText(inputDir, outputDir, "errors.txt",  team, autoDiscard, discardFolder);
     }
 
-    private void allImagesToText(String inputDir, String outputDir, String errorFileName, String team) {
+    private void allImagesToText(String inputDir, String outputDir, String errorFileName, String team, boolean autoDiscard, String discardFolder) {
+        double thresholdToDiscard = 0.6;
         File errorFile = new File(errorFileName);
         File inputDirFile = new File(inputDir);
         File outputDirFile = new File(outputDir);
@@ -431,15 +444,35 @@ public class PortadaApi {
             HashMap p = new HashMap();
             p.put("team", team);
             for(File inputImageFile: lf){
-                File outputImageFile = new File(outputDirFile, inputImageFile.getName()
-                        .substring(0, inputImageFile.getName().lastIndexOf(".")).concat(".txt"));
                 String m = "image: ";
                 String n = inputImageFile.getName();
-                if(imageFileService.transformImageFile("pr/ocr", inputImageFile.getAbsolutePath(), 
-                        outputImageFile.getAbsolutePath(), errorFile.getAbsolutePath(), p, "java")){
-                    publishProgress(m, n, "OCR", ++fet, all);
+                boolean discardImage = false;
+                if(autoDiscard){
+                    JSONObject resp = imageQualityFilterService.processBinaryFilter(
+                            inputImageFile.getAbsolutePath(), thresholdToDiscard);
+                    if(resp.getInt("status")==0){
+                        discardImage = resp.getJSONObject("result").getDouble("score")>thresholdToDiscard;
+                    }else{
+                         publishErrorProgress(m, n, "DISCARDING IMAGE", ++fet, all, -1);
+                    }
+                }
+                if(discardImage){
+                    try {
+                        File outputImageFile = new File(discardFolder, inputImageFile.getName());
+                        Files.copy(inputImageFile.toPath(), outputImageFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                        publishProgress(m, n, "OCR DISCARDED", ++fet, all);
+                    } catch (IOException ex) {
+                        publishErrorProgress(m, n, "OCR DISCARDED", ++fet, all, -1);
+                    }
                 }else{
-                    publishErrorProgress(m, n, "OCR", ++fet, all, -1);
+                    File outputImageFile = new File(outputDirFile, inputImageFile.getName()
+                            .substring(0, inputImageFile.getName().lastIndexOf(".")).concat(".txt"));
+                    if(imageFileService.transformImageFile("pr/ocr", inputImageFile.getAbsolutePath(), 
+                            outputImageFile.getAbsolutePath(), errorFile.getAbsolutePath(), p, "java")){
+                        publishProgress(m, n, "OCR", ++fet, all);
+                    }else{
+                        publishErrorProgress(m, n, "OCR", ++fet, all, -1);
+                    }
                 }
             } 
         }else{
@@ -461,6 +494,151 @@ public class PortadaApi {
         }        
     }
 
+    public void autoCorrectAllImages(Configuration config){
+         switch (config.getCommandArgumentsSize()) {
+            case 1:
+                autoCorrectAllImages(config.getInputDir(), config.getInputDir());
+                break;
+            case 2:
+                autoCorrectAllImages(config.getInputFile(), config.getOutputFile());
+                break;
+            case 3:
+                autoCorrectAllImages(config.getInputFile(), config.getOutputFile(), config.getErrorFile());
+                break;
+            default:
+                throw new RuntimeException("Bad number of parametres for fixBackTransparencyImageFile command");             
+         }        
+    }
+    
+    public void autoCorrectAllImages(String inputDir, String outputDir){
+        autoCorrectAllImages(inputDir, outputDir, "errors.txt");
+    }
+    
+    public void autoCorrectAllImages(String inputDir, String outputDir, String errorFileName){
+        String p;
+        File errorFile = new File(errorFileName);
+        File inputDirFile = new File(inputDir);
+        File outputDirFile = new File(outputDir);
+        if(errorFile.exists()){
+            errorFile.delete();
+        }
+        if(!outputDirFile.exists()){
+            outputDirFile.mkdirs();
+        }
+        if(inputDirFile.isDirectory() && outputDirFile.isDirectory()){
+            File[] lf = inputDirFile.listFiles(new FileFilter(){
+                @Override
+                public boolean accept(File file) {
+                    boolean ret = false;
+                    for(int i=0; !ret && i<imagesExtensions.length; i++){
+                        ret = file.isFile() && file.getName().substring(file.getName().lastIndexOf(".")).toLowerCase().equals(imagesExtensions[i]);
+                    }
+                    return ret;
+                }
+            });
+            
+            int fet=0;
+            int all = lf.length;
+            int actions = 0;
+            publishInfo("Starting process", "fix image");
+            for(File inputImageFile: lf){
+                boolean processOk;
+                File outputImageFile = new File(outputDirFile, inputImageFile.getName());
+                String m = "image: ";
+                String n = inputImageFile.getName();
+                String iif = inputImageFile.getAbsolutePath();
+                
+                JSONObject multiclassFilter = imageQualityFilterService.processMulticlassFilter(iif, 0.6);
+                
+                if(multiclassFilter.getInt("status")==0){
+                    switch (multiclassFilter.getJSONObject("result").getString("label")) {
+                        case "TODO":
+                            all += 2;
+                            actions = FixActions.FIX_SKEW.getId() + FixActions.FIX_WARP.getId() + FixActions.FIX_TANSPARENCY.getId();
+                            break;
+                        case "CURVATURA":
+                            actions = FixActions.FIX_WARP.getId();
+                            break;
+                        case "INCLINACION":
+                            actions = FixActions.FIX_SKEW.getId();
+                            break;
+                        case "RUIDO":
+                            actions = FixActions.FIX_TANSPARENCY.getId();
+                            break;
+                        case "ORIGINAL":
+                            actions = 0;
+                            break;
+                    }
+                    if(actions==0){
+                        try {
+                            Files.copy(inputImageFile.toPath(), outputImageFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                            processOk = true;
+                        } catch (IOException ex) {
+                            processOk = false;
+                        }
+                        p = "copying good image";
+                        if(processOk){
+                            publishProgress(m, n, p, ++fet, all);
+                        }else{
+                            publishErrorProgress(m, n, p, ++fet, all, -1);                    
+                        }
+                    }else{
+                        if(FixActions.isActionIn(FixActions.FIX_TANSPARENCY, actions)){
+                            processOk = fixBackTransparencyImageFile(iif, outputImageFile.getAbsolutePath(), errorFile.getAbsolutePath());
+                            p = "fix transparency";
+                            if(processOk){
+                                iif = outputImageFile.getAbsolutePath();                        
+                                publishProgress(m, n, p, ++fet, all);
+                            }else{
+                                publishErrorProgress(m, n, p, ++fet, all, -1);                    
+                            }
+                        }                
+                        if(FixActions.isActionIn(FixActions.FIX_WARP, actions)){                
+                            processOk = dewarpImageFile(iif, outputImageFile.getAbsolutePath(),errorFile.getAbsolutePath());
+                            p = "dewarp";
+                            if(processOk){
+                                iif = outputImageFile.getAbsolutePath();                        
+                                publishProgress(m, n, p, ++fet, all);
+                            }else{
+                                publishErrorProgress(m, n, p, ++fet, all, -1);                    
+                            }                    
+                        }
+                        if(FixActions.isActionIn(FixActions.FIX_SKEW, actions)){                
+                            processOk = deskewImageFile(iif, outputImageFile.getAbsolutePath(), errorFile.getAbsolutePath());
+                            p = "deskew";
+                            if(processOk){
+                                publishProgress(m, n, p, ++fet, all);
+                            }else{
+                                publishErrorProgress(m, n, p, ++fet, all, multiclassFilter.getInt("status"));                    
+                            }                    
+                        }
+                    }
+                }else{
+                    publishErrorInfo(multiclassFilter.getString("message"), "fix image", -1);
+                }                                
+            } 
+            //System.out.println();
+        }else{
+            //ERROR NO ES DIRECTORIO
+            String dName;
+            if(!inputDirFile.isDirectory()){
+                dName = inputDir;
+            }else{
+                dName = outputDir;
+            }
+            String message = String.format("Error! %s is not a directory. this command need an input difectory and an output directory" , dName);
+            try(FileWriter err = new FileWriter(errorFile, true)){
+                err.write(message);
+                Logger.getLogger(PortadaApi.class.getName()).log(Level.SEVERE, message);
+            } catch (IOException ex) {
+                Logger.getLogger(PortadaApi.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            publishErrorInfo(message, "fix image", -1);
+        }        
+    }
+
+
+    
     public void fixAllImages(Configuration config){
          switch (config.getCommandArgumentsSize()) {
             case 1:
@@ -596,6 +774,10 @@ public class PortadaApi {
         return ret;
     }
     
+    public boolean fixBackTransparencyImageFile(String inputFile, String outputFile, String errorFile){
+        return imageFileService.transformImageFile("fixBackTransparency", inputFile, outputFile, errorFile, "java");
+    }
+    
     public boolean fixBackTransparencyImageFile(String inputFile){
         return fixBackTransparencyImageFile(inputFile, inputFile, inputFile);
     }
@@ -604,9 +786,9 @@ public class PortadaApi {
         return fixBackTransparencyImageFile(inputFile, outputFile, outputFile);
     }
     
-    public boolean fixBackTransparencyImageFile(String inputFile, String outputFile, String errorFile){
-        return imageFileService.transformImageFile("fixBackTransparency", inputFile, outputFile, errorFile, "java");
-    }
+//    public boolean fixBackTransparencyImageFile(String inputFile, String outputFile, String errorFile){
+//        return imageFileService.transformImageFile("fixBackTransparency", inputFile, outputFile, errorFile, "java");
+//    }
     
     public boolean deskewImageFile(Configuration config){
         boolean ret;
