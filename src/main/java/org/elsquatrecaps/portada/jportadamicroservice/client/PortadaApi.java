@@ -5,11 +5,7 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.file.CopyOption;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.Map;
@@ -234,27 +230,48 @@ public class PortadaApi {
 //        }
 //    }
     
+    public void testAllImagesToParagraphs(Configuration config){
+        String processName = "Testing to marck columns in correct order";
+        String command = "testParagraphImageFile";
+        String context = "python";
+        allImagesToGetImagesList(config, command, context, processName);        
+    }
+    
+    public void allImagesToParagraphs(Configuration config){
+        String processName = "Cutting paragraphs in correct order";
+        String command = "redrawParagraphImageFile";
+        String context = "python";
+        allImagesToGetImagesList(config, command, context, processName);
+    }
+    
     public void allImagesToFixOrder(Configuration config){
+        String processName = "Redraw in correct order";
+        String command = "pr/redrawOrderedImageFile";
+        String context = "python";
+        allImagesToGetImagesList(config, command, context, processName);
+    }
+    
+    public void allImagesToGetImagesList(Configuration config, String cmd, String context, String processName){
         switch (config.getCommandArgumentsSize()) {
             case 1:
-                allImagesToFixOrder(config.getInputDir(), config.getInputDir(), config.getTeam());
+                allImagesToGetImagesList(cmd, context, config.getInputDir(), config.getInputDir(), config.getTeam(), processName);
                 break;
             case 2:
-                allImagesToFixOrder(config.getInputFile(), config.getOutputFile(), config.getTeam());
+                allImagesToGetImagesList(cmd, context,config.getInputFile(), config.getOutputFile(), config.getTeam(), processName);
                 break;
             case 3:
-                allImagesToFixOrder(config.getInputFile(), config.getOutputFile(), config.getErrorFile(), config.getTeam());
+                allImagesToGetImagesList(cmd, context,config.getInputFile(), config.getOutputFile(), config.getErrorFile(), config.getTeam(), processName);
                 break;
             default:
                 throw new RuntimeException("Bad number of parametres for fixBackTransparencyImageFile command");             
          }        
     }
     
-    private void allImagesToFixOrder(String inputDir, String outputDir, String team) {
-        allImagesToFixOrder(inputDir, outputDir, "errors.txt",  team);
+    private void allImagesToGetImagesList(String cmd, String context,  String inputDir, String outputDir, String team, String processName) {
+        allImagesToGetImagesList(cmd, context, inputDir, outputDir, "errors.txt",  team, processName);
     }
 
-    private void allImagesToFixOrder(String inputDir, String outputDir, String errorFileName, String team) {
+    private void allImagesToGetImagesList(String command, String context, String inputDir, String outputDir, String errorFileName, String team, String processName) {
         File errorFile = new File(errorFileName);
         File inputDirFile = new File(inputDir);
         File outputDirFile = new File(outputDir);
@@ -277,22 +294,24 @@ public class PortadaApi {
             });
             int all = lf.length;
             int fet=0;
-            publishInfo("Starting process", "Redraw in correct order");
+            publishInfo("Starting process", processName );
             HashMap p = new HashMap();
-            p.put("team", team);
+            if (team !=null){
+                p.put("team", team);
+            }
             for(File inputImageFile: lf){
                 String m = "image: ";
                 String n = inputImageFile.getName();
                 String iname = n.split("\\.")[0];
                 File outName = new File(new File(outputDir), iname);
                 JSONObject jsonresponse = new JSONObject(
-                        imageFileService.transformImageFileToJsonImages("pr/redrawOrderedImageFile", 
+                        imageFileService.transformImageFileToJsonImages(command, 
                                 inputImageFile.getAbsolutePath(), 
-                                outName.getAbsolutePath(), p, "python"));
+                                outName.getAbsolutePath(), p, context));
                 if(jsonresponse.getInt("status")==0){
-                    publishProgress(m, n, "Redraw in correct order", ++fet, all);
+                    publishProgress(m, n, processName, ++fet, all);
                 }else{
-                    publishErrorProgress(m, n, "Redraw in correct order", ++fet, all, -1);
+                    publishErrorProgress(m, n, processName, ++fet, all, -1);
                 }
             } 
         }else{
@@ -310,7 +329,7 @@ public class PortadaApi {
             } catch (IOException ex) {
                 Logger.getLogger(PortadaApi.class.getName()).log(Level.SEVERE, null, ex);
             }
-            publishErrorInfo(message, "Redraw in correct order",-1);
+            publishErrorInfo(message, processName,-1);
         }        
     }
    

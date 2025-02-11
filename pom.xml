@@ -58,7 +58,7 @@
         </dependency>
     </dependencies>
     <build>
-        <!--finalName>JPortadaMicroservice</finalName-->
+        <finalName>jportada_microservices_client</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

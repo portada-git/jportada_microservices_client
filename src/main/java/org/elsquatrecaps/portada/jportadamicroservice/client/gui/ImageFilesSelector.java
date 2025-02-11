@@ -53,7 +53,7 @@ public class ImageFilesSelector extends javax.swing.JFrame {
         forceRequestCheckBox = new javax.swing.JCheckBox();
         jPanel3 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        commandComboBox = new javax.swing.JComboBox<>();
+        commandFixingComboBox = new javax.swing.JComboBox<>();
         jPanel1 = new javax.swing.JPanel();
         dewarpCheckBox = new javax.swing.JCheckBox();
         deskewCheckBox = new javax.swing.JCheckBox();
@@ -245,10 +245,10 @@ public class ImageFilesSelector extends javax.swing.JFrame {
 
         jLabel1.setText("Command:");
 
-        commandComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Automatic fixing", "Fix all", "Deskew", "Dewarp", "Fix Back Transparecy" }));
-        commandComboBox.addActionListener(new java.awt.event.ActionListener() {
+        commandFixingComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Automatic fixing", "Fix all", "Deskew", "Dewarp", "Fix Back Transparecy" }));
+        commandFixingComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                commandComboBoxActionPerformed(evt);
+                commandFixingComboBoxActionPerformed(evt);
             }
         });
 
@@ -378,7 +378,7 @@ public class ImageFilesSelector extends javax.swing.JFrame {
                         .addGap(38, 38, 38)
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(commandComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(commandFixingComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanel3Layout.createSequentialGroup()
@@ -397,7 +397,7 @@ public class ImageFilesSelector extends javax.swing.JFrame {
                         .addGap(37, 37, 37)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel1)
-                            .addComponent(commandComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(commandFixingComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -411,8 +411,6 @@ public class ImageFilesSelector extends javax.swing.JFrame {
         jTabbedPane1.addTab("Fix images", jPanel3);
 
         commandFixOrderComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Arcanum", "Yolo" }));
-        commandFixOrderComboBox.setEnabled(false);
-        commandFixOrderComboBox.setFocusable(false);
         commandFixOrderComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 commandFixOrderComboBoxActionPerformed(evt);
@@ -637,12 +635,12 @@ public class ImageFilesSelector extends javax.swing.JFrame {
                     .addComponent(outputOcrTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(odForOutputOcrButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(odForDiscardFolder)
+                .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(AutoDiscardCheckBox)
                         .addComponent(jLabel20)
-                        .addComponent(discardFolderTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(discardFolderTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(odForDiscardFolder))
                 .addContainerGap())
         );
 
@@ -1025,10 +1023,6 @@ public class ImageFilesSelector extends javax.swing.JFrame {
         }        
     }//GEN-LAST:event_odForInputFixOrderButtonActionPerformed
 
-    private void commandFixOrderComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_commandFixOrderComboBoxActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_commandFixOrderComboBoxActionPerformed
-
     private void odForOutputFixImagesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_odForOutputFixImagesButtonActionPerformed
         JFileChooser fc = new JFileChooser(dirBase.getAbsoluteFile());
         if(iCommandSelection<=1){
@@ -1065,14 +1059,14 @@ public class ImageFilesSelector extends javax.swing.JFrame {
 //        updateComponenets();
     }//GEN-LAST:event_odForInputFixImagesButtonActionPerformed
 
-    private void commandComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_commandComboBoxActionPerformed
-        iCommandSelection = commandComboBox.getSelectedIndex();
+    private void commandFixingComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_commandFixingComboBoxActionPerformed
+        iCommandSelection = commandFixingComboBox.getSelectedIndex();
         if(iCommandSelection<=1){
             inputFixImagesTextField.setText("");
             outputFixImagesTextField.setText("");
         }
         updateComponenetsFirst();
-    }//GEN-LAST:event_commandComboBoxActionPerformed
+    }//GEN-LAST:event_commandFixingComboBoxActionPerformed
 
     private void odForInputExtractDataButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_odForInputExtractDataButtonActionPerformed
         // TODO add your handling code here:
@@ -1111,7 +1105,7 @@ public class ImageFilesSelector extends javax.swing.JFrame {
         Configuration config = new Configuration();
         PortadaWorker worker = new PortadaWorker();
         List<String> options = new ArrayList<>();
-        options.add(fixImagesCommads[this.commandComboBox.getSelectedIndex()]);
+        options.add(fixImagesCommads[this.commandFixingComboBox.getSelectedIndex()]);
         options.add("-i");
         options.add(this.inputFixImagesTextField.getText());
         options.add("-o");
@@ -1177,10 +1171,11 @@ public class ImageFilesSelector extends javax.swing.JFrame {
 
     private void runFixOrderButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_runFixOrderButtonActionPerformed
         // TODO add your handling code here:
+        String[] comands = {"reorderAll", "toParagraphsAll"};
         Configuration config = new Configuration();
         PortadaWorker worker = new PortadaWorker();
-        List<String> options = new ArrayList<>();
-        options.add("reorderAll");
+        List<String> options = new ArrayList<>();        
+        options.add(comands[this.commandFixOrderComboBox.getSelectedIndex()]);
         options.add("-i");
         options.add(this.inputFixOrderTextField.getText());
         options.add("-o");
@@ -1196,11 +1191,7 @@ public class ImageFilesSelector extends javax.swing.JFrame {
 
     private void teamComboBoxOrderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_teamComboBoxOrderActionPerformed
         // TODO add your handling code here:
-        if(this.teamComboBoxOrder.getSelectedItem().toString().equals("NONE")){
-            this.runFixOrderButton.setEnabled(false);
-        }else{
-            this.runFixOrderButton.setEnabled(true);
-        }        
+       this.updateFixOrderStates();
     }//GEN-LAST:event_teamComboBoxOrderActionPerformed
 
     private void teamComboBoxRequestAccessActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_teamComboBoxRequestAccessActionPerformed
@@ -1355,6 +1346,10 @@ public class ImageFilesSelector extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_AutoDiscardCheckBoxActionPerformed
 
+    private void commandFixOrderComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_commandFixOrderComboBoxActionPerformed
+        this.updateFixOrderStates();
+    }//GEN-LAST:event_commandFixOrderComboBoxActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1410,8 +1405,8 @@ public class ImageFilesSelector extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox AutoDiscardCheckBox;
-    private javax.swing.JComboBox<String> commandComboBox;
     private javax.swing.JComboBox<String> commandFixOrderComboBox;
+    private javax.swing.JComboBox<String> commandFixingComboBox;
     private javax.swing.JCheckBox deskewCheckBox;
     private javax.swing.JCheckBox dewarpCheckBox;
     private javax.swing.JTextField discardFolderTextField;
@@ -1492,7 +1487,7 @@ public class ImageFilesSelector extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
 
     private void initMoreComponents() {
-        commandComboBox.setSelectedIndex(iCommandSelection);
+        commandFixingComboBox.setSelectedIndex(iCommandSelection);
         dirBase = new File("");
 //        this.emailTextField.addActionListener((ae) -> {
 //            updateRunRequestPermission();
@@ -1574,6 +1569,15 @@ public class ImageFilesSelector extends javax.swing.JFrame {
             enabled = enabled && true;
         }
         this.runRequestPermisionButton.setEnabled(enabled);        
+    }
+
+    private void updateFixOrderStates() {
+         if(this.commandFixOrderComboBox.getSelectedItem().toString().equals("Arcanum") 
+                && this.teamComboBoxOrder.getSelectedItem().toString().equals("NONE")){
+            this.runFixOrderButton.setEnabled(false);
+        }else{
+            this.runFixOrderButton.setEnabled(true);
+        }        
     }
     
     private static class ComboBoxItem{
