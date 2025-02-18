@@ -410,7 +410,7 @@ public class ImageFilesSelector extends javax.swing.JFrame {
 
         jTabbedPane1.addTab("Fix images", jPanel3);
 
-        commandFixOrderComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Arcanum", "Yolo" }));
+        commandFixOrderComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Arcanum", "Yolo paragraphs", "Yolo bocks", "Yolo columns" }));
         commandFixOrderComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 commandFixOrderComboBoxActionPerformed(evt);
@@ -1171,7 +1171,7 @@ public class ImageFilesSelector extends javax.swing.JFrame {
 
     private void runFixOrderButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_runFixOrderButtonActionPerformed
         // TODO add your handling code here:
-        String[] comands = {"reorderAll", "toParagraphsAll"};
+        String[] comands = {"reorderAll", "toParagraphsAll", "toBlocksAll", "toColumnsAll"};
         Configuration config = new Configuration();
         PortadaWorker worker = new PortadaWorker();
         List<String> options = new ArrayList<>();        

@@ -18,6 +18,7 @@ import org.elsquatrecaps.portada.jportadamicroservice.client.services.extractor.
 import org.elsquatrecaps.portada.jportadamicroservice.client.services.imagefile.ImageFileService;
 import org.elsquatrecaps.portada.jportadamicroservice.client.services.imagefile.ImageQualityFilterService;
 import org.elsquatrecaps.portada.jportadamicroservice.client.services.publickey.PublicKeyService;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
@@ -240,6 +241,20 @@ public class PortadaApi {
     public void allImagesToParagraphs(Configuration config){
         String processName = "Cutting paragraphs in correct order";
         String command = "redrawParagraphImageFile";
+        String context = "python";
+        allImagesToGetImagesList(config, command, context, processName);
+    }
+
+    public void allImagesToColumns(Configuration config){
+        String processName = "Cutting columns in correct order";
+        String command = "redrawColumnImageFile";
+        String context = "python";
+        allImagesToGetImagesList(config, command, context, processName);
+    }
+    
+    public void allImagesToBlocks(Configuration config){
+        String processName = "Cutting blocks in correct order";
+        String command = "redrawBlockImageFile";
         String context = "python";
         allImagesToGetImagesList(config, command, context, processName);
     }
@@ -568,25 +583,24 @@ public class PortadaApi {
                 String iif = inputImageFile.getAbsolutePath();
                 
                 JSONObject multiclassFilter = imageQualityFilterService.processMulticlassFilter(iif, 0.6);
-                
                 if(multiclassFilter.getInt("status")==0){
-                    switch (multiclassFilter.getJSONObject("result").getString("label")) {
-                        case "TODO":
-                            all += 2;
-                            actions = FixActions.FIX_SKEW.getId() + FixActions.FIX_WARP.getId() + FixActions.FIX_TANSPARENCY.getId();
-                            break;
-                        case "CURVATURA":
-                            actions = FixActions.FIX_WARP.getId();
-                            break;
-                        case "INCLINACION":
-                            actions = FixActions.FIX_SKEW.getId();
-                            break;
-                        case "RUIDO":
-                            actions = FixActions.FIX_TANSPARENCY.getId();
-                            break;
-                        case "ORIGINAL":
-                            actions = 0;
-                            break;
+                    JSONArray transfomationIndex = multiclassFilter.getJSONObject("result").getJSONArray("suggested_transformation_indexes");
+                    actions = 0;
+                    for(int i= 0; i < transfomationIndex.length(); i++){
+                        switch (transfomationIndex.getInt(i)) {
+                            case 0:
+                                actions += FixActions.FIX_WARP.getId();
+                                break;
+                            case 1:
+                                actions += FixActions.FIX_SKEW.getId();
+                                break;
+                            case 3:
+                                actions += FixActions.FIX_TANSPARENCY.getId();
+                                break;
+                        }
+                    }
+                    if(transfomationIndex.length()>1){
+                        all += transfomationIndex.length()-1;
                     }
                     if(actions==0){
                         try {
