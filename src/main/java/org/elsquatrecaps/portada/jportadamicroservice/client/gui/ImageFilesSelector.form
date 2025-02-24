@@ -319,13 +319,18 @@
               <Layout>
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" alignment="0" attributes="0">
+                      <Group type="102" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="dewarpCheckBox" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Component id="deskewCheckBox" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Component id="fixbacktransCheckBox" min="-2" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" alignment="0" attributes="0">
+                                  <Component id="dewarpCheckBox" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                  <Component id="deskewCheckBox" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                                  <Component id="fixbacktransCheckBox" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <Component id="doNotFixLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                          </Group>
                           <EmptySpace max="32767" attributes="0"/>
                       </Group>
                   </Group>
@@ -333,7 +338,9 @@
                 <DimensionLayout dim="1">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="1" attributes="0">
-                          <EmptySpace pref="33" max="32767" attributes="0"/>
+                          <EmptySpace pref="10" max="32767" attributes="0"/>
+                          <Component id="doNotFixLabel" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="dewarpCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="deskewCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -358,6 +365,11 @@
                 <Component class="javax.swing.JCheckBox" name="fixbacktransCheckBox">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Fix back transparency"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JLabel" name="doNotFixLabel">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Do not use:"/>
                   </Properties>
                 </Component>
               </SubComponents>
@@ -386,7 +398,7 @@
                                   <Component id="odForOutputFixImagesButton" max="32767" attributes="0"/>
                               </Group>
                           </Group>
-                          <EmptySpace max="32767" attributes="0"/>
+                          <EmptySpace pref="16" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>

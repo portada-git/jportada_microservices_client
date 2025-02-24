@@ -58,6 +58,7 @@ public class ImageFilesSelector extends javax.swing.JFrame {
         dewarpCheckBox = new javax.swing.JCheckBox();
         deskewCheckBox = new javax.swing.JCheckBox();
         fixbacktransCheckBox = new javax.swing.JCheckBox();
+        doNotFixLabel = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -258,23 +259,30 @@ public class ImageFilesSelector extends javax.swing.JFrame {
 
         fixbacktransCheckBox.setText("Fix back transparency");
 
+        doNotFixLabel.setText("Do not use:");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(dewarpCheckBox)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(deskewCheckBox)
-                .addGap(18, 18, 18)
-                .addComponent(fixbacktransCheckBox)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(dewarpCheckBox)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(deskewCheckBox)
+                        .addGap(18, 18, 18)
+                        .addComponent(fixbacktransCheckBox))
+                    .addComponent(doNotFixLabel))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(33, Short.MAX_VALUE)
+                .addContainerGap(10, Short.MAX_VALUE)
+                .addComponent(doNotFixLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(dewarpCheckBox)
                     .addComponent(deskewCheckBox)
@@ -326,7 +334,7 @@ public class ImageFilesSelector extends javax.swing.JFrame {
                         .addComponent(outputFixImagesTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 404, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(odForOutputFixImagesButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(16, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1410,6 +1418,7 @@ public class ImageFilesSelector extends javax.swing.JFrame {
     private javax.swing.JCheckBox deskewCheckBox;
     private javax.swing.JCheckBox dewarpCheckBox;
     private javax.swing.JTextField discardFolderTextField;
+    private javax.swing.JLabel doNotFixLabel;
     private javax.swing.JTextField emailTextField;
     private javax.swing.JCheckBox fixbacktransCheckBox;
     private javax.swing.JCheckBox forceRequestCheckBox;
@@ -1510,13 +1519,15 @@ public class ImageFilesSelector extends javax.swing.JFrame {
     }
 
     private void updateComponenetsFirst() {
+        doNotFixLabel.setText("Use:");
         switch (iCommandSelection) {
             case 0:
-                dewarpCheckBox.setEnabled(false);
+                doNotFixLabel.setText("Do not use:");
+                dewarpCheckBox.setEnabled(true);
                 dewarpCheckBox.setSelected(false);
-                deskewCheckBox.setEnabled(false);
+                deskewCheckBox.setEnabled(true);
                 deskewCheckBox.setSelected(false);
-                fixbacktransCheckBox.setEnabled(false);
+                fixbacktransCheckBox.setEnabled(true);
                 fixbacktransCheckBox.setSelected(false);
                 break;
             case 1:

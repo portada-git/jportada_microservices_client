@@ -531,24 +531,27 @@ public class PortadaApi {
     public void autoCorrectAllImages(Configuration config){
          switch (config.getCommandArgumentsSize()) {
             case 1:
-                autoCorrectAllImages(config.getInputDir(), config.getInputDir());
+                autoCorrectAllImages(config.getInputDir(), config.getInputDir(),
+                        FixActions.getActions(config.getFixTransparency(), config.getFixSkew(), config.getFixWarp()));
                 break;
             case 2:
-                autoCorrectAllImages(config.getInputFile(), config.getOutputFile());
+                autoCorrectAllImages(config.getInputFile(), config.getOutputFile(),
+                        FixActions.getActions(config.getFixTransparency(), config.getFixSkew(), config.getFixWarp()));
                 break;
             case 3:
-                autoCorrectAllImages(config.getInputFile(), config.getOutputFile(), config.getErrorFile());
+                autoCorrectAllImages(config.getInputFile(), config.getOutputFile(), config.getErrorFile(),
+                        FixActions.getActions(config.getFixTransparency(), config.getFixSkew(), config.getFixWarp()));
                 break;
             default:
                 throw new RuntimeException("Bad number of parametres for fixBackTransparencyImageFile command");             
          }        
     }
     
-    public void autoCorrectAllImages(String inputDir, String outputDir){
-        autoCorrectAllImages(inputDir, outputDir, "errors.txt");
+    public void autoCorrectAllImages(String inputDir, String outputDir, int noActions){
+        autoCorrectAllImages(inputDir, outputDir, "errors.txt", noActions);
     }
     
-    public void autoCorrectAllImages(String inputDir, String outputDir, String errorFileName){
+    public void autoCorrectAllImages(String inputDir, String outputDir, String errorFileName, int noActions){
         String p;
         File errorFile = new File(errorFileName);
         File inputDirFile = new File(inputDir);
@@ -586,21 +589,31 @@ public class PortadaApi {
                 if(multiclassFilter.getInt("status")==0){
                     JSONArray transfomationIndex = multiclassFilter.getJSONObject("result").getJSONArray("suggested_transformation_indexes");
                     actions = 0;
+                    int cActions=0;
                     for(int i= 0; i < transfomationIndex.length(); i++){
                         switch (transfomationIndex.getInt(i)) {
                             case 0:
-                                actions += FixActions.FIX_WARP.getId();
+                                if(!FixActions.isActionIn(FixActions.FIX_WARP, noActions)){
+                                    actions += FixActions.FIX_WARP.getId();
+                                    cActions++;
+                                }
                                 break;
                             case 1:
-                                actions += FixActions.FIX_SKEW.getId();
+                                if(!FixActions.isActionIn(FixActions.FIX_SKEW, noActions)){
+                                    actions += FixActions.FIX_SKEW.getId();
+                                    cActions++;
+                                }
                                 break;
                             case 3:
-                                actions += FixActions.FIX_TANSPARENCY.getId();
+                                if(!FixActions.isActionIn(FixActions.FIX_TANSPARENCY, noActions)){
+                                    actions += FixActions.FIX_TANSPARENCY.getId();
+                                    cActions++;
+                                }
                                 break;
                         }
                     }
-                    if(transfomationIndex.length()>1){
-                        all += transfomationIndex.length()-1;
+                    if(cActions>1){
+                        all += cActions-1;
                     }
                     if(actions==0){
                         try {
