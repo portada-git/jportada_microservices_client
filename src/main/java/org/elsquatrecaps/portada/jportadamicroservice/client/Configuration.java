@@ -132,11 +132,11 @@ public class Configuration{
     @Arg(dest="forceKeyGeneration")  //-f
     private Boolean forceKeyGeneration;
     private String[] teamsForSelecting;
-    @Arg(dest="k")  //-k
+    @Arg(dest="pk")  //-k
     private String pk;
-    @Arg(dest="u")  //-u
+    @Arg(dest="user")  //-u
     private String adminUser;
-    @Arg(dest="p")  //-p
+    @Arg(dest="pass")  //-p
     private String adminPass;
     @Arg(dest="extractConfigMode")
     private String extractConfigMode;
@@ -295,9 +295,9 @@ public class Configuration{
         parser.addArgument("-m", "--email").nargs("?").help("email to send the veridication code");
         parser.addArgument("-c", "--verificationCode").nargs("?").help("email to send the veridication code");
         parser.addArgument("-f", "--forceKeyGeneration").action(Arguments.storeTrue()).help("Force Key pair generation for requestAccess command.");
-        parser.addArgument("-k", "--pk").action(Arguments.storeTrue()).help("Key filename.");
-        parser.addArgument("-u", "--user").action(Arguments.storeTrue()).help("User name.");
-        parser.addArgument("-p", "--pass").action(Arguments.storeTrue()).help("User password.");
+        parser.addArgument("-k", "--pk").nargs("?").help("Key filename.");
+        parser.addArgument("-u", "--user").nargs("?").help("User name.");
+        parser.addArgument("-p", "--pass").nargs("?").help("User password.");
         parser.addArgument("--extractConfigMode").nargs("?").help("The mode to read the configuration data for extractor. Can be: 'R' for remote, or 'L' for local");
         parser.addArgument("--extractConfigProtertiesFile").nargs("?").help("The remote path file if 'extractConfigMode' is remote or the local path file if 'extractConfigMode' is local for the extractor config file");
         parser.addArgument("--extractJsonConfigParsersFile").nargs("?").help("The local path for the parsers JSON configuration file regardless of whether 'extractConfigMode' is local or remote");
