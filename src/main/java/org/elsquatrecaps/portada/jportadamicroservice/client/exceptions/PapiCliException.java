@@ -4,42 +4,27 @@
  */
 package org.elsquatrecaps.portada.jportadamicroservice.client.exceptions;
 
-import org.json.simple.JSONObject;
+import org.elsquatrecaps.portada.jportadamscaller.exceptions.PortadaMicroserviceCallException;
 
 /**
  *
  * @author josep
  */
-public class PapiCliException  extends Exception{
-    private int errorcode;
+public class PapiCliException  extends PortadaMicroserviceCallException{
 
     public PapiCliException(int errorcode) {
-        this.errorcode = errorcode;
+        super(errorcode);
     }
 
     public PapiCliException(int errorcode, String message) {
-        super(message);
-        this.errorcode = errorcode;
+        super(errorcode, message);
     }
 
     public PapiCliException(int errorcode, Throwable cause) {
-        super(cause);
-        this.errorcode = errorcode;
+        super(errorcode, cause);
     }
 
     public PapiCliException(int errorcode, String message, Throwable cause) {
-        super(message, cause);
-        this.errorcode = errorcode;
-    }
-
-    /**
-     * @return the errorcode
-     */
-    public int getErrorcode() {
-        return errorcode;
-    }
-    
-    public String getJsonFormat(){
-        return String.format("{\"error\":true, \"status_code\":%d, \"message\":\"%s\"}", errorcode, getMessage());
+        super(errorcode, message, cause);
     }
 }

@@ -1,11 +1,5 @@
 
-import java.util.HashMap;
-import java.util.Map;
-import org.elsquatrecaps.portada.jportadamicroservice.client.Configuration;
-import org.elsquatrecaps.portada.jportadamicroservice.client.ConnectionMs;
 import org.elsquatrecaps.portada.jportadamicroservice.client.JPortadaMicroservice;
-import org.elsquatrecaps.portada.jportadamicroservice.client.services.PublisherService;
-import org.elsquatrecaps.portada.jportadamicroservice.client.services.imagefile.ImageQualityFilterService;
 
 /**
  *

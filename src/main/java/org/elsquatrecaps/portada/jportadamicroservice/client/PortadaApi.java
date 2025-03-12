@@ -18,6 +18,7 @@ import org.elsquatrecaps.portada.jportadamicroservice.client.services.extractor.
 import org.elsquatrecaps.portada.jportadamicroservice.client.services.imagefile.ImageFileService;
 import org.elsquatrecaps.portada.jportadamicroservice.client.services.imagefile.ImageQualityFilterService;
 import org.elsquatrecaps.portada.jportadamicroservice.client.services.publickey.PublicKeyService;
+import org.elsquatrecaps.portada.jportadamscaller.ConnectionMs;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -48,11 +49,11 @@ public class PortadaApi {
         for(String ctx: PublisherService.msContext){
             conDataList.put(ctx, new ConnectionMs(config.getProtocols(ctx), config.getPort(ctx), config.getHosts(ctx), config.getPrefs(ctx)));
         }
-        publicKeyService.init(conDataList).init(publish);
-        imageFileService.init(conDataList).init(publish);
-        publisherService.init(conDataList).init(publish);
-        fileExtractorSevice.init(conDataList).init(publish);
-        imageQualityFilterService.init(conDataList).init(publish);
+        ((PublicKeyService)publicKeyService.init(conDataList)).init(publish);
+        ((PublicKeyService)imageFileService.init(conDataList)).init(publish);
+        ((PublicKeyService)publisherService.init(conDataList)).init(publish);
+        ((PublicKeyService)fileExtractorSevice.init(conDataList)).init(publish);
+        ((PublicKeyService)imageQualityFilterService.init(conDataList)).init(publish);
     }
     
     public final void init(){

@@ -20,10 +20,10 @@ import static org.elsquatrecaps.portada.boatfactextractor.BoatFactVersionUpdater
 import static org.elsquatrecaps.portada.boatfactextractor.BoatFactVersionUpdater.BoatFactVersionUpdaterResponse.UNKNOWN_VERSION;
 import org.elsquatrecaps.portada.boatfactextractor.BoatFactVersionVerifier;
 import org.elsquatrecaps.portada.boatfactextractor.TextParserInfo;
-import org.elsquatrecaps.portada.jportadamicroservice.client.ConnectionMs;
-import org.elsquatrecaps.portada.jportadamicroservice.client.exceptions.PapiCliException;
 import org.elsquatrecaps.portada.jportadamicroservice.client.exceptions.RuntimePapiCliException;
 import org.elsquatrecaps.portada.jportadamicroservice.client.services.PublisherService;
+import org.elsquatrecaps.portada.jportadamscaller.ConnectionMs;
+import org.elsquatrecaps.portada.jportadamscaller.exceptions.PortadaMicroserviceCallException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.http.converter.FormHttpMessageConverter;
@@ -106,7 +106,7 @@ public class FileExtractorSevice extends PublisherService{
                 //publish
                 publishErrorProgress(info.getInformationUnitName(), "extract", (int)(100*info.getCompletedRatio()), 100, resp.getInt("statusCode"));
             }
-        } catch (PapiCliException ex) {
+        } catch (PortadaMicroserviceCallException ex) {
 //            strRet = ex.getJsonFormat();
             //PUBLISH
             publishErrorInfo(ex.getMessage(), "extract", ex.getErrorcode());

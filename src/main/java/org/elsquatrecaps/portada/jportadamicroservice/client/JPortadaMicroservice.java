@@ -10,7 +10,7 @@ import org.elsquatrecaps.utilities.console.Print;
  * @author josepcanellas
  */
 public class JPortadaMicroservice {
-    private static final String VERSION = "1.0.7";
+    private static final String VERSION = "1.0.8";
     private final PortadaApi papìInstance = new PortadaApi((ProgressInfo t) -> {
         if(t.getStatus().equals(ProgressInfo.KEY_ALREADY_EXIST_STATUS)){
             t.setName("If you want to replace the existing key, repeat the command adding the forceKeyGeneration (-f) attribute: requestForAccessPermission -tm [TEAM] -m [E-MAIL] -f");
