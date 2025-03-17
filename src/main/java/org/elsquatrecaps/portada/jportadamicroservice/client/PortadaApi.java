@@ -49,11 +49,16 @@ public class PortadaApi {
         for(String ctx: PublisherService.msContext){
             conDataList.put(ctx, new ConnectionMs(config.getProtocols(ctx), config.getPort(ctx), config.getHosts(ctx), config.getPrefs(ctx)));
         }
-        ((PublicKeyService)publicKeyService.init(conDataList)).init(publish);
-        ((PublicKeyService)imageFileService.init(conDataList)).init(publish);
-        ((PublicKeyService)publisherService.init(conDataList)).init(publish);
-        ((PublicKeyService)fileExtractorSevice.init(conDataList)).init(publish);
-        ((PublicKeyService)imageQualityFilterService.init(conDataList)).init(publish);
+//        ((PublisherService)publicKeyService.init(conDataList)).init(publish);
+//        ((PublisherService)imageFileService.init(conDataList)).init(publish);
+//        ((PublisherService)publisherService.init(conDataList)).init(publish);
+//        ((PublisherService)fileExtractorSevice.init(conDataList)).init(publish);
+//        ((PublisherService)imageQualityFilterService.init(conDataList)).init(publish);
+        publicKeyService.init(publish).init(conDataList);
+        imageFileService.init(publish).init(conDataList);
+        publisherService.init(publish).init(conDataList);
+        fileExtractorSevice.init(publish).init(conDataList);
+        imageQualityFilterService.init(publish).init(conDataList);
     }
     
     public final void init(){

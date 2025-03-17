@@ -117,15 +117,15 @@ public class PublicKeyService extends PublisherService{
                 //rename public key
                 String publicKeyFilename = "public.pem";
                 String newPublicKeyFilename = String.format("%s_%s_%s" , email.replaceAll("@", "__AT_SIGN__"), code, publicKeyFilename);
-                File publicKeyFile = new File(new File(SECURITY_PATH, team), publicKeyFilename);
-                publicKeyFile.renameTo(new File(new File(SECURITY_PATH, team), newPublicKeyFilename));
+                File publicKeyFile = new File(new File(securityPath, team), publicKeyFilename);
+                publicKeyFile.renameTo(new File(new File(securityPath, team), newPublicKeyFilename));
             }else{
                 //error
                 if(jsonresponse.getInt("statusCode")==3){
                     //eliminar claus
-                    File keyFile = new File(new File(SECURITY_PATH, team), "public.pem");
+                    File keyFile = new File(new File(securityPath, team), "public.pem");
                     keyFile.delete();
-                    keyFile = new File(new File(SECURITY_PATH, team), "private.pem");
+                    keyFile = new File(new File(securityPath, team), "private.pem");
                     keyFile.delete();
                 }
                 ret = jsonresponse.getString("message");
@@ -142,8 +142,8 @@ public class PublicKeyService extends PublisherService{
         String ret;
         try {
             File oldKey = null;
-            File privateKeyFile = new File(new File(SECURITY_PATH, team), "private.pem").getCanonicalFile().getAbsoluteFile();
-            File publicKeyFile = new File(new File(SECURITY_PATH, team), "public.pem").getCanonicalFile().getAbsoluteFile();
+            File privateKeyFile = new File(new File(securityPath, team), "private.pem").getCanonicalFile().getAbsoluteFile();
+            File publicKeyFile = new File(new File(securityPath, team), "public.pem").getCanonicalFile().getAbsoluteFile();
             if(privateKeyFile.exists() && !forceGeneration){
                 publishStatus("KEY_ALREADY_EXIST", "An access key already exists on this computer. A new key was not created.", "request for accessing");
                 return;
@@ -160,7 +160,7 @@ public class PublicKeyService extends PublisherService{
             }
             KeyPair keyPair = generateKeyPair();
 //            String randomName = RandomStringGenerator.builder().get().generate(30);
-//            saveKey(keyPair.getPrivate().getEncoded(), new File(SECURITY_PATH, String.format("private%s.pem", randomName)).getCanonicalFile().getAbsoluteFile(), "PRIVATE");
+//            saveKey(keyPair.getPrivate().getEncoded(), new File(securityPath, String.format("private%s.pem", randomName)).getCanonicalFile().getAbsoluteFile(), "PRIVATE");
             saveKey(keyPair.getPrivate().getEncoded(), privateKeyFile, "PRIVATE");
             saveKey(keyPair.getPublic().getEncoded(), publicKeyFile, "PUBLIC");
             HashMap p = new HashMap();
