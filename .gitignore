@@ -34,7 +34,6 @@ nb-configuration.xml
 /resultats/
 /annotated/
 /autocorregides/
-/corregidas/
 errors.txt
 
 .DS_Store
