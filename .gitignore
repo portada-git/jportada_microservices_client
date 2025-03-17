@@ -30,6 +30,12 @@ nb-configuration.xml
 /ocr*/
 /ordered*/
 /security/
+/descartadas/
+/resultats/
+/annotated/
+/autocorregides/
+/corregidas/
+errors.txt
 
 .DS_Store
 
