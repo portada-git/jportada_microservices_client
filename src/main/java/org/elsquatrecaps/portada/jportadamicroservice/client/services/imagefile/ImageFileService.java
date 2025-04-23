@@ -93,7 +93,7 @@ public class ImageFileService extends PublisherService {
                     SignedData signedData = signChallengeOfConnection(con, paramData.getOrDefault("team", null));
                     con.disconnect();
                     con = flushMultipartRequest(command, "image", inputFile, paramData, signedData, context);
-                    exit = times<1;
+                    exit = times > 0;
                     times++;
                 } else {
                     //error
@@ -148,7 +148,7 @@ public class ImageFileService extends PublisherService {
                     SignedData signedData = signChallengeOfConnection(con, paramData.getOrDefault("team", null));
                     con.disconnect();
                     con = flushMultipartRequest(command, "image", inputFile, paramData, signedData, context);
-                    exit = times < 1;
+                    exit = times > 0;
                     times++;
                 } else {
                     //error
@@ -185,7 +185,7 @@ public class ImageFileService extends PublisherService {
                     SignedData signedData = signChallengeOfConnection(con, paramData.getOrDefault("team", null));
                     con.disconnect();
                     con = flushMultipartRequest(command, "image", inputFile, paramData, signedData, context);
-                    exit = times < 1;
+                    exit = times > 0;
                     times++;
                 } else {
                     //error
