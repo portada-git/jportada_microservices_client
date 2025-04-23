@@ -7,7 +7,9 @@ package org.elsquatrecaps.portada.jportadamicroservice.client.services.imagefile
 import java.io.FileOutputStream;
 import java.net.HttpURLConnection;
 import java.nio.file.Files;
+import java.nio.file.OpenOption;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -33,6 +35,75 @@ public class ImageFileService extends PublisherService {
 
     public ImageFileService() {
         super();
+    }
+    
+    public String transformImageFileToOcrData(String command, String inputFile, String outputDir, String context){
+        return transformImageFileToOcrData(command, inputFile, outputDir, null, context);
+    }
+    
+    public String transformImageFileToOcrData(String command, String inputFile, String outputName, HashMap<String, String> paramData, String context){
+        String ret = null;
+        try{  
+            boolean exit;
+            HttpURLConnection con = flushMultipartRequest(command, "image", inputFile, paramData, context);
+            do{
+                exit = true;
+                int responseCode = con.getResponseCode();
+                if ((responseCode >= 200) && (responseCode < 400)) {  
+                    JSONObject json = new JSONObject(copyStreamToString(con.getInputStream()));
+                    if(json.has("status") && json.getInt("status")!=0){
+                        ret = json.toString();
+                    }else if (json.has("error") && json.getBoolean("error")){
+                        ret = "{\"status\":-1, \"message\":\"".concat(json.getString("message")).concat("\"}");
+                    }else{
+                        //copy txt and json data
+                        JSONObject ocrData = null;
+                        String txt = null;
+                        if(json.has("data")){
+                            JSONObject data;
+                            data = json.getJSONObject("data");
+                            if(data.has("txt")){
+                                txt = data.getString("txt");
+                            }
+                            if(data.has("json")){
+                                ocrData = data.getJSONObject("json");
+                            }
+                        }else{
+                            if(json.has("txt")){
+                                txt = json.getString("txt");
+                            }
+                            if(json.has("json")){
+                                ocrData = json.getJSONObject("json");
+                            }
+                        }
+                        if(txt!=null){
+                            Files.writeString(
+                                    Paths.get(String.format("%s.txt",outputName)),
+                                    txt, StandardOpenOption.CREATE);
+                        }
+                        if(ocrData!=null){
+                            Files.writeString(
+                                    Paths.get(String.format("%s.json",outputName)),
+                                    ocrData.toString(4), StandardOpenOption.CREATE);
+                        }
+                        ret = "{\"status\":0, \"message\":\"".concat(json.has("message")?json.getString("message"):"OK").concat("\"}");
+                    }                    
+                } else if(responseCode==401) {
+                    SignedData signedData = signChallengeOfConnection(con, paramData.getOrDefault("team", null));
+                    con.disconnect();
+                    con = flushMultipartRequest(command, "image", inputFile, paramData, signedData, context);
+                    exit = false;
+                } else {
+                    //error
+                    ret = "{\"status\":-3, \"message\":\"".concat(copyStreamToString(con.getErrorStream())).concat("\"}");
+                }
+            }while(!exit);
+            con.disconnect();
+        } catch (Exception ex) {
+            Logger.getLogger(PortadaApi.class.getName()).log(Level.SEVERE, null, ex);
+            ret = "{\"status\":-4, \"message\":\"".concat(ex.getMessage()).concat("\"}");
+        }
+        return ret;        
     }
     
     public String transformImageFileToJsonImages(String command, String inputFile, String outputDir, String context){

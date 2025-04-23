@@ -113,6 +113,10 @@ public class Configuration{
     private Map<String, String> hosts = new HashMap<>();
     private Map<String, String> prefs = new HashMap<>();
     private Map<String, String> protocols = new HashMap<>();
+    @Arg(dest="ocr_json")
+    Boolean ocrJson;
+    @Arg(dest="ocr_txt")
+    Boolean ocrTxt;
     @Arg(dest="discard_folder")
     private String discardFolder; //-df
     @Arg(dest="autoDiscard")
@@ -236,6 +240,12 @@ public class Configuration{
                 case "autoDiscard":
                     this.setAutoDiscard((String) val);
                     break;
+                case "ocr_json":
+                    this.setOcrJson((String) val);
+                    break;
+                case "ocr_txt":
+                    this.setOcrTxt((String) val);
+                    break;
             }
         }
     }
@@ -310,6 +320,8 @@ public class Configuration{
         parser.addArgument("-t", "--fixTrans").action(Arguments.storeTrue()).help("Images to process not need to fix back transparency");
         parser.addArgument("-s", "--fixSkew").action(Arguments.storeTrue()).help("Images to process not need to fix skew lines");
         parser.addArgument("-w", "--fixWarp").action(Arguments.storeTrue()).help("Images to process not need to fix warp lines");
+        parser.addArgument("-ocr_json", "--ocr_json").nargs("?").help("JSON output required for OCR response.");
+        parser.addArgument("-ocr_txt", "--ocr_txt").nargs("?").help("TXT output required for OCR response.");
         try {
             parser.parseArgs(args, this);
             this.updateAttrs();
@@ -368,6 +380,12 @@ public class Configuration{
         }
         if(this.discardFolder!=null){
             this.attrs.add("discard_folder");
+        }
+        if(this.ocrJson!=null){
+            this.attrs.add("ocr_json");
+        }
+        if(this.ocrTxt!=null){
+            this.attrs.add("ocr_txt");
         }
         if(this.inputFile!=null){
             this.attrs.add("input_file");
@@ -708,4 +726,29 @@ public class Configuration{
         return discardFolder;
     }
 
+    private void setOcrJson(Boolean v) {
+        this.ocrJson = v;
+        this.attrs.add("ocr_json");        
+    }
+    
+    private void setOcrJson(String string) {
+        setOcrJson(getBoolean(string));        
+    }
+
+    public Boolean getOcrJson() {
+        return ocrJson==null?false:ocrJson;
+    }
+
+    private void setOcrTxt(Boolean v) {
+        this.ocrTxt = v;
+        this.attrs.add("ocr_txt");        
+    }
+    
+    private void setOcrTxt(String string) {
+        setOcrTxt(getBoolean(string));        
+    }
+
+    public Boolean getOcrtxt() {
+        return ocrTxt==null?true:ocrTxt;
+    }
 }

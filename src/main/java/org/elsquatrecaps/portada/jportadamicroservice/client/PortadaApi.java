@@ -284,7 +284,7 @@ public class PortadaApi {
                 allImagesToGetImagesList(cmd, context,config.getInputFile(), config.getOutputFile(), config.getErrorFile(), config.getTeam(), processName);
                 break;
             default:
-                throw new RuntimeException("Bad number of parametres for fixBackTransparencyImageFile command");             
+                throw new RuntimeException("Bad number of parametres for allImagesToGetImagesList command");             
          }        
     }
     
@@ -366,7 +366,7 @@ public class PortadaApi {
                 allImagesToJson(config.getInputFile(), config.getOutputFile(), config.getErrorFile(), config.getTeam());
                 break;
             default:
-                throw new RuntimeException("Bad number of parametres for fixBackTransparencyImageFile command");             
+                throw new RuntimeException("Bad number of parametres for allImagesToJson command");             
          }                
     }
     
@@ -437,26 +437,31 @@ public class PortadaApi {
          switch (config.getCommandArgumentsSize()) {
             case 1:
                 allImagesToText(config.getInputDir(), config.getInputDir(), 
-                        config.getTeam(), config.getAutoDiscard(), config.getDiscardFolder());
+                        config.getTeam(), config.getAutoDiscard(), 
+                        config.getDiscardFolder(), config.getOcrtxt(), 
+                        config.getOcrJson());
                 break;
             case 2:
-                allImagesToText(config.getInputFile(), config.getOutputFile(), 
-                        config.getTeam(), config.getAutoDiscard(), config.getDiscardFolder());
+                allImagesToText(config.getInputDir(), config.getOutputFile(), 
+                        config.getTeam(), config.getAutoDiscard(), 
+                        config.getDiscardFolder(), config.getOcrtxt(), 
+                        config.getOcrJson());
                 break;
             case 3:
-                allImagesToText(config.getInputFile(), config.getOutputFile(), config.getErrorFile(), 
-                        config.getTeam(), config.getAutoDiscard(), config.getDiscardFolder());
+                allImagesToText(config.getInputDir(), config.getOutputFile(), config.getErrorFile(), 
+                        config.getTeam(), config.getAutoDiscard(), config.getDiscardFolder(),
+                        config.getOcrtxt(), config.getOcrJson());
                 break;
             default:
-                throw new RuntimeException("Bad number of parametres for fixBackTransparencyImageFile command");             
+                throw new RuntimeException("Bad number of parametres for allImagesToText command");             
          }        
     }
     
-    private void allImagesToText(String inputDir, String outputDir, String team, boolean autoDiscard, String discardFolder) {
-        allImagesToText(inputDir, outputDir, "errors.txt",  team, autoDiscard, discardFolder);
+    private void allImagesToText(String inputDir, String outputDir, String team, boolean autoDiscard, String discardFolder, boolean outpu_txt, boolean output_json) {
+        allImagesToText(inputDir, outputDir, "errors.txt",  team, autoDiscard, discardFolder, outpu_txt, output_json);
     }
 
-    private void allImagesToText(String inputDir, String outputDir, String errorFileName, String team, boolean autoDiscard, String discardFolder) {
+    private void allImagesToText(String inputDir, String outputDir, String errorFileName, String team, boolean autoDiscard, String discardFolder, boolean outpu_txt, boolean output_json) {
         double thresholdToDiscard = 0.6;
         File errorFile = new File(errorFileName);
         File inputDirFile = new File(inputDir);
@@ -505,13 +510,26 @@ public class PortadaApi {
                         publishErrorProgress(m, n, "OCR DISCARDED", ++fet, all, -1);
                     }
                 }else{
-                    File outputImageFile = new File(outputDirFile, inputImageFile.getName()
-                            .substring(0, inputImageFile.getName().lastIndexOf(".")).concat(".txt"));
-                    if(imageFileService.transformImageFile("pr/ocr", inputImageFile.getAbsolutePath(), 
-                            outputImageFile.getAbsolutePath(), errorFile.getAbsolutePath(), p, "java")){
-                        publishProgress(m, n, "OCR", ++fet, all);
+                    if(outpu_txt && output_json){
+                        File outputImageFile = new File(outputDirFile, inputImageFile.getName()
+                                .substring(0, inputImageFile.getName().lastIndexOf(".")));    
+                        JSONObject resp = new JSONObject(imageFileService.transformImageFileToOcrData("pr/ocr_txt_and_json", 
+                                inputImageFile.getAbsolutePath(), outputImageFile.getAbsolutePath(), p, 
+                                "java"));
+                        if(resp.getInt("status")==0){
+                           publishProgress(m, n, "OCR", ++fet, all);
+                        }else{
+                           publishErrorProgress(m, n, "OCR", ++fet, all, -1); 
+                        }                        
                     }else{
-                        publishErrorProgress(m, n, "OCR", ++fet, all, -1);
+                        File outputImageFile = new File(outputDirFile, inputImageFile.getName()
+                                .substring(0, inputImageFile.getName().lastIndexOf(".")).concat(outpu_txt?".txt":"json"));
+                        if(imageFileService.transformImageFile(outpu_txt?"pr/ocr":"pr/ocrJson", inputImageFile.getAbsolutePath(), 
+                                outputImageFile.getAbsolutePath(), errorFile.getAbsolutePath(), p, "java")){
+                            publishProgress(m, n, "OCR", ++fet, all);
+                        }else{
+                            publishErrorProgress(m, n, "OCR", ++fet, all, -1);
+                        }
                     }
                 }
             } 
@@ -549,7 +567,7 @@ public class PortadaApi {
                         FixActions.getActions(config.getFixTransparency(), config.getFixSkew(), config.getFixWarp()));
                 break;
             default:
-                throw new RuntimeException("Bad number of parametres for fixBackTransparencyImageFile command");             
+                throw new RuntimeException("Bad number of parametres for autoCorrectAllImages command");             
          }        
     }
     
@@ -706,7 +724,7 @@ public class PortadaApi {
                         FixActions.getActions(config.getFixTransparency(), config.getFixSkew(), config.getFixWarp()));
                 break;
             default:
-                throw new RuntimeException("Bad number of parametres for fixBackTransparencyImageFile command");             
+                throw new RuntimeException("Bad number of parametres for fixAllImages command");             
          }        
     }
     
@@ -885,7 +903,7 @@ public class PortadaApi {
                 ret = dewarpImageFile(config.getInputFile(), config.getOutputFile(), config.getErrorFile());
                 break;
             default:
-                throw new RuntimeException("Bad number of parametres for deskewImageFile command");
+                throw new RuntimeException("Bad number of parametres for dewarpImageFile command");
         }
         return ret;        
     }
