@@ -45,6 +45,7 @@ public class ImageFileService extends PublisherService {
         String ret = null;
         try{  
             boolean exit;
+            int times=0;
             HttpURLConnection con = flushMultipartRequest(command, "image", inputFile, paramData, context);
             do{
                 exit = true;
@@ -92,7 +93,8 @@ public class ImageFileService extends PublisherService {
                     SignedData signedData = signChallengeOfConnection(con, paramData.getOrDefault("team", null));
                     con.disconnect();
                     con = flushMultipartRequest(command, "image", inputFile, paramData, signedData, context);
-                    exit = false;
+                    exit = times<1;
+                    times++;
                 } else {
                     //error
                     ret = "{\"status\":-3, \"message\":\"".concat(copyStreamToString(con.getErrorStream())).concat("\"}");
@@ -114,6 +116,7 @@ public class ImageFileService extends PublisherService {
         String ret = null;
         try{  
             boolean exit;
+            int times = 0;
             HttpURLConnection con = flushMultipartRequest(command, "image", inputFile, paramData, context);
             do{
                 exit = true;
@@ -145,7 +148,8 @@ public class ImageFileService extends PublisherService {
                     SignedData signedData = signChallengeOfConnection(con, paramData.getOrDefault("team", null));
                     con.disconnect();
                     con = flushMultipartRequest(command, "image", inputFile, paramData, signedData, context);
-                    exit = false;
+                    exit = times < 1;
+                    times++;
                 } else {
                     //error
                     ret = "{\"status\":-3, \"message\":\"".concat(copyStreamToString(con.getErrorStream())).concat("\"}");
@@ -168,6 +172,7 @@ public class ImageFileService extends PublisherService {
         boolean ret=true;
         try{  
             boolean exit;
+            int times = 0;
             HttpURLConnection con = flushMultipartRequest(command, "image", inputFile, paramData, context);
             do{
                 exit = true;
@@ -180,7 +185,8 @@ public class ImageFileService extends PublisherService {
                     SignedData signedData = signChallengeOfConnection(con, paramData.getOrDefault("team", null));
                     con.disconnect();
                     con = flushMultipartRequest(command, "image", inputFile, paramData, signedData, context);
-                    exit = false;
+                    exit = times < 1;
+                    times++;
                 } else {
                     //error
                     try(FileOutputStream outputStream = new FileOutputStream(errorFile)){
