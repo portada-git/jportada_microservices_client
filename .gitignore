@@ -25,11 +25,13 @@
 nb-configuration.xml
 
 /data*/
+/fixed*/
 /config*/
 /corregi*/
 /ocr*/
 /ordered*/
 /security/
+/security*/
 /descartadas/
 /resultats/
 /annotated/
