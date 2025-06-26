@@ -5,18 +5,27 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.FileUtils;
+import org.elsquatrecaps.autonewsextractor.error.AutoNewsRuntimeException;
+import org.elsquatrecaps.autonewsextractor.informationunitbuilder.reader.InformationUnitBuilderFromSdlFiles;
 import org.elsquatrecaps.autonewsextractor.tools.configuration.AutoNewsExtractorConfiguration;
 import org.elsquatrecaps.portada.jportadamicroservice.client.services.PublisherService;
 import org.elsquatrecaps.portada.jportadamicroservice.client.services.extractor.FileExtractorSevice;
 import org.elsquatrecaps.portada.jportadamicroservice.client.services.imagefile.ImageFileService;
 import org.elsquatrecaps.portada.jportadamicroservice.client.services.imagefile.ImageQualityFilterService;
+import org.elsquatrecaps.portada.jportadamicroservice.client.services.imagefile.QwenOcrService;
 import org.elsquatrecaps.portada.jportadamicroservice.client.services.publickey.PublicKeyService;
 import org.elsquatrecaps.portada.jportadamscaller.ConnectionMs;
 import org.json.JSONArray;
@@ -36,6 +45,7 @@ public class PortadaApi {
     ImageQualityFilterService imageQualityFilterService = new ImageQualityFilterService();
     PublicKeyService publicKeyService=new PublicKeyService();
     FileExtractorSevice fileExtractorSevice=new FileExtractorSevice();
+    QwenOcrService qwenOcrService = new QwenOcrService();
     
     public PortadaApi() {
         
@@ -59,6 +69,7 @@ public class PortadaApi {
         publisherService.init(publish).init(conDataList);
         fileExtractorSevice.init(publish).init(conDataList);
         imageQualityFilterService.init(publish).init(conDataList);
+        qwenOcrService.init(publish).init(conDataList);
     }
     
     public final void init(){
@@ -433,22 +444,247 @@ public class PortadaApi {
         }        
     }
     
-    public void allImagesToText(Configuration config){
+    public void fixAllOcr(Configuration config){
+         switch (config.getCommandArgumentsSize()) {
+            case 2:
+                fixAllOcr(config.getTeam(), config.getInputDir(), config.getExtraInputDir(), config.getInputDir(), "errors.txt", null);
+                break;
+            case 3:
+                fixAllOcr(config.getTeam(), config.getInputDir(), config.getExtraInputDir(), config.getOutputFile(), "errors.txt", null);
+                break;
+            case 4:
+                if(config.getErrorFile()==null){
+                    fixAllOcr(config.getTeam(), config.getInputDir(), config.getExtraInputDir(), config.getOutputFile(), "errors.txt", config.getConfigFile());
+                }else{
+                    fixAllOcr(config.getTeam(), config.getInputDir(), config.getExtraInputDir(), config.getOutputFile(), config.getErrorFile(), null);
+                }
+                break;
+            case 5:
+                fixAllOcr(config.getTeam(), config.getInputDir(), config.getExtraInputDir(), config.getOutputFile(), config.getErrorFile(), config.getConfigFile());
+                break;
+            default:
+                throw new RuntimeException("Bad number of parametres for allImagesToText command");             
+         }        
+    }
+    
+    private void fixAllOcr(String team, String textDir, String imagesDir, String outputDir, String errorFileName, String jsonConfigPath){
+        Map<String, List<File>> textFilesToFix = new HashMap<>();
+        Map<String, List<File>> imagesFilesForFixing = new HashMap<>();
+        File errorFile = new File(errorFileName);
+        File textDirFile = new File(textDir);
+        File imagesDirFile = new File(imagesDir);
+        File outputDirFile = new File(outputDir);
+        File jsonConfigFile = jsonConfigPath==null?null:new File(jsonConfigPath);
+        if(errorFile.exists()){
+            errorFile.delete();
+        }
+        if(!outputDirFile.exists()){
+            outputDirFile.mkdirs();
+        }
+        if(textDirFile.isDirectory() && imagesDirFile.isDirectory() && outputDirFile.isDirectory()){
+            File[] ltf = textDirFile.listFiles();
+            File[] lif = imagesDirFile.listFiles();
+            Arrays.sort(ltf);
+            Arrays.sort(lif);
+            for(File f:ltf){
+                if(f.getName().matches("\\d{4}_\\d{2}_\\d{2}_[A-Z]{3}_[A-Z]{2}_[A-Z]_\\d{2}.*?\\.txt")){
+                    String name = f.getName().substring(0, 20);
+                    if(!textFilesToFix.containsKey(name)){
+                        textFilesToFix.put(name, new ArrayList<>());
+                    }
+                    textFilesToFix.get(name).add(f);
+                }
+            }            
+            for(File f:lif){
+                if(f.getName().matches("\\d{4}_\\d{2}_\\d{2}_[A-Z]{3}_[A-Z]{2}_[A-Z]_\\d{2}.*?((\\.jpg)|(\\.jpeg)|(\\.png)|(\\.gif))")){
+                    String name = f.getName().substring(0, 20);
+                    if(!imagesFilesForFixing.containsKey(name)){
+                        imagesFilesForFixing.put(name, new ArrayList<>());
+                    }
+                    imagesFilesForFixing.get(name).add(f);
+                }
+            }
+            publishInfo("Starting process", "FixingOCR");
+            int all = textFilesToFix.size();
+            int fet=0;
+            for(String k: textFilesToFix.keySet()){
+                fet++;
+                if(imagesFilesForFixing.containsKey(k)){
+                    JSONObject resp = qwenOcrService.fixOcr(team, textFilesToFix.get(k), imagesFilesForFixing.get(k), jsonConfigFile);                   
+                    if(resp.getInt("status")==0){
+                        String ocrText = resp.getString("text");
+                        try {
+                            //save ocr file
+                            FileUtils.writeStringToFile(new File(new File(outputDir), k), ocrText, Charset.defaultCharset());
+                            publishProgress("Information Unit:", k.concat(".txt"), "FIXING OCR", fet, all);
+                        } catch (IOException ex) {
+                            Logger.getLogger(PortadaApi.class.getName()).log(Level.SEVERE, null, ex);
+                            publishErrorProgress(String.format("Error! %s, for Information Unit:",ex.getMessage()), k, "ERROR FIXING OCR", fet, all, -1);
+                        }
+                    }else{
+                     publishErrorProgress(String.format("Error! %s, for Information Unit:",resp.getString("error_message")), k, "ERROR FIXING OCR", fet, all, -1);
+                    }
+                }else{
+                    publishErrorProgress("Information Unit:", k, "ERROR FIXING OCR. Image doesn't exist.", fet, all, -1);
+                }
+            }
+        }else{
+            //ERROR NO ES DIRECTORIO
+            String dName;
+            if(!textDirFile.isDirectory()){
+                dName = textDir;
+            }else if(!imagesDirFile.isDirectory()){
+                dName = imagesDir;
+            }else{
+                dName = outputDir;
+            }
+            String message = String.format("Error! %s is not a directory. this command need an input difectory and an output directory" , dName);
+            try(FileWriter err = new FileWriter(errorFile, true)){
+                err.write(message);
+                Logger.getLogger(PortadaApi.class.getName()).log(Level.SEVERE, message);
+            } catch (IOException ex) {
+                Logger.getLogger(PortadaApi.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            publishErrorInfo(message, "FIXING OCR", -1);
+        }        
+    }
+
+    public void allImagesToTextQwenAI(Configuration config){
          switch (config.getCommandArgumentsSize()) {
             case 1:
-                allImagesToText(config.getInputDir(), config.getInputDir(), 
+                allImagesToTextQwenAI(config.getTeam(), config.getInputDir(), config.getInputDir(), "error.txt",
+                        config.getAutoDiscard(), config.getDiscardFolder(), config.getConfigFile());
+                break;
+            case 2:
+                allImagesToTextQwenAI(config.getTeam(), config.getInputDir(), config.getOutputFile(), "error.txt",
+                        config.getAutoDiscard(), config.getDiscardFolder(), config.getConfigFile());
+                break;
+            case 3:
+                allImagesToTextQwenAI(config.getTeam(), config.getInputDir(), config.getOutputFile(), config.getErrorFile(), 
+                        config.getAutoDiscard(), config.getDiscardFolder(),config.getConfigFile());
+                break;
+            default:
+                throw new RuntimeException("Bad number of parametres for allImagesToText command");             
+         }        
+    }
+    
+    public void allImagesToTextQwenAI(String team, String imagesDir, String outputDir, String errorFileName, 
+                                        boolean autoDiscard, String discardFolder, String jsonConfigPath){
+        Map<String, List<File>> imagesFilesForFixing = new HashMap<>();
+        double thresholdToDiscard = 0.6;
+        File errorFile = new File(errorFileName);
+        File inputDirFile = new File(imagesDir);
+        File outputDirFile = new File(outputDir);
+        if(errorFile.exists()){
+            errorFile.delete();
+        }
+        if(!outputDirFile.exists()){
+            outputDirFile.mkdirs();
+        }
+        if(inputDirFile.isDirectory() && outputDirFile.isDirectory()){
+            File[] lf = inputDirFile.listFiles(new FileFilter(){
+                @Override
+                public boolean accept(File file) {
+                    boolean ret = false;
+                    for(int i=0; !ret && i<imagesExtensions.length; i++){
+                        ret = file.isFile() && file.getName().substring(file.getName().lastIndexOf(".")).toLowerCase().equals(imagesExtensions[i]);
+                    }
+                    return ret;
+                }
+            });
+            int all = lf.length;
+            int fet=0;
+            publishInfo("Starting process", "OCR");
+            HashMap p = new HashMap();
+            p.put("team", team);
+            for(File inputImageFile: lf){
+                String m = "image: ";
+                String n = inputImageFile.getName();
+                boolean discardImage = false;
+                if(autoDiscard){
+                    JSONObject resp = imageQualityFilterService.processBinaryFilter(
+                            inputImageFile.getAbsolutePath(), thresholdToDiscard);
+                    if(resp.getInt("status")==0){
+                        discardImage = resp.getJSONObject("result").getDouble("score")>thresholdToDiscard;
+                    }else{
+                         publishErrorProgress(m, n, "DISCARDING IMAGE", ++fet, all, -1);
+                    }
+                }
+                if(discardImage){
+                    try {
+                        File outputImageFile = new File(discardFolder, inputImageFile.getName());
+                        Files.copy(inputImageFile.toPath(), outputImageFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                        publishProgress(m, n, "OCR DISCARDED", ++fet, all);
+                    } catch (IOException ex) {
+                        publishErrorProgress(m, n, "OCR DISCARDED", ++fet, all, -1);
+                    }
+                }else{
+                    if(inputImageFile.getName().matches("\\d{4}_\\d{2}_\\d{2}_[A-Z]{3}_[A-Z]{2}_[A-Z]_\\d{2}.*?((\\.jpg)|(\\.jpeg)|(\\.png)|(\\.gif))")){
+                        String name = inputImageFile.getName().substring(0, 20);
+                        if(!imagesFilesForFixing.containsKey(name)){
+                            imagesFilesForFixing.put(name, new ArrayList<>());
+                        }
+                        imagesFilesForFixing.get(name).add(inputImageFile);
+                    }
+                }
+            }
+            for(String k: imagesFilesForFixing.keySet()){
+                fet++;
+                File jsonConfigFile = null;
+                if(jsonConfigPath!=null){
+                    jsonConfigFile = new File(jsonConfigPath);
+                }
+                JSONObject resp = qwenOcrService.getOcr(team, imagesFilesForFixing.get(k), jsonConfigFile);                   
+                if(resp.getInt("status")==0){
+                    String ocrText = resp.getString("text");
+                    //save ocr file
+                    try {
+                        //save ocr file
+                        FileUtils.writeStringToFile(new File(new File(outputDir), k), ocrText, Charset.defaultCharset());
+                        publishProgress("Information Unit:", k.concat(".txt"), "QWEN OCR", fet, all);
+                    } catch (IOException ex) {
+                        Logger.getLogger(PortadaApi.class.getName()).log(Level.SEVERE, null, ex);
+                        publishErrorProgress(String.format("Error! %s, for Information Unit:",ex.getMessage()), k, "ERROR QWEN OCR", fet, all, -1);
+                    }
+                }else{
+                     publishErrorProgress(String.format("Error! %s, for Information Unit:",resp.getString("error_message")), k, "ERROR QWEN OCR", fet, all, -1);
+                }
+            }                    
+        }else{
+            //ERROR NO ES DIRECTORIO
+            String dName;
+            if(!inputDirFile.isDirectory()){
+                dName = imagesDir;
+            }else{
+                dName = outputDir;
+            }
+            String message = String.format("Error! %s is not a directory. this command need an input difectory and an output directory" , dName);
+            try(FileWriter err = new FileWriter(errorFile, true)){
+                err.write(message);
+                Logger.getLogger(PortadaApi.class.getName()).log(Level.SEVERE, message);
+            } catch (IOException ex) {
+                Logger.getLogger(PortadaApi.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            publishErrorInfo(message, "OCR", -1);
+        }            
+    }
+
+    public void allImagesToTextWithDocumentAI(Configuration config){
+         switch (config.getCommandArgumentsSize()) {
+            case 1:
+                allImagesToTextWithDocumentAI(config.getInputDir(), config.getInputDir(), 
                         config.getTeam(), config.getAutoDiscard(), 
                         config.getDiscardFolder(), config.getOcrtxt(), 
                         config.getOcrJson());
                 break;
             case 2:
-                allImagesToText(config.getInputDir(), config.getOutputFile(), 
+                allImagesToTextWithDocumentAI(config.getInputDir(), config.getOutputFile(), 
                         config.getTeam(), config.getAutoDiscard(), 
                         config.getDiscardFolder(), config.getOcrtxt(), 
                         config.getOcrJson());
                 break;
             case 3:
-                allImagesToText(config.getInputDir(), config.getOutputFile(), config.getErrorFile(), 
+                allImagesToTextWithDocumentAI(config.getInputDir(), config.getOutputFile(), config.getErrorFile(), 
                         config.getTeam(), config.getAutoDiscard(), config.getDiscardFolder(),
                         config.getOcrtxt(), config.getOcrJson());
                 break;
@@ -457,11 +693,11 @@ public class PortadaApi {
          }        
     }
     
-    private void allImagesToText(String inputDir, String outputDir, String team, boolean autoDiscard, String discardFolder, boolean outpu_txt, boolean output_json) {
-        allImagesToText(inputDir, outputDir, "errors.txt",  team, autoDiscard, discardFolder, outpu_txt, output_json);
+    private void allImagesToTextWithDocumentAI(String inputDir, String outputDir, String team, boolean autoDiscard, String discardFolder, boolean outpu_txt, boolean output_json) {
+        allImagesToTextWithDocumentAI(inputDir, outputDir, "errors.txt",  team, autoDiscard, discardFolder, outpu_txt, output_json);
     }
 
-    private void allImagesToText(String inputDir, String outputDir, String errorFileName, String team, boolean autoDiscard, String discardFolder, boolean outpu_txt, boolean output_json) {
+    private void allImagesToTextWithDocumentAI(String inputDir, String outputDir, String errorFileName, String team, boolean autoDiscard, String discardFolder, boolean outpu_txt, boolean output_json) {
         double thresholdToDiscard = 0.6;
         File errorFile = new File(errorFileName);
         File inputDirFile = new File(inputDir);

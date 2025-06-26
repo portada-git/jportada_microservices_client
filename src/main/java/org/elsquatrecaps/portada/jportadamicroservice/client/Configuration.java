@@ -102,10 +102,14 @@ public class Configuration{
     }
     @Arg(dest="input_file")  //-i
     private String inputFile;
+    @Arg(dest="extra_input_file")  //-ei
+    private String extraInputFile;
     @Arg(dest="output_file")  //-o
     private String outputFile;
     @Arg(dest="error_file")  //-e
     private String errorFile;
+    @Arg(dest="config_file")  //-cfg
+    private String configFile;
     @Arg(dest="command")
     private ArrayList<String> positionalArgs;
     private String command;
@@ -171,11 +175,17 @@ public class Configuration{
                 case "input_file":
                     setInputFile((String) val);
                     break;
+                case "extra_input_file":
+                    setExtraInputFile((String) val);
+                    break;
                 case "output_file":
                     setOutputFile((String) val);
                     break;                    
                 case "error_file":
                     setErrorFile((String) val);
+                    break;                    
+                case "config_file":
+                    setConfigFile((String) val);
                     break;                    
                 case "protocol":
                     setProtocols(preDest, (String) val);
@@ -299,8 +309,10 @@ public class Configuration{
                 .description("Client of portADa microservice for processing images");
         parser.addArgument("command").metavar("<COMMAND>").nargs(1);
         parser.addArgument("-i", "--input_file").nargs("?").help("Image file to fix skewed problem");
+        parser.addArgument("-ei", "--extra_input_file").nargs("?").help("Image file to fix skewed problem");
         parser.addArgument("-o", "--output_file").nargs("?").help("Path where fixed image will be saved");
         parser.addArgument("-e", "--error_file").nargs("?").help("Path where error will be saved if an error is happened");
+        parser.addArgument("-cfg", "--config_file").nargs("?").help("Path where config file is");
         parser.addArgument("-tm", "--team").nargs("?").help("Team from user processes the command");
         parser.addArgument("-m", "--email").nargs("?").help("email to send the veridication code");
         parser.addArgument("-c", "--verificationCode").nargs("?").help("email to send the veridication code");
@@ -391,12 +403,20 @@ public class Configuration{
             this.attrs.add("input_file");
             this.commandArgumentsSize++;
         }
+        if(this.extraInputFile!=null){
+            this.attrs.add("extra_input_file");
+            this.commandArgumentsSize++;
+        }
         if(this.outputFile!=null){
             this.attrs.add("output_file");
             this.commandArgumentsSize++;
         }
         if(this.errorFile!=null){
             this.attrs.add("error_file");
+            this.commandArgumentsSize++;
+        }
+        if(this.configFile!=null){
+            this.attrs.add("config_file");
             this.commandArgumentsSize++;
         }
         if(this.positionalArgs!=null){
@@ -433,14 +453,30 @@ public class Configuration{
         return inputFile;
     }
 
+    public String getExtraInputFile() {
+        return extraInputFile;
+    }
+
     public String getInputDir() {
         return getInputFile();
+    }
+
+    public String getExtraInputDir() {
+        return getExtraInputFile();
     }
 
     protected void setInputFile(String originDir) {
         this.inputFile = originDir;
         if(inputFile!=null && !inputFile.isEmpty()){
             this.attrs.add("input_file");        
+            this.commandArgumentsSize++;
+        }
+    }
+
+    protected void setExtraInputFile(String originDir) {
+        this.extraInputFile = originDir;
+        if(extraInputFile!=null && !extraInputFile.isEmpty()){
+            this.attrs.add("extra_input_file");        
             this.commandArgumentsSize++;
         }
     }
@@ -469,6 +505,18 @@ public class Configuration{
         this.errorFile = errorFile;
         if(errorFile!=null && !errorFile.isEmpty()){
             this.attrs.add("error_file");        
+            this.commandArgumentsSize++;
+        }
+    }
+
+    public String getConfigFile() {
+        return configFile;
+    }
+
+    protected void setConfigFile(String configFile) {
+        this.configFile = configFile;
+        if(configFile!=null && !configFile.isEmpty()){
+            this.attrs.add("config_file");  
             this.commandArgumentsSize++;
         }
     }

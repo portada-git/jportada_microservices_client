@@ -91,8 +91,11 @@ public class JPortadaMicroservice {
             case "fix":
                 papiInstance.fixAllImages(config);
                 break;
-            case "ocrAll":
-                papiInstance.allImagesToText(config);
+            case "ocrAll_documentAI":
+                papiInstance.allImagesToTextWithDocumentAI(config);
+                break;
+            case "ocrAll_qwenAI":
+                papiInstance.allImagesToTextQwenAI(config);
                 break;
             case "ocrJsonAll":
                 papiInstance.allImagesToJson(config);
@@ -111,6 +114,9 @@ public class JPortadaMicroservice {
                 break;
             case "extract":
                 papiInstance.extractAllDataFromDir(config);
+                break;
+            case "fixOcrAll":
+                papiInstance.fixAllOcr(config);
                 break;
             default:
                 throw new RuntimeException("Unkown command named: ".concat(config.getCommand()));

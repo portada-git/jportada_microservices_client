@@ -6,7 +6,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.elsquatrecaps.portada.jportadamicroservice.client.PortadaApi;
 import org.elsquatrecaps.portada.jportadamicroservice.client.services.PublisherService;
-import org.elsquatrecaps.portada.jportadamscaller.PortadaMicroservicesCaller;
 import org.json.JSONObject;
 
 /**
