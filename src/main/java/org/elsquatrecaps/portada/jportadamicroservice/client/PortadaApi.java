@@ -20,6 +20,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 import org.elsquatrecaps.autonewsextractor.error.AutoNewsRuntimeException;
 import org.elsquatrecaps.autonewsextractor.informationunitbuilder.reader.InformationUnitBuilderFromSdlFiles;
+import org.elsquatrecaps.autonewsextractor.tools.ReaderTools;
 import org.elsquatrecaps.autonewsextractor.tools.configuration.AutoNewsExtractorConfiguration;
 import org.elsquatrecaps.portada.jportadamicroservice.client.services.PublisherService;
 import org.elsquatrecaps.portada.jportadamicroservice.client.services.extractor.FileExtractorSevice;
@@ -512,7 +513,7 @@ public class PortadaApi {
                 if(imagesFilesForFixing.containsKey(k)){
                     JSONObject resp = qwenOcrService.fixOcr(team, textFilesToFix.get(k), imagesFilesForFixing.get(k), jsonConfigFile);                   
                     if(resp.getInt("status")==0){
-                        String ocrText = resp.getString("text");
+                        String ocrText = ReaderTools.doubleLf2SingleLf(resp.getString("text"));
                         try {
                             //save ocr file
                             FileUtils.writeStringToFile(new File(new File(outputDir), k), ocrText, Charset.defaultCharset());
@@ -636,7 +637,7 @@ public class PortadaApi {
                 }
                 JSONObject resp = qwenOcrService.getOcr(team, imagesFilesForFixing.get(k), jsonConfigFile);                   
                 if(resp.getInt("status")==0){
-                    String ocrText = resp.getString("text");
+                    String ocrText = ReaderTools.doubleLf2SingleLf(resp.getString("text"));
                     //save ocr file
                     try {
                         //save ocr file
