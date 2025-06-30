@@ -487,11 +487,13 @@ public class PortadaApi {
             File[] lif = imagesDirFile.listFiles();
             Arrays.sort(ltf);
             Arrays.sort(lif);
+            String page = "";
             for(File f:ltf){
                 if(f.getName().matches("\\d{4}_\\d{2}_\\d{2}_[A-Z]{3}_[A-Z]{2}_[A-Z]_\\d{2}.*?\\.txt")){
                     String name = f.getName().substring(0, 20);
                     if(!textFilesToFix.containsKey(name)){
                         textFilesToFix.put(name, new ArrayList<>());
+                        page = f.getName().substring(20, 22);
                     }
                     textFilesToFix.get(name).add(f);
                 }
@@ -516,8 +518,8 @@ public class PortadaApi {
                         String ocrText = ReaderTools.doubleLf2SingleLf(resp.getString("text"));
                         try {
                             //save ocr file
-                            FileUtils.writeStringToFile(new File(new File(outputDir), k), ocrText, Charset.defaultCharset());
-                            publishProgress("Information Unit:", k.concat(".txt"), "FIXING OCR", fet, all);
+                            FileUtils.writeStringToFile(new File(new File(outputDir), k.concat(page).concat(".txt")), ocrText, Charset.defaultCharset());
+                            publishProgress("Information Unit:", k, "FIXING OCR", fet, all);
                         } catch (IOException ex) {
                             Logger.getLogger(PortadaApi.class.getName()).log(Level.SEVERE, null, ex);
                             publishErrorProgress(String.format("Error! %s, for Information Unit:",ex.getMessage()), k, "ERROR FIXING OCR", fet, all, -1);
@@ -598,6 +600,7 @@ public class PortadaApi {
             publishInfo("Starting process", "OCR");
             HashMap p = new HashMap();
             p.put("team", team);
+            String page="";
             for(File inputImageFile: lf){
                 String m = "image: ";
                 String n = inputImageFile.getName();
@@ -624,6 +627,7 @@ public class PortadaApi {
                         String name = inputImageFile.getName().substring(0, 20);
                         if(!imagesFilesForFixing.containsKey(name)){
                             imagesFilesForFixing.put(name, new ArrayList<>());
+                            page=inputImageFile.getName().substring(20, 22);
                         }
                         imagesFilesForFixing.get(name).add(inputImageFile);
                     }
@@ -641,8 +645,8 @@ public class PortadaApi {
                     //save ocr file
                     try {
                         //save ocr file
-                        FileUtils.writeStringToFile(new File(new File(outputDir), k), ocrText, Charset.defaultCharset());
-                        publishProgress("Information Unit:", k.concat(".txt"), "QWEN OCR", fet, all);
+                        FileUtils.writeStringToFile(new File(new File(outputDir), k.concat(page).concat(".txt")), ocrText, Charset.defaultCharset());
+                        publishProgress("Information Unit:", k, "QWEN OCR", fet, all);
                     } catch (IOException ex) {
                         Logger.getLogger(PortadaApi.class.getName()).log(Level.SEVERE, null, ex);
                         publishErrorProgress(String.format("Error! %s, for Information Unit:",ex.getMessage()), k, "ERROR QWEN OCR", fet, all, -1);

@@ -10,7 +10,7 @@ import org.elsquatrecaps.utilities.console.Print;
  * @author josepcanellas
  */
 public class JPortadaMicroservice {
-    private static final String VERSION = "1.0.12";
+    private static final String VERSION = "1.0.17";
     private final PortadaApi papìInstance = new PortadaApi((ProgressInfo t) -> {
         if(t.getStatus().equals(ProgressInfo.KEY_ALREADY_EXIST_STATUS)){
             t.setName("If you want to replace the existing key, repeat the command adding the forceKeyGeneration (-f) attribute: requestForAccessPermission -tm [TEAM] -m [E-MAIL] -f");
@@ -29,7 +29,8 @@ public class JPortadaMicroservice {
             SwingUtilities.invokeLater(()->{
                 ImageFilesSelector f = new ImageFilesSelector();
                 f.setTitle(String.format("PAPI - CLI (%s)", VERSION));
-                f.setSize(740, 385);
+                f.setSize(960, 596);
+                f.setResizable(false);
                 f.setVisible(true);
             });
         }
