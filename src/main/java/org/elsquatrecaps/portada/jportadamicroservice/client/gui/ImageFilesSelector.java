@@ -10,6 +10,7 @@ import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import org.elsquatrecaps.portada.jportadamicroservice.client.Configuration;
 import org.elsquatrecaps.portada.jportadamicroservice.client.JPortadaMicroservice;
@@ -622,6 +623,7 @@ public class ImageFilesSelector extends javax.swing.JFrame {
 
         useDefaultOcrConfigurationCheckBox.setSelected(true);
         useDefaultOcrConfigurationCheckBox.setText("Use default configuration");
+        useDefaultOcrConfigurationCheckBox.setEnabled(false);
         useDefaultOcrConfigurationCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 useDefaultOcrConfigurationCheckBoxActionPerformed(evt);
@@ -1385,7 +1387,7 @@ public class ImageFilesSelector extends javax.swing.JFrame {
         }
         if(!this.useDefaultOcrConfigurationCheckBox.isSelected()){
             options.add("-cfg");
-            options.add(this.localConfigOcrLabel.getText());            
+            options.add(this.localConfigurationFixOcrTextField.getText());            
         }
         options.add("-tm");
         options.add(this.teamComboBoxOcr.getSelectedItem().toString().toLowerCase());
@@ -1630,7 +1632,7 @@ public class ImageFilesSelector extends javax.swing.JFrame {
         options.add(this.ImageInputFixOcrTextField.getText());
         if(!this.useDefaultFixOcrConfigurationCheckBox.isSelected()){
             options.add("-cfg");
-            options.add(this.localConfigFixOcrLabel.getText());            
+            options.add(this.localConfigurationFixOcrTextField.getText());            
         }
         options.add("-o");
         options.add(this.outputFixOcrTextField.getText());
@@ -1644,8 +1646,9 @@ public class ImageFilesSelector extends javax.swing.JFrame {
 
     private void odForLocalConfigFixOcrButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_odForLocalConfigFixOcrButtonActionPerformed
         JFileChooser fc = new JFileChooser(dirBase.getAbsolutePath());
-        fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
         fc.setCurrentDirectory(dirBase.getAbsoluteFile());
+        fc.setFileFilter(new FileNameExtensionFilter("json files", "json"));
         int resp = fc.showOpenDialog(this);
         if(resp!=JFileChooser.CANCEL_OPTION){
             dirBase = fc.getSelectedFile().getParentFile();
@@ -1670,16 +1673,17 @@ public class ImageFilesSelector extends javax.swing.JFrame {
 
     private void useDefaultOcrConfigurationCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_useDefaultOcrConfigurationCheckBoxActionPerformed
         // TODO add your handling code here:
-        this.localConfigOcrLabel.setEnabled(this.useDefaultOcrConfigurationCheckBox.isSelected());
-        this.localConfigurationOcrTextField.setEnabled(this.useDefaultOcrConfigurationCheckBox.isSelected());
-        this.odForLocalConfigOcrButton.setEnabled(this.useDefaultOcrConfigurationCheckBox.isSelected());
+        this.localConfigOcrLabel.setEnabled(!this.useDefaultOcrConfigurationCheckBox.isSelected());
+        this.localConfigurationOcrTextField.setEnabled(!this.useDefaultOcrConfigurationCheckBox.isSelected());
+        this.odForLocalConfigOcrButton.setEnabled(!this.useDefaultOcrConfigurationCheckBox.isSelected());
     }//GEN-LAST:event_useDefaultOcrConfigurationCheckBoxActionPerformed
 
     private void odForLocalConfigOcrButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_odForLocalConfigOcrButtonActionPerformed
         // TODO add your handling code here:
         JFileChooser fc = new JFileChooser(dirBase.getAbsolutePath());
-        fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
         fc.setCurrentDirectory(dirBase.getAbsoluteFile());
+        fc.setFileFilter(new FileNameExtensionFilter("json files", "json"));
         int resp = fc.showOpenDialog(this);
         if(resp!=JFileChooser.CANCEL_OPTION){
             dirBase = fc.getSelectedFile().getParentFile();
@@ -1689,16 +1693,16 @@ public class ImageFilesSelector extends javax.swing.JFrame {
 
     private void ocrApiComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ocrApiComboBoxActionPerformed
         // TODO add your handling code here:
-        if(((ComboBoxItem)(this.ocrApiComboBox.getSelectedItem())).getId().equals("documenAI")){
+        if(((ComboBoxItem)(this.ocrApiComboBox.getSelectedItem())).getId().equals("qwenAI")){
+            this.useDefaultOcrConfigurationCheckBox.setEnabled(true);
+            this.localConfigOcrLabel.setEnabled(!this.useDefaultOcrConfigurationCheckBox.isSelected());
+            this.localConfigurationOcrTextField.setEnabled(!this.useDefaultOcrConfigurationCheckBox.isSelected());
+            this.odForLocalConfigOcrButton.setEnabled(!this.useDefaultOcrConfigurationCheckBox.isSelected());
+        }else{
             this.useDefaultOcrConfigurationCheckBox.setEnabled(false);
             this.localConfigOcrLabel.setEnabled(false);
             this.localConfigurationOcrTextField.setEnabled(false);
             this.odForLocalConfigOcrButton.setEnabled(false);
-        }else{
-            this.useDefaultOcrConfigurationCheckBox.setEnabled(true);
-            this.localConfigOcrLabel.setEnabled(this.useDefaultOcrConfigurationCheckBox.isSelected());
-            this.localConfigurationOcrTextField.setEnabled(this.useDefaultOcrConfigurationCheckBox.isSelected());
-            this.odForLocalConfigOcrButton.setEnabled(this.useDefaultOcrConfigurationCheckBox.isSelected());
         }
     }//GEN-LAST:event_ocrApiComboBoxActionPerformed
 
