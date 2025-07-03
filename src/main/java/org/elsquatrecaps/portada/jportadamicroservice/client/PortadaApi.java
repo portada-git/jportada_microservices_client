@@ -493,7 +493,6 @@ public class PortadaApi {
                     String name = f.getName().substring(0, 20);
                     if(!textFilesToFix.containsKey(name)){
                         textFilesToFix.put(name, new ArrayList<>());
-                        page = f.getName().substring(20, 22);
                     }
                     textFilesToFix.get(name).add(f);
                 }
@@ -513,6 +512,9 @@ public class PortadaApi {
             for(String k: textFilesToFix.keySet()){
                 fet++;
                 if(imagesFilesForFixing.containsKey(k)){
+                    if(!textFilesToFix.get(k).isEmpty()){
+                         page = textFilesToFix.get(k).get(0).getName().substring(20, 22);
+                    }
                     JSONObject resp = qwenOcrService.fixOcr(team, textFilesToFix.get(k), imagesFilesForFixing.get(k), jsonConfigFile);                   
                     if(resp.getInt("status")==0){
                         String ocrText = ReaderTools.doubleLf2SingleLf(resp.getString("text"));
@@ -627,7 +629,6 @@ public class PortadaApi {
                         String name = inputImageFile.getName().substring(0, 20);
                         if(!imagesFilesForFixing.containsKey(name)){
                             imagesFilesForFixing.put(name, new ArrayList<>());
-                            page=inputImageFile.getName().substring(20, 22);
                         }
                         imagesFilesForFixing.get(name).add(inputImageFile);
                     }
@@ -638,6 +639,9 @@ public class PortadaApi {
                 File jsonConfigFile = null;
                 if(jsonConfigPath!=null){
                     jsonConfigFile = new File(jsonConfigPath);
+                }
+                if(!imagesFilesForFixing.get(k).isEmpty()){
+                    page=imagesFilesForFixing.get(k).get(0).getName().substring(20, 22);
                 }
                 JSONObject resp = qwenOcrService.getOcr(team, imagesFilesForFixing.get(k), jsonConfigFile);                   
                 if(resp.getInt("status")==0){
