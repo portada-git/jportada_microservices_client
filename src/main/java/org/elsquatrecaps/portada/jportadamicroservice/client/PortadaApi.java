@@ -13,13 +13,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
-import org.elsquatrecaps.autonewsextractor.error.AutoNewsRuntimeException;
-import org.elsquatrecaps.autonewsextractor.informationunitbuilder.reader.InformationUnitBuilderFromSdlFiles;
 import org.elsquatrecaps.autonewsextractor.tools.ReaderTools;
 import org.elsquatrecaps.autonewsextractor.tools.configuration.AutoNewsExtractorConfiguration;
 import org.elsquatrecaps.portada.jportadamicroservice.client.services.PublisherService;
@@ -325,6 +323,7 @@ public class PortadaApi {
                     return ret;
                 }
             });
+            Arrays.sort(lf);
             int all = lf.length;
             int fet=0;
             publishInfo("Starting process", processName );
@@ -407,6 +406,7 @@ public class PortadaApi {
                     return ret;
                 }
             });
+            Arrays.sort(lf);
             int all = lf.length;
             int fet=0;
             publishInfo("Starting process", "OCR");
@@ -469,7 +469,7 @@ public class PortadaApi {
     }
     
     private void fixAllOcr(String team, String textDir, String imagesDir, String outputDir, String errorFileName, String jsonConfigPath){
-        Map<String, List<File>> textFilesToFix = new HashMap<>();
+        Map<String, List<File>> textFilesToFix = new TreeMap<>();
         Map<String, List<File>> imagesFilesForFixing = new HashMap<>();
         File errorFile = new File(errorFileName);
         File textDirFile = new File(textDir);
@@ -597,6 +597,7 @@ public class PortadaApi {
                     return ret;
                 }
             });
+            Arrays.sort(lf);
             int all = lf.length;
             int fet=0;
             publishInfo("Starting process", "OCR");
@@ -728,6 +729,7 @@ public class PortadaApi {
                     return ret;
                 }
             });
+            Arrays.sort(lf);
             int all = lf.length;
             int fet=0;
             publishInfo("Starting process", "OCR");
@@ -842,7 +844,7 @@ public class PortadaApi {
                     return ret;
                 }
             });
-            
+            Arrays.sort(lf);
             int fet=0;
             int all = lf.length;
             int actions = 0;
@@ -1009,7 +1011,7 @@ public class PortadaApi {
             if(FixActions.isActionIn(FixActions.FIX_SKEW, actions)){                
                 processTofix++;
             }
-
+            Arrays.sort(lf);
             int all = lf.length*processTofix;
             int fet=0;
             publishInfo("Starting process", "fix image");
