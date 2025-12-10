@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -208,22 +209,40 @@ public class FileExtractorSevice extends PublisherService{
                         final int id = i;
                         BoatFactReader boatFactReader = new BoatFactReader();
                         final JSONObject jsonCfg = autoNewsExtractorJsonConfiguration;
+                        List<NewsExtractedData> tmpExtractDataList = new ArrayList<>();
+                        String fn = String.format("%s_%s",outputFile, autoNewsExtractorConfiguration.getParseModel()[i]);
+                        String fn_tmp = String.format("%s_tmp", fn);
+                        JSONObject csvParams = readConfigCsv(autoNewsExtractorJsonConfiguration, autoNewsExtractorConfiguration.getParseModel()[i]);
                         extractDataList = boatFactReader.initInfoUnitBuilderConfig(autoNewsExtractorConfiguration).initProcessInformationUnitCallback((param) -> {
                             List<NewsExtractedData> l;
                             l = this.processCutAndExtractFromText(team, param, extractorProp, jsonCfg);
                             //PUBLISH
                             publishProgress(param.getInformationUnitName(), String.format("extract (%s)", autoNewsExtractorConfiguration.getParseModel()[id]), (int)(100*param.getCompletedRatio()), 100);
+                            tmpExtractDataList.addAll(l);
+                            JsonFileFormatterForExtractedData<NewsExtractedData> formatter = new JsonFileFormatterForExtractedData<>(tmpExtractDataList);
+                            formatter.toFile(fn_tmp);
+                            if(csvParams!=null){
+                                BoatFactCsvFormatter csvFormatter = new BoatFactCsvFormatter();
+                                csvFormatter.configHeaderFields(csvParams).format(tmpExtractDataList).toFile(fn_tmp);
+                            }
                             return l;
                         }).processFiles(originDir, extension, i);
                         //Emmagatzemar
                         JsonFileFormatterForExtractedData<NewsExtractedData> formatter = new JsonFileFormatterForExtractedData<>(extractDataList);
-                        String fn = String.format("%s_%s",outputFile, autoNewsExtractorConfiguration.getParseModel()[i]);
                         formatter.toFile(fn);
-                        JSONObject csvParams = readConfigCsv(autoNewsExtractorJsonConfiguration, autoNewsExtractorConfiguration.getParseModel()[i]);
                         if(csvParams!=null){
                             BoatFactCsvFormatter csvFormatter = new BoatFactCsvFormatter();
                             List d = extractDataList;
                             csvFormatter.configHeaderFields(csvParams).format(d).toFile(fn);
+                        }
+                        if(Files.exists(Paths.get(fn_tmp))){
+                            Files.delete(Paths.get(fn_tmp));                            
+                        }
+                        if(Files.exists(Paths.get(fn_tmp.concat(".json")))){
+                            Files.delete(Paths.get(fn_tmp.concat(".json")));                            
+                        }
+                        if(Files.exists(Paths.get(fn_tmp.concat(".csv")))){
+                            Files.delete(Paths.get(fn_tmp.concat(".csv")));                            
                         }
                     }
                     if(r.equals(BoatFactVersionUpdater.BoatFactVersionUpdaterResponse.JSON_UPDATED) || r.equals(BoatFactVersionUpdater.BoatFactVersionUpdaterResponse.JSON_UPDATED_WITH_WARNIGS)){
