@@ -122,6 +122,8 @@ public class ImageFilesSelector extends javax.swing.JFrame {
         localConfigFixOcrLabel = new javax.swing.JLabel();
         localConfigurationFixOcrTextField = new javax.swing.JTextField();
         odForLocalConfigFixOcrButton = new javax.swing.JButton();
+        platformAiComboBoxFixOcr = new javax.swing.JComboBox<>();
+        jLabel25 = new javax.swing.JLabel();
         jPanel9 = new javax.swing.JPanel();
         jPanel12 = new javax.swing.JPanel();
         jLabel9 = new javax.swing.JLabel();
@@ -865,48 +867,57 @@ public class ImageFilesSelector extends javax.swing.JFrame {
             }
         });
 
+        platformAiComboBoxFixOcr.setModel(createComboboxModelplatformAiForSelecting());
+        platformAiComboBoxFixOcr.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                platformAiComboBoxFixOcrActionPerformed(evt);
+            }
+        });
+
+        jLabel25.setText("platform AI:");
+
         javax.swing.GroupLayout jPanel19Layout = new javax.swing.GroupLayout(jPanel19);
         jPanel19.setLayout(jPanel19Layout);
         jPanel19Layout.setHorizontalGroup(
             jPanel19Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel19Layout.createSequentialGroup()
+                .addGap(10, 10, 10)
                 .addGroup(jPanel19Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel19Layout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel22)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(teamComboBoxFixOcr, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel19Layout.createSequentialGroup()
-                        .addGap(10, 10, 10)
+                        .addComponent(useDefaultFixOcrConfigurationCheckBox)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 271, Short.MAX_VALUE)
+                        .addComponent(localConfigFixOcrLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(localConfigurationFixOcrTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 257, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(odForLocalConfigFixOcrButton, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel19Layout.createSequentialGroup()
+                        .addGroup(jPanel19Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel23)
+                            .addComponent(jLabel26)
+                            .addComponent(jLabel24)
+                            .addComponent(jLabel25))
+                        .addGap(18, 18, 18)
                         .addGroup(jPanel19Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel19Layout.createSequentialGroup()
-                                .addComponent(useDefaultFixOcrConfigurationCheckBox)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(localConfigFixOcrLabel)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(localConfigurationFixOcrTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 257, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(odForLocalConfigFixOcrButton, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel19Layout.createSequentialGroup()
-                                .addGroup(jPanel19Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jLabel23)
-                                    .addComponent(jLabel26)
-                                    .addComponent(jLabel24))
-                                .addGap(18, 18, 18)
                                 .addGroup(jPanel19Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(jPanel19Layout.createSequentialGroup()
-                                        .addGroup(jPanel19Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(textInputFixOcrTextField)
-                                            .addComponent(outputFixOcrTextField)
-                                            .addComponent(runFixOcrButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 673, Short.MAX_VALUE))
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addGroup(jPanel19Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                            .addComponent(odForOutputFixOcrButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                            .addComponent(odForTextInputFixOcrButton)))
-                                    .addGroup(jPanel19Layout.createSequentialGroup()
-                                        .addComponent(ImageInputFixOcrTextField)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(odForImageInputFixOcrButton)))))))
+                                    .addComponent(textInputFixOcrTextField)
+                                    .addComponent(outputFixOcrTextField)
+                                    .addComponent(runFixOcrButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 673, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(jPanel19Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(odForOutputFixOcrButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(odForTextInputFixOcrButton)))
+                            .addGroup(jPanel19Layout.createSequentialGroup()
+                                .addComponent(ImageInputFixOcrTextField)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(odForImageInputFixOcrButton))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel19Layout.createSequentialGroup()
+                                .addComponent(platformAiComboBoxFixOcr, javax.swing.GroupLayout.PREFERRED_SIZE, 256, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel22)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(teamComboBoxFixOcr, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                 .addContainerGap())
         );
         jPanel19Layout.setVerticalGroup(
@@ -915,7 +926,9 @@ public class ImageFilesSelector extends javax.swing.JFrame {
                 .addGap(56, 56, 56)
                 .addGroup(jPanel19Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel22)
-                    .addComponent(teamComboBoxFixOcr, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(teamComboBoxFixOcr, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(platformAiComboBoxFixOcr, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel25))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel19Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel23)
@@ -938,7 +951,7 @@ public class ImageFilesSelector extends javax.swing.JFrame {
                         .addComponent(localConfigurationFixOcrTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(odForLocalConfigFixOcrButton))
                     .addComponent(useDefaultFixOcrConfigurationCheckBox))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 153, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 151, Short.MAX_VALUE)
                 .addComponent(runFixOcrButton)
                 .addGap(42, 42, 42))
         );
@@ -1638,6 +1651,8 @@ public class ImageFilesSelector extends javax.swing.JFrame {
         options.add(this.outputFixOcrTextField.getText());
         options.add("-tm");
         options.add(this.teamComboBoxFixOcr.getSelectedItem().toString().toLowerCase());
+        options.add("-ai");
+        options.add(((ComboBoxItem)this.platformAiComboBoxFixOcr.getSelectedItem()).getId());
         String[] par = new String[options.size()];
         config.parseArgumentsAndConfigure(options.toArray( par));
         worker.init(config);
@@ -1664,11 +1679,12 @@ public class ImageFilesSelector extends javax.swing.JFrame {
 
     private void teamComboBoxFixOcrActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_teamComboBoxFixOcrActionPerformed
         // TODO add your handling code here:
-        if(this.teamComboBoxFixOcr.getSelectedItem().toString().equals("NONE")){
+        if(this.teamComboBoxFixOcr.getSelectedItem().toString().equals("NONE")
+                || ((ComboBoxItem)this.platformAiComboBoxFixOcr.getSelectedItem()).getId().equals("NONE")){
             this.runFixOcrButton.setEnabled(false);
         }else{
             this.runFixOcrButton.setEnabled(true);
-        }        
+        }     
     }//GEN-LAST:event_teamComboBoxFixOcrActionPerformed
 
     private void useDefaultOcrConfigurationCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_useDefaultOcrConfigurationCheckBoxActionPerformed
@@ -1705,6 +1721,16 @@ public class ImageFilesSelector extends javax.swing.JFrame {
             this.odForLocalConfigOcrButton.setEnabled(false);
         }
     }//GEN-LAST:event_ocrApiComboBoxActionPerformed
+
+    private void platformAiComboBoxFixOcrActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_platformAiComboBoxFixOcrActionPerformed
+        // TODO add your handling code here:
+        if(this.teamComboBoxFixOcr.getSelectedItem().toString().equals("NONE")
+                || ((ComboBoxItem)this.platformAiComboBoxFixOcr.getSelectedItem()).getId().equals("NONE")){
+            this.runFixOcrButton.setEnabled(false);
+        }else{
+            this.runFixOcrButton.setEnabled(true);
+        }   
+    }//GEN-LAST:event_platformAiComboBoxFixOcrActionPerformed
 
     /**
      * @param args the command line arguments
@@ -1756,7 +1782,18 @@ public class ImageFilesSelector extends javax.swing.JFrame {
     protected static ComboBoxModel<String> createComboboxModelTeamsForSelecting(){
         Properties prop = Configuration.loadAndGetConfigProperties();
         String[] values = prop.getProperty("teamsForSelecting", "NONE,ARG,BCN,CUB,GRE").split(",");
-        return new DefaultComboBoxModel<>(values);
+        DefaultComboBoxModel<String> m = new DefaultComboBoxModel<>(values);
+        return m;
+    }
+
+    protected static ComboBoxModel<ComboBoxItem> createComboboxModelplatformAiForSelecting(){
+        Properties prop = Configuration.loadAndGetConfigProperties();
+        String[] values = prop.getProperty("fixOcrApiForSelection", "NONE,openai,qwen").split(",");
+        DefaultComboBoxModel<ComboBoxItem> m = new DefaultComboBoxModel<>();
+        for(String v: values){
+            m.addElement(new ComboBoxItem(v));
+        }
+        return m;
     }
 
     protected static ComboBoxModel<ComboBoxItem> createComboboxModelNewsPaperForSelecting(){
@@ -1802,6 +1839,7 @@ public class ImageFilesSelector extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel23;
     private javax.swing.JLabel jLabel24;
+    private javax.swing.JLabel jLabel25;
     private javax.swing.JLabel jLabel26;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -1858,6 +1896,7 @@ public class ImageFilesSelector extends javax.swing.JFrame {
     private javax.swing.JTextField outputOcrTextField;
     private javax.swing.JTextField outputSelectExtractDataField;
     private javax.swing.JTextField parserConfigFileTextField;
+    private javax.swing.JComboBox<ComboBoxItem> platformAiComboBoxFixOcr;
     private javax.swing.JTextField propertiesFileExtractDataTextField;
     private javax.swing.JCheckBox remoteConfigCheckBox;
     private javax.swing.JButton runExtractDataButton;

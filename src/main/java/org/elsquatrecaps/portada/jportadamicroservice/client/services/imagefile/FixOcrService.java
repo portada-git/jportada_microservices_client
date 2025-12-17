@@ -20,32 +20,33 @@ import org.json.JSONObject;
  *
  * @author josep
  */
-public class QwenOcrService extends PublisherService{
+public class FixOcrService extends PublisherService{
     
-    public static QwenOcrService getInstance(){
-        return new QwenOcrService();
+    public static FixOcrService getInstance(){
+        return new FixOcrService();
     }
     
-    public JSONObject fixOcr(String team, List<File> textFiles, List<File> imageFiles){        
-        return fixOcr(team, textFiles, imageFiles, null);
+    public JSONObject fixOcr(String aiPlatform, String team, List<File> textFiles, List<File> imageFiles){        
+        return fixOcr(aiPlatform, team, textFiles, imageFiles, null);
     }
 
-    public JSONObject fixOcr(String team, List<File> textFiles, List<File> imageFiles, File configFile){
+    public JSONObject fixOcr(String aiPlatform, String team, List<File> textFiles, List<File> imageFiles, File configFile){
         JSONObject ret=null;
         JSONObject params = new JSONObject();
-        params.put("team", team).put("text", readFileAndGetText(textFiles)).put("images", readImageAndGetBytesAndMime(imageFiles));
+        params.put("team", team).put("text", readFileAndGetText(textFiles))
+                .put("images", readImageAndGetBytesAndMime(imageFiles)).put("ai_platform", aiPlatform);
         if(configFile!=null){
             try {
                 JSONObject content = new JSONObject(FileUtils.readFileToString(configFile, Charset.defaultCharset()));
                 params.put("config_json", content);
             } catch (IOException ex) {
-                Logger.getLogger(QwenOcrService.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(FixOcrService.class.getName()).log(Level.SEVERE, null, ex);
             }            
         }
         try{
             ret = new JSONObject(sendPostAsFormatParams("/pr/fix_ocr_from_text_and_images", "python", params, String.class));
         } catch (PortadaMicroserviceCallException ex) {
-            Logger.getLogger(QwenOcrService.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(FixOcrService.class.getName()).log(Level.SEVERE, null, ex);
         }   
         return ret;
     }
@@ -65,13 +66,13 @@ public class QwenOcrService extends PublisherService{
                 JSONObject content = new JSONObject(FileUtils.readFileToString(configFile, Charset.defaultCharset()));
                 params.put("config_json", content);
             } catch (IOException ex) {
-                Logger.getLogger(QwenOcrService.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(FixOcrService.class.getName()).log(Level.SEVERE, null, ex);
             }            
         }
         try{
             ret = new JSONObject(sendPostAsFormatParams("/pr/get_text_from_images", "python", params, String.class));
         } catch (PortadaMicroserviceCallException ex) {
-            Logger.getLogger(QwenOcrService.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(FixOcrService.class.getName()).log(Level.SEVERE, null, ex);
         }   
         return ret;
     }

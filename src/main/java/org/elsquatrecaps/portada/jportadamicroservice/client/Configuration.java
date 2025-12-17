@@ -154,6 +154,8 @@ public class Configuration{
     private String extractJsonConfigParsersFile;
     @Arg(dest="extractExtensionFile")
     private String extractExtensionFile;
+    @Arg(dest="ai_platform")
+    private String aiPlatform;
     
     private int  commandArgumentsSize=0;    
     private final Set<String> attrs = new HashSet<>();
@@ -256,6 +258,9 @@ public class Configuration{
                 case "ocr_txt":
                     this.setOcrTxt((String) val);
                     break;
+                case "ai_platform":
+                    this.setAiPlatform((String) val);
+                    break;
             }
         }
     }
@@ -334,6 +339,7 @@ public class Configuration{
         parser.addArgument("-w", "--fixWarp").action(Arguments.storeTrue()).help("Images to process not need to fix warp lines");
         parser.addArgument("-ocr_json", "--ocr_json").nargs("?").help("JSON output required for OCR response.");
         parser.addArgument("-ocr_txt", "--ocr_txt").nargs("?").help("TXT output required for OCR response.");
+        parser.addArgument("-ai", "--ai_platform").nargs("?").help("AI platform used");
         try {
             parser.parseArgs(args, this);
             this.updateAttrs();
@@ -442,6 +448,9 @@ public class Configuration{
             this.attrs.add("fixWarp");            
         }else{
             this.fixWarp=false;
+        }
+        if(getAiPlatform()!=null){
+            this.attrs.add("ai_platform");
         }
     }
     
@@ -695,6 +704,15 @@ public class Configuration{
 
     public Boolean getForceKeyGeneration() {
         return forceKeyGeneration;
+    }
+
+    private void setAiPlatform(String val) {
+        aiPlatform = val;
+        this.attrs.add("ai_platform");
+    }
+
+    public String getAiPlatform() {
+        return aiPlatform;
     }
 
     /**

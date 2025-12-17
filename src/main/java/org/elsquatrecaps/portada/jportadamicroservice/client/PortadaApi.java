@@ -24,7 +24,7 @@ import org.elsquatrecaps.portada.jportadamicroservice.client.services.PublisherS
 import org.elsquatrecaps.portada.jportadamicroservice.client.services.extractor.FileExtractorSevice;
 import org.elsquatrecaps.portada.jportadamicroservice.client.services.imagefile.ImageFileService;
 import org.elsquatrecaps.portada.jportadamicroservice.client.services.imagefile.ImageQualityFilterService;
-import org.elsquatrecaps.portada.jportadamicroservice.client.services.imagefile.QwenOcrService;
+import org.elsquatrecaps.portada.jportadamicroservice.client.services.imagefile.FixOcrService;
 import org.elsquatrecaps.portada.jportadamicroservice.client.services.publickey.PublicKeyService;
 import org.elsquatrecaps.portada.jportadamscaller.ConnectionMs;
 import org.json.JSONArray;
@@ -44,7 +44,7 @@ public class PortadaApi {
     ImageQualityFilterService imageQualityFilterService = new ImageQualityFilterService();
     PublicKeyService publicKeyService=new PublicKeyService();
     FileExtractorSevice fileExtractorSevice=new FileExtractorSevice();
-    QwenOcrService qwenOcrService = new QwenOcrService();
+    FixOcrService qwenOcrService = new FixOcrService();
     
     public PortadaApi() {
         
@@ -448,27 +448,27 @@ public class PortadaApi {
     public void fixAllOcr(Configuration config){
          switch (config.getCommandArgumentsSize()) {
             case 2:
-                fixAllOcr(config.getTeam(), config.getInputDir(), config.getExtraInputDir(), config.getInputDir(), "errors.txt", null);
+                fixAllOcr(config.getAiPlatform(), config.getTeam(), config.getInputDir(), config.getExtraInputDir(), config.getInputDir(), "errors.txt", null);
                 break;
             case 3:
-                fixAllOcr(config.getTeam(), config.getInputDir(), config.getExtraInputDir(), config.getOutputFile(), "errors.txt", null);
+                fixAllOcr(config.getAiPlatform(), config.getTeam(), config.getInputDir(), config.getExtraInputDir(), config.getOutputFile(), "errors.txt", null);
                 break;
             case 4:
                 if(config.getErrorFile()==null){
-                    fixAllOcr(config.getTeam(), config.getInputDir(), config.getExtraInputDir(), config.getOutputFile(), "errors.txt", config.getConfigFile());
+                    fixAllOcr(config.getAiPlatform(), config.getTeam(), config.getInputDir(), config.getExtraInputDir(), config.getOutputFile(), "errors.txt", config.getConfigFile());
                 }else{
-                    fixAllOcr(config.getTeam(), config.getInputDir(), config.getExtraInputDir(), config.getOutputFile(), config.getErrorFile(), null);
+                    fixAllOcr(config.getAiPlatform(), config.getTeam(), config.getInputDir(), config.getExtraInputDir(), config.getOutputFile(), config.getErrorFile(), null);
                 }
                 break;
             case 5:
-                fixAllOcr(config.getTeam(), config.getInputDir(), config.getExtraInputDir(), config.getOutputFile(), config.getErrorFile(), config.getConfigFile());
+                fixAllOcr(config.getAiPlatform(), config.getTeam(), config.getInputDir(), config.getExtraInputDir(), config.getOutputFile(), config.getErrorFile(), config.getConfigFile());
                 break;
             default:
                 throw new RuntimeException("Bad number of parametres for allImagesToText command");             
          }        
     }
     
-    private void fixAllOcr(String team, String textDir, String imagesDir, String outputDir, String errorFileName, String jsonConfigPath){
+    private void fixAllOcr(String aiPlatform, String team, String textDir, String imagesDir, String outputDir, String errorFileName, String jsonConfigPath){
         Map<String, List<File>> textFilesToFix = new TreeMap<>();
         Map<String, List<File>> imagesFilesForFixing = new HashMap<>();
         File errorFile = new File(errorFileName);
@@ -515,7 +515,7 @@ public class PortadaApi {
                     if(!textFilesToFix.get(k).isEmpty()){
                          page = textFilesToFix.get(k).get(0).getName().substring(20, 22);
                     }
-                    JSONObject resp = qwenOcrService.fixOcr(team, textFilesToFix.get(k), imagesFilesForFixing.get(k), jsonConfigFile);                   
+                    JSONObject resp = qwenOcrService.fixOcr(aiPlatform, team, textFilesToFix.get(k), imagesFilesForFixing.get(k), jsonConfigFile);                   
                     if(resp.getInt("status")==0){
                         String ocrText = ReaderTools.doubleLf2SingleLf(resp.getString("text"));
                         try {
