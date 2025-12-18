@@ -28,6 +28,7 @@ import org.elsquatrecaps.portada.jportadamicroservice.client.services.imagefile.
 import org.elsquatrecaps.portada.jportadamicroservice.client.services.publickey.PublicKeyService;
 import org.elsquatrecaps.portada.jportadamscaller.ConnectionMs;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -515,19 +516,28 @@ public class PortadaApi {
                     if(!textFilesToFix.get(k).isEmpty()){
                          page = textFilesToFix.get(k).get(0).getName().substring(20, 22);
                     }
-                    JSONObject resp = qwenOcrService.fixOcr(aiPlatform, team, textFilesToFix.get(k), imagesFilesForFixing.get(k), jsonConfigFile);                   
-                    if(resp.getInt("status")==0){
-                        String ocrText = ReaderTools.doubleLf2SingleLf(resp.getString("text"));
-                        try {
-                            //save ocr file
-                            FileUtils.writeStringToFile(new File(new File(outputDir), k.concat(page).concat(".txt")), ocrText, Charset.defaultCharset());
-                            publishProgress("Information Unit:", k, "FIXING OCR", fet, all);
-                        } catch (IOException ex) {
-                            Logger.getLogger(PortadaApi.class.getName()).log(Level.SEVERE, null, ex);
-                            publishErrorProgress(String.format("Error! %s, for Information Unit:",ex.getMessage()), k, "ERROR FIXING OCR", fet, all, -1);
+                    JSONObject resp = null;
+                    try{
+                        resp = qwenOcrService.fixOcr(aiPlatform, team, textFilesToFix.get(k), imagesFilesForFixing.get(k), jsonConfigFile);                   
+                        if(resp.getInt("status")==0){
+                            String ocrText = ReaderTools.doubleLf2SingleLf(resp.getString("text"));
+                            try {
+                                //save ocr file
+                                FileUtils.writeStringToFile(new File(new File(outputDir), k.concat(page).concat(".txt")), ocrText, Charset.defaultCharset());
+                                publishProgress("Information Unit:", k, "FIXING OCR", fet, all);
+                            } catch (IOException ex) {
+                                Logger.getLogger(PortadaApi.class.getName()).log(Level.SEVERE, null, ex);
+                                publishErrorProgress(String.format("Error! %s, for Information Unit:",ex.getMessage()), k, "ERROR FIXING OCR", fet, all, -1);
+                            }
+                        }else{
+                         publishErrorProgress(String.format("Error! %s, for Information Unit:",resp.getString("error_message")), k, "ERROR FIXING OCR", fet, all, -1);
                         }
-                    }else{
-                     publishErrorProgress(String.format("Error! %s, for Information Unit:",resp.getString("error_message")), k, "ERROR FIXING OCR", fet, all, -1);
+                    }catch (Exception e){
+                        if (resp == null){
+                            publishErrorProgress(String.format("Error! %s, for Information Unit:",resp.getString("error_message")), k, "ERROR FIXING OCR", fet, all, -1);
+                        }else{
+                            publishErrorInfo(String.format("Error! %s",resp.getString("error_message")), k, -100);
+                        }
                     }
                 }else{
                     publishErrorProgress("Information Unit:", k, "ERROR FIXING OCR. Image doesn't exist.", fet, all, -1);
