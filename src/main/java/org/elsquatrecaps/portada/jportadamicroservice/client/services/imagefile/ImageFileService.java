@@ -100,6 +100,11 @@ public class ImageFileService extends PublisherService {
                 }
             }while(!exit);
             con.disconnect();
+            if(times>1){
+                Object[] par = new Object[0];
+                Logger.getLogger(PortadaApi.class.getName()).log(Level.WARNING, "Error. You need generate a security key access", par);
+                ret = "{\"status\":-2, \"message\":\"Error. You need generate a security key access\"}";
+            }
         } catch (Exception ex) {
             Logger.getLogger(PortadaApi.class.getName()).log(Level.SEVERE, null, ex);
             ret = "{\"status\":-4, \"message\":\"".concat(ex.getMessage()).concat("\"}");
@@ -155,6 +160,11 @@ public class ImageFileService extends PublisherService {
                 }
             }while(!exit);
             con.disconnect();
+            if(times>1){
+                Object[] par = new Object[0];
+                Logger.getLogger(PortadaApi.class.getName()).log(Level.WARNING, "Error. You need generate a security key access", par);
+                ret = "{\"status\":-2, \"message\":\"Error. You need generate a security key access\"}";
+            }
         } catch (Exception ex) {
             Logger.getLogger(PortadaApi.class.getName()).log(Level.SEVERE, null, ex);
             ret = "{\"status\":-4, \"message\":\"".concat(ex.getMessage()).concat("\"}");
@@ -195,8 +205,13 @@ public class ImageFileService extends PublisherService {
                 }
             }while(!exit);
             con.disconnect();
+            if(times>1){
+                Object[] par = new Object[0];
+                Logger.getLogger(PortadaApi.class.getName()).log(Level.WARNING, "Error. You need generate a security key access", par);
+                ret = false;
+            }
         } catch (Exception ex) {
-            Logger.getLogger(PortadaApi.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(PortadaApi.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
             ret = false;
         }
         return ret;

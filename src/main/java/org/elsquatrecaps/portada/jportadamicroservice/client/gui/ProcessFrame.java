@@ -252,5 +252,6 @@ public class ProcessFrame extends javax.swing.JFrame implements InfoProcessFrame
     @Override
     public void updateErrorInfo(String message, String process, int errorcode) {
         updateProgress(message, process, jProgressBar1.getValue());
+        updateList(message, process, jProgressBar1.getValue(), false);
     }
 }

@@ -138,7 +138,9 @@ public class PortadaApi {
                     if(config.getExtractJsonConfigParsersFile()!=null){
                         fileExtractorSevice.init(new File(config.getExtractJsonConfigParsersFile()));
                     }else{
-                        fileExtractorSevice.init(new File(extractorConf.getParserConfigJsonFile()));
+                        if(extractorConf.getParserConfigJsonFile()!=null){
+                            fileExtractorSevice.init(new File(extractorConf.getParserConfigJsonFile()));
+                        }
                     }
             }
             fileExtractorSevice.processFiles(config.getTeam(), config.getOutputFile(), config.getInputDir(), config.getExtractExtensionFile());
@@ -519,7 +521,7 @@ public class PortadaApi {
                     JSONObject resp = null;
                     try{
                         resp = qwenOcrService.fixOcr(aiPlatform, team, textFilesToFix.get(k), imagesFilesForFixing.get(k), jsonConfigFile);                   
-                        if(resp.getInt("status")==0){
+                        if(resp!=null && resp.getInt("status")==0){
                             String ocrText = ReaderTools.doubleLf2SingleLf(resp.getString("text"));
                             try {
                                 //save ocr file
@@ -530,13 +532,14 @@ public class PortadaApi {
                                 publishErrorProgress(String.format("Error! %s, for Information Unit:",ex.getMessage()), k, "ERROR FIXING OCR", fet, all, -1);
                             }
                         }else{
-                         publishErrorProgress(String.format("Error! %s, for Information Unit:",resp.getString("error_message")), k, "ERROR FIXING OCR", fet, all, -1);
+                            publishErrorProgress(String.format("Error! %s, for Information Unit:",resp.getString("error_message")), k, "ERROR FIXING OCR", fet, all,resp.getInt("status"));
                         }
                     }catch (Exception e){
+                        Logger.getLogger(PortadaApi.class.getName()).log(Level.SEVERE, null, e);
                         if (resp == null){
-                            publishErrorProgress(String.format("Error! %s, for Information Unit:",resp.getString("error_message")), k, "ERROR FIXING OCR", fet, all, -1);
+                            publishErrorProgress(String.format("Error! %s, for Information Unit:",e.getMessage()), k, "ERROR FIXING OCR", fet, all, -1);
                         }else{
-                            publishErrorInfo(String.format("Error! %s",resp.getString("error_message")), k, -100);
+                            publishErrorProgress(String.format("Error! %s",resp.optString("error_message", e.getMessage())), k,"ERROR FIXING OCR", fet, all, resp.getInt("status"));
                         }
                     }
                 }else{

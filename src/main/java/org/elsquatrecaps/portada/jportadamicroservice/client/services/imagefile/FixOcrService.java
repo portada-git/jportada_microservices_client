@@ -47,6 +47,7 @@ public class FixOcrService extends PublisherService{
             ret = new JSONObject(sendPostAsFormatParams("/pr/fix_ocr_from_text_and_images", "python", params, String.class));
         } catch (PortadaMicroserviceCallException ex) {
             Logger.getLogger(FixOcrService.class.getName()).log(Level.SEVERE, null, ex);
+            ret = new JSONObject(String.format("{\"status\":-1, \"error_message\":%s}", ex.getMessage()));
         }   
         return ret;
     }

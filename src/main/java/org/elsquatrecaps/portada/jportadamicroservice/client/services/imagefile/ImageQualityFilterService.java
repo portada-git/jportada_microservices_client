@@ -55,6 +55,7 @@ public class ImageQualityFilterService extends PublisherService {
         try{  
             boolean exit;
             HttpURLConnection con = flushMultipartRequest(command, "file", inputFile, paramData, context);
+            int times=0;
             do{
                 exit = true;
                 int responseCode = con.getResponseCode();
@@ -65,16 +66,22 @@ public class ImageQualityFilterService extends PublisherService {
                     SignedData signedData = signChallengeOfConnection(con, paramData.getOrDefault("team", null));
                     con.disconnect();
                     con = flushMultipartRequest(command, "image", inputFile, paramData, signedData, context);
-                    exit = false;
+                    times++;
+                    exit = times>1;
                 } else {
                     //error
                     ret = "{\"status\":-1, \"message\":\"Error. Something was wrong\"}";
                 }
             }while(!exit);
             con.disconnect();
+            if(times>1){
+                Object[] par = new Object[0];
+                Logger.getLogger(PortadaApi.class.getName()).log(Level.WARNING, "Error. You need generate a security key access", par);
+                ret = "{\"status\":-2, \"message\":\"Error. You need generate a security key access\"}";
+            }
         } catch (Exception ex) {
             Logger.getLogger(PortadaApi.class.getName()).log(Level.SEVERE, null, ex);
-            ret = "{\"status\":-2, \"message\":\"Error: ".concat(ex.getMessage()).concat("\"}");
+            ret = "{\"status\":-3, \"message\":\"Error: ".concat(ex.getMessage()).concat("\"}");
         }
         return ret;
         
