@@ -193,6 +193,9 @@ public class FileExtractorSevice extends PublisherService{
                 throw new RuntimePapiCliException(-100, "Error reading parser json config file.\n ".concat(ex.getMessage()), ex); 
             }
         }else{
+            if (this.newsPaper==null){
+                this.newsPaper = autoNewsExtractorConfiguration.getNewspaper();
+            }
             autoNewsExtractorJsonConfiguration = getRemoteJsonConfigParser();
         }
 
